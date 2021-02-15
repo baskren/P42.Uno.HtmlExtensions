@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="MSBuild.Sdk.Extras/3.0.22">
+  <!--
+	Adding project references to this project requires some manual adjustments.
+	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
+	-->
+  <PropertyGroup>
+    <!--TargetFrameworks>uap10.0.17763;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks-->
+    <TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);uap10.0.17763;</TargetFrameworks>
+    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <DebugType>portable</DebugType>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(TargetFramework.ToLower().StartsWith('monoandroid')) ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Uno.UI" Version="3.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="**\*.shared.cs" />
+    <Compile Include="**\*.shared.*.cs" />
+  </ItemGroup>
+  <!-- UWP -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <Compile Include="**\*.uwp.cs" />
+    <Compile Include="**\*.uwp.*.cs" />
+  </ItemGroup>
+  <!-- Android -->
+  <ItemGroup Condition=" $(TargetFramework.ToLower().StartsWith('monoandroid')) ">
+    <Compile Include="**\*.android.cs" />
+    <Compile Include="**\*.android.*.cs" />
+  </ItemGroup>
+  <!-- iOS -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('xamarinios')) ">
+    <Compile Include="**\*.ios.cs" />
+    <Compile Include="**\*.ios.*.cs" />
+  </ItemGroup>
+  <!-- MacOS -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('xamarinmac')) ">
+    <Compile Include="**\*.macos.cs" />
+    <Compile Include="**\*.macos.*.cs" />
+  </ItemGroup>
+  <!-- WASM -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) ">
+    <PackageReference Include="Uno.UI.WebAssembly" Version="3.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <Compile Include="**\*.unowasm.cs" />
+    <Compile Include="**\*.unowasm.*.cs" />
+
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <EmbeddedResource Include="Themes\Generic.xaml" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\moderateMargins.svg" />
+    <None Remove="Assets\narrowMargins.svg" />
+    <None Remove="Assets\wideMargins.svg" />
+    <None Remove="LinkerDefinition.Wasm.xml" />
+    <None Remove="Themes\Generic.xaml" />
+    <None Remove="WasmScripts\html2canvas.min.js" />
+    <None Remove="WasmScripts\UnoPng.js" />
+    <None Remove="WasmScripts\UnoPrint.js" />
+    <None Remove="WasmScripts\UnoWebView.js" />
+    <None Remove="WasmScripts\UnoWebViewBridge.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\moderateMargins.svg" />
+    <Content Include="Assets\narrowMargins.svg" />
+    <Content Include="Assets\wideMargins.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
+      <LogicalName>$(AssemblyName).xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
+    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
+    <EmbeddedResource Include="WasmScripts\UnoWebViewBridge.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj" />
+  </ItemGroup>
+</Project>
