@@ -51,7 +51,7 @@ namespace P42.Uno.HtmlExtensions
         public async Task PrintAsync(string html, string jobName)
         {
             var webView = new WebView();
-            webView.Opacity = 0.2;
+            webView.Opacity = 0.01;
             webView.NavigationCompleted += OnNavigationComplete;
             webView.NavigationFailed += OnNavigationFailed;
             
@@ -63,6 +63,7 @@ namespace P42.Uno.HtmlExtensions
             webView.NavigateToString(html);
             if (await tcs.Task)
                 await PrintAsync(webView, jobName);
+            RootPanel.Children.Remove(webView);
         }
 
         static void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
