@@ -1,5 +1,4 @@
-﻿#if __IOS__ 
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
@@ -93,4 +92,3 @@ namespace P42.Uno.HtmlExtensions
         }
     }
 }
-#endif

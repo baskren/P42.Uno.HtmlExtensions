@@ -1,5 +1,4 @@
-﻿#if __IOS__ || __MACOS__
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,4 +21,3 @@ namespace P42.Uno.HtmlExtensions
         }
     }
 }
-#endif

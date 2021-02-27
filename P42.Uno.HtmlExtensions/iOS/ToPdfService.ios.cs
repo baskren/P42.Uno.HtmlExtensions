@@ -1,5 +1,4 @@
-﻿#if __IOS__ 
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using CoreGraphics;
@@ -174,4 +173,3 @@ namespace P42.Uno.HtmlExtensions
 
 
 }
-#endif

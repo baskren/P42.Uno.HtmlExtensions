@@ -155,6 +155,7 @@ namespace P42.Uno.HtmlExtensions
             //this.ClearCssStyle("pointer-events");  // doesn't seem to work here as it seems to get reset by Uno during layout.
             this.SetHtmlAttribute("name", $"{SessionGuid}:{InstanceGuid}");
             this.SetHtmlAttribute("onLoad", $"UnoWebView_OnLoad('{InstanceGuid}')");
+            System.Diagnostics.Debug.WriteLine("NativeWebView.ctr WebViewRootPage: " + WebViewBridgeRootPage);
             this.SetHtmlAttribute("src", WebViewBridgeRootPage);
         }
 
@@ -168,6 +169,7 @@ namespace P42.Uno.HtmlExtensions
 
         void NavigateToText(string text)
         {
+            System.Diagnostics.Debug.WriteLine("NativeWebView.NavigateToText: text (before): " + text.Substring(0, Math.Min(256, text.Length)));
             text = WebViewXExtensions.InjectWebBridge(text);
             var valueBytes = Encoding.UTF8.GetBytes(text);
             var base64 = Convert.ToBase64String(valueBytes);

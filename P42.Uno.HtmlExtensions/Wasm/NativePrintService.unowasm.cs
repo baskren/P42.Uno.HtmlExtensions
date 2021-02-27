@@ -57,7 +57,7 @@ namespace P42.Uno.HtmlExtensions
             
             RootPanel.Children.Add(webView);
 
-            System.Diagnostics.Debug.WriteLine("NativePrintService.PrintAsync start NavigateToString");
+            System.Diagnostics.Debug.WriteLine("NativePrintService.PrintAsync start NavigateToString html: " + html.Substring(0, Math.Min(256, html.Length)));
             var tcs = new TaskCompletionSource<bool>();
             webView.Tag = tcs;
             webView.NavigateToString(html);
