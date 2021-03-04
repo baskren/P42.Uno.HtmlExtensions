@@ -40,22 +40,25 @@ namespace Demo
         {
             this.InitializeComponent();
 
-            _toPngButton.IsEnabled = false;
-            _toPdfButton.IsEnabled = false;
+            //_toPngButton.IsEnabled = false;
+            //_toPdfButton.IsEnabled = false;
             _printButton.IsEnabled = P42.Uno.HtmlExtensions.PrintService.IsAvailable;
 
             Grid.SetRow(_webView, 2);
             _grid.Children.Add(_webView);
 
             _webView.NavigationCompleted += OnNavigationCompleted;
+
+            System.Diagnostics.Debug.WriteLine("MainPage. ASSEMBLY: " + GetType().Assembly.GetName().Name);
+
         }
 
 
         private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine("MainPage.OnNavigationCompleted " + args.Uri);
-            _toPngButton.IsEnabled = ToPngService.IsAvailable;
-            _toPdfButton.IsEnabled = ToPdfService.IsAvailable;
+            //_toPngButton.IsEnabled = ToPngService.IsAvailable;
+            //_toPdfButton.IsEnabled = ToPdfService.IsAvailable;
             OnPrintClicked(null, null);
         }
 
@@ -103,7 +106,7 @@ namespace Demo
                 }
             }
         }
-
+        /*
         async void OnToPngClicked(object sender, RoutedEventArgs e)
         {
             ShowSpinner();
@@ -145,7 +148,7 @@ namespace Demo
             HideSpinner();
             
         }
-
+        */
         int count = 0;
         async void OnPrintClicked(object sender, RoutedEventArgs e)
         {
