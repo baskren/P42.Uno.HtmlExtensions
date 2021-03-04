@@ -42,7 +42,7 @@ namespace P42.Uno.HtmlExtensions
         internal List<UIElement> printPreviewPages;
 
         // Event callback which is called after print preview pages are generated.  Photos scenario uses this to do filtering of preview pages
-        protected event EventHandler PreviewPagesCreated;
+        //protected event EventHandler PreviewPagesCreated;
 
 
         Task<IRandomAccessStreamWithContentType> wideMarginsIconTask;
@@ -85,8 +85,8 @@ namespace P42.Uno.HtmlExtensions
             {
                 var rootFrame = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
                 var page = rootFrame?.Content as Windows.UI.Xaml.Controls.Page;
-                var panel = page?.Content as Panel;
-                var children = panel.Children.ToList();
+                //var panel = page?.Content as Panel;
+                //var children = panel.Children.ToList();
                 return page;
             }
         }
@@ -132,6 +132,9 @@ namespace P42.Uno.HtmlExtensions
 
             var printMan = PrintManager.GetForCurrentView();
             printMan.PrintTaskRequested += PrintTaskRequested;
+
+            GC.Collect();
+
         }
 
         /// <summary>
@@ -155,17 +158,29 @@ namespace P42.Uno.HtmlExtensions
                 if (PrintCanvas != null)
                 {
                     PrintCanvas.Children.Clear();
-                    RootPanel?.Children.Remove(PrintCanvas);
+                    RootPanel.Children.Remove(PrintCanvas);
                 }
                 if (PrintContent != null)
-                    RootPanel?.Children.Remove(PrintContent);
+                {
+                    RootPanel.Children.Remove(PrintContent);
+                }
                 if (PrintSpinner != null)
-                    RootPanel?.Children.Remove(PrintSpinner);
+                    RootPanel.Children.Remove(PrintSpinner);
+
+                printDocument = null;
+                printDocumentSource = null;
+                printPreviewPages?.Clear();
+                printPreviewPages = null;
+
+                GC.Collect();
             });
+
+            GC.Collect();
         }
 
         public string JobName { get; private set; }
 
+        /*
         public static async Task ShowPrintUIAsync()
         {
             // Catch and print out any errors reported
@@ -176,10 +191,12 @@ namespace P42.Uno.HtmlExtensions
             //}
             //catch (Exception e)
             //{
-                //MainPage.Current.NotifyUser("Error printing: " + e.Message + ", hr=" + e.HResult, NotifyType.ErrorMessage);
-                //await P42.Uno.Controls.Toast.CreateAsync(null, "Error printing: " + e.Message + ", hr=" + e.HResult);
+            //MainPage.Current.NotifyUser("Error printing: " + e.Message + ", hr=" + e.HResult, NotifyType.ErrorMessage);
+            //await P42.Uno.Controls.Toast.CreateAsync(null, "Error printing: " + e.Message + ", hr=" + e.HResult);
             //}
+            System.Diagnostics.Debug.WriteLine("PrintHelper.");
         }
+        */
 
         /// <summary>
         /// Method that will generate print content for the scenario
@@ -227,7 +244,7 @@ namespace P42.Uno.HtmlExtensions
                 printTask.Options.MediaSize = PrintMediaSize.NorthAmericaLetter;
 
                 // Create a new list option
-                var margins = printDetailedOptions.CreateItemListOption("Margins", "Margins");
+                //var margins = printDetailedOptions.CreateItemListOption("Margins", "Margins");
                 /*
                 if (Forms9Patch.OsInfoService.Version >= new Version(10, 0, 17134, 0))
                 {
@@ -239,38 +256,32 @@ namespace P42.Uno.HtmlExtensions
                 }
                 else
                 */
+                /*
                 {
                     margins.AddItem("WideMargins", "Wide");
                     margins.AddItem("ModerateMargins", "Moderate");
                     margins.AddItem("NarrowMargins", "Narrow");
                 }
                 // The default is ModerateMargins
+                */
+
                 ApplicationContentMarginTop = 0.1;
                 ApplicationContentMarginLeft = 0.1;
-                margins.TrySetValue("ModerateMargins");
+                //margins.TrySetValue("ModerateMargins");
+                //displayedOptions.Add("Margins");
 
 
                 // Add the custom option to the option list
-                displayedOptions.Add("Margins");
 
                 printDetailedOptions.OptionChanged += OnPrintDetailOptionChangedAsync;
 
                 // Print Task event handler is invoked when the print job is completed.
-                printTask.Completed += (s, args) =>
+                printTask.Completed += PrintTask_Completed;
+
+                void PrintTask_Completed(PrintTask task, PrintTaskCompletedEventArgs args)
                 {
-                    MainThread.BeginInvokeOnMainThread(async() =>
-                    {
-                        // Notify the user when the print operation fails.
-                        //if (args.Completion == PrintTaskCompletion.Failed)
-                        //    await P42.Uno.Controls.Toast.CreateAsync("Printing Failed", null);
-                        //else if (args.Completion == PrintTaskCompletion.Canceled)
-                        //    using (Toast.Create("Printing Cancelled", null)) { }
-                        //else if (args.Completion == PrintTaskCompletion.Submitted)
-                        //    await P42.Uno.Controls.Toast.CreateAsync("Printing ...", "Print job submitted to printer.", TimeSpan.FromSeconds(5));
-                        //else if (args.Completion == PrintTaskCompletion.Abandoned)
-                        //    await P42.Uno.Controls.Toast.CreateAsync("Printing Abandoned", null);
-                    });
                     UnregisterForPrinting();
+                    task.Completed -= PrintTask_Completed;
                 };
 
                 sourceRequestedArgs.SetSource(printDocumentSource);
@@ -278,6 +289,9 @@ namespace P42.Uno.HtmlExtensions
                 deferral.Complete();
             });
         }
+
+
+
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         async void OnPrintDetailOptionChangedAsync(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
@@ -338,8 +352,8 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-        System.Threading.SemaphoreSlim _semaphoreSlim = new System.Threading.SemaphoreSlim(1, 1);
-        
+        bool _generatingPreviewPages;
+
         /// <summary>
         /// This is the event handler for PrintDocument.Paginate. It creates print preview pages for the app.
         /// </summary>
@@ -347,68 +361,37 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="e">Paginate Event  </param>
         public virtual async void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
         {
+            _generatingPreviewPages = true;
             var paperSize = e.PrintTaskOptions.GetPageDescription(0).PageSize;
             System.Diagnostics.Debug.WriteLine("CreatePrintPreviewPages: {" + paperSize.Width + "," + paperSize.Height + "}");
 
-            //lock (printPreviewPages)
-            await _semaphoreSlim.WaitAsync();
 
-            //try
-            //{
+            // Get the PrintTaskOptions
+            var printingOptions = e.PrintTaskOptions;
+            // Get the page description to deterimine how big the page is
+            var pageDescription = printingOptions.GetPageDescription(0);
+
+            if (await GeneratePagesAsync(pageDescription) is List<UIElement> pages)
+            {
                 // Clear the cache of preview pages
                 printPreviewPages.Clear();
-
                 // Clear the print canvas of preview pages
                 PrintCanvas.Children.Clear();
 
-                // Get the PrintTaskOptions
-                var printingOptions = e.PrintTaskOptions;
+                foreach (var page in pages)
+                    PrintCanvas.Children.Add(page);
+                PrintCanvas.InvalidateMeasure();
+                PrintCanvas.UpdateLayout();
 
-                // Get the page description to deterimine how big the page is
-                var pageDescription = printingOptions.GetPageDescription(0);
-
-                if (await GeneratePagesAsync(pageDescription) is List<UIElement> pages)
-                {
-
-                    foreach (var page in pages)
-                        PrintCanvas.Children.Add(page);
-                    PrintCanvas.InvalidateMeasure();
-                    PrintCanvas.UpdateLayout();
-
-                    await Task.Delay(1000);
-
-                    printPreviewPages.AddRange(pages);
-                    await Task.Delay(1000);
-                }
-
-                if (PreviewPagesCreated != null)
-                    PreviewPagesCreated.Invoke(printPreviewPages, null);
-
-                var printDoc = (PrintDocument)sender;
-
-                // Report the number of preview pages created
-                printDoc.SetPreviewPageCount(printPreviewPages.Count, PreviewPageCountType.Intermediate);
-            /*
+                printPreviewPages.AddRange(pages);
+                await Task.Delay(1000);
             }
-            catch (Exception pve)
-            {
-                //P42.Utils.BreadCrumbs.AddException(pve, GetType());
 
-                if (pve.Message.Contains("The RPC server is unavailable", StringComparison.OrdinalIgnoreCase))
-                {
-                    var permission = await P42.Uno.Controls.PermissionPopup.CreateAsync("The RPC server is unavailable", "Windows failed trying to setup the print preview because it could not connect to its RPC server.   There are three basic potential causes for this error message. Either the RPC service is not running, there are issues with the network, or some important registry entries that control the RPC service have been corrupted. In Windows 10, the most common cause for the error is that the RPC service is simply not running.  <a id='link' href='https://www.techjunkie.com/rpc-server-is-unavailable/'>Click [LEARN MORE] to learn more about how to fix this.</a>", "LEARN MORE", "Cancel");
-                    await permission.WaitForPoppedAsync();
-                    if (permission.PermissionState == Controls.PermissionState.Ok)
-                        await Xamarin.Essentials.Browser.OpenAsync("https://www.techjunkie.com/rpc-server-is-unavailable/", Xamarin.Essentials.BrowserLaunchMode.SystemPreferred);
-                }
-                else
-                    await P42.Uno.Controls.Toast.CreateAsync("Cannot print", "Windows failed trying to setup the print preview.  Below is some information from Windows about the failure.  \n\n" + pve.Message);
-            }
-            finally
-            {
-            */
-                _semaphoreSlim.Release();
-            //}
+            // Report the number of preview pages created
+            var printDoc = (PrintDocument)sender;
+            printDoc.SetPreviewPageCount(printPreviewPages.Count, PreviewPageCountType.Intermediate);
+
+            _generatingPreviewPages = false;
         }
 
 
@@ -426,11 +409,14 @@ namespace P42.Uno.HtmlExtensions
         {
             System.Diagnostics.Debug.WriteLine("GetPrintPreviewPage: " + e.PageNumber);
 
-            await _semaphoreSlim.WaitAsync();
+            while (_generatingPreviewPages)
+                await Task.Delay(100);
+            //await _semaphoreSlim.WaitAsync();
 
             var printDoc = (PrintDocument)sender;
             printDoc.SetPreviewPage(e.PageNumber, printPreviewPages[e.PageNumber - 1]);
-            _semaphoreSlim.Release();
+            //printDoc.SetPreviewPage(e.PageNumber, printPreviewPages.First());
+            //_semaphoreSlim.Release();
         }
 
         /// <summary>
@@ -459,9 +445,7 @@ namespace P42.Uno.HtmlExtensions
         }
 
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected virtual async Task<IEnumerable<UIElement>> GeneratePagesAsync(PrintPageDescription pageDescription)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             throw new NotImplementedException();
         }

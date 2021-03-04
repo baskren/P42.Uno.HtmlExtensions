@@ -30,6 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\cbracco.html" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\HtmlForm.html" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />

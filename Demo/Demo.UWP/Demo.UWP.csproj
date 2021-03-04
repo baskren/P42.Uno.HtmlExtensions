@@ -126,17 +126,6 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj">
-      <Project>{e244872a-a5ad-4995-b5fd-0a8ff5463595}</Project>
-      <Name>P42.Uno.HtmlExtensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.csproj">
-      <Project>{c1942f23-2d8f-4eca-a208-7cead48dffc3}</Project>
-      <Name>P42.Uno.Xamarin.Essentials</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +142,20 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
+      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
+      <Name>P42.Uno.CompressionBridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.UWP.csproj">
+      <Project>{18c96c9b-3560-4172-97ec-86c54e00f3cb}</Project>
+      <Name>P42.Uno.HtmlExtensions.UWP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.UWP.csproj">
+      <Project>{9ebeba17-b88d-4145-9b32-4448f369b45a}</Project>
+      <Name>P42.Uno.Xamarin.Essentials.UWP</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" Condition="Exists('..\Demo.Shared\Demo.Shared.projitems')" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

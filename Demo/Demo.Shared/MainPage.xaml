@@ -22,6 +22,9 @@
                 <TextBlock Text="WebView to PNG / PDF Tester!" Margin="20" FontSize="30" Grid.ColumnSpan="2" />
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Padding="5" Spacing="5">
                     <StackPanel.Children>
+                        <Button x:Name="_loadHtmlFormButton" Content="Load HTML Form" Click="OnLoadTextClicked" />
+                        <Button x:Name="_loadUnoHtmlButton" Content="Load Uno Html" Click="OnLoadTextClicked" />
+                        <Button x:Name="_loadCbraccoHtmlButton" Content="Load CBracco Html" Click="OnLoadTextClicked" />
                         <Button x:Name="_toPngButton" Content="To PNG" Click="OnToPngClicked" />
                         <Button x:Name="_toPdfButton" Content="To PDF" Click="OnToPdfClicked" />
                         <Button x:Name="_printButton" Content="Print" Click="OnPrintClicked" />

@@ -91,7 +91,20 @@
     <ImageAsset Include="Assets.xcassets\unologo.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\unologo.imageset\unoplatform.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
+      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
+      <Name>P42.Uno.CompressionBridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.MacOS.csproj">
+      <Project>{b50407ab-0a1d-4b77-8b64-1be0511551ec}</Project>
+      <Name>P42.Uno.HtmlExtensions.MacOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.MacOS.csproj">
+      <Project>{d4db88a1-b134-405b-9836-da422a833667}</Project>
+      <Name>P42.Uno.Xamarin.Essentials.MacOS</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
@@ -103,16 +116,6 @@
     <BundleResource Include="Resources\Fonts\uno-fluentui-assets.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </BundleResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj">
-      <Project>{e244872a-a5ad-4995-b5fd-0a8ff5463595}</Project>
-      <Name>P42.Uno.HtmlExtensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.csproj">
-      <Project>{c1942f23-2d8f-4eca-a208-7cead48dffc3}</Project>
-      <Name>P42.Uno.Xamarin.Essentials</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">

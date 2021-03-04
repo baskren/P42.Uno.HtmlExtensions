@@ -89,13 +89,17 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj">
-      <Project>{e244872a-a5ad-4995-b5fd-0a8ff5463595}</Project>
-      <Name>P42.Uno.HtmlExtensions</Name>
+    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
+      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
+      <Name>P42.Uno.CompressionBridge</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.csproj">
-      <Project>{c1942f23-2d8f-4eca-a208-7cead48dffc3}</Project>
-      <Name>P42.Uno.Xamarin.Essentials</Name>
+    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.Android.csproj">
+      <Project>{6dff346e-1fac-4d7a-989a-2dee96e2886c}</Project>
+      <Name>P42.Uno.HtmlExtensions.Android</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.Android.csproj">
+      <Project>{19be0e5f-9a03-4771-a658-dca543169b3a}</Project>
+      <Name>P42.Uno.Xamarin.Essentials.Android</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" Condition="Exists('..\Demo.Shared\Demo.Shared.projitems')" />

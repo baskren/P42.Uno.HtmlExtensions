@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -29,8 +30,10 @@ namespace P42.Uno.HtmlExtensions
             var line = 29;
             try
             {
+
                 line = 32;
                 var widthString = await webView.InvokeScriptAsync("eval", new[] { "document.body.scrollWidth.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. widthString: " + widthString);
                 line = 34;
                 int.TryParse(widthString, out contentWidth);
                 line = 36;
@@ -39,13 +42,23 @@ namespace P42.Uno.HtmlExtensions
 
                 //var rect = await webView.InvokeScriptAsync("pizzx", new[] { "document.getElementById( 'rasta' ).clientHeight.toString()" });
                 // ask the content its height
-                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.scrollHeight.toString()" });
-                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "document.body.scrollHeight.toString()" });
-                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.getBoundingClientRect().height.toString()" });
-                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "self.innerHeight.toString()" });
-                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "document.body.offsetHeight.toString()" });
+                var docScrollHeight = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.scrollHeight.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.documentElement.scrollHeight " + docScrollHeight);
+                /*
+                var bodyScrollHeight = await webView.InvokeScriptAsync("eval", new[] { "document.body.scrollHeight.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.body.scrollHeight " + bodyScrollHeight);
+                var clientRectHeight = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.getBoundingClientRect().height.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.documentElement.getBoundingClientRect().height " + clientRectHeight);
+                var clientHeight = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.clientHeight.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.documentElement.clientHeight " + clientHeight);
+                var innterHeight = await webView.InvokeScriptAsync("eval", new[] { "self.innerHeight.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. self.innerHeight " + innterHeight);
+                var offsetHeight = await webView.InvokeScriptAsync("eval", new[] { "document.body.offsetHeight.toString()" });
+                System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.body.offsetHeight " + offsetHeight);
+                */
                 line = 47;
-                var heightString = await webView.InvokeScriptAsync("eval", new[] { "Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight ).toString()" });//, document.documentElement.offsetHeight ).toString()" });
+                //var heightString = await webView.InvokeScriptAsync("eval", new[] { "Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight ).toString()" });//, document.documentElement.offsetHeight ).toString()" });
+                var heightString = docScrollHeight;
                 line = 49;
                 int.TryParse(heightString, out contentHeight);
                 line = 51;

@@ -34,16 +34,15 @@ namespace Demo
     {
         WebView _webView = new WebView
         {
-           // Source = new Uri("https://platform.uno")
-           // Source = new Uri("https://slashdot.org")
         };
 
         public MainPage()
         {
             this.InitializeComponent();
 
-            _toPngButton.IsEnabled = ToPngService.IsAvailable;
-            _toPdfButton.IsEnabled = ToPdfService.IsAvailable;
+            _toPngButton.IsEnabled = false;
+            _toPdfButton.IsEnabled = false;
+
 
             Grid.SetRow(_webView, 2);
             _grid.Children.Add(_webView);
@@ -51,39 +50,19 @@ namespace Demo
             _webView.NavigationCompleted += OnNavigationCompleted;
         }
 
+
         private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine("MainPage.OnNavigationCompleted " + args.Uri);
+            _toPngButton.IsEnabled = ToPngService.IsAvailable;
+            _toPdfButton.IsEnabled = ToPdfService.IsAvailable;
+            OnPrintClicked(null, null);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            _toPngButton.IsEnabled = true;
-        }
-
-
-        async void OnToPngClicked(object sender, RoutedEventArgs e)
-        {
-            /*
-            ShowSpinner();
-            if ( await _webView.ToPngAsync("WebView.png") is ToFileResult fileResult)
-            {
-                if (!fileResult.IsError)
-                {
-                    _messageTextBlock.Text = "Success: " + fileResult.Result;
-                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.Result, "image/png") { FileName = "WebView.png" };
-                    var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PNG", shareFile);
-                    await Xamarin.Essentials.Share.RequestAsync(shareRequest);
-                }
-                else
-                {
-                    _messageTextBlock.Text = "Error: " + fileResult.Result;
-                }
-            }
-            HideSpinner();
-            */
-
+            //_toPngButton.IsEnabled = true;
             var assembly = GetType().Assembly;
             var name = assembly.GetName().Name;
             var resourceId = name + ".Resources.platform.uno.html";
@@ -93,48 +72,88 @@ namespace Demo
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    var text = await reader.ReadToEndAsync();
+                    var text = reader.ReadToEnd();
                     _webView.NavigateToString(text);
                 }
             }
-            //WebClient client = new WebClient();
-            //var html = client.DownloadString("https://platform.uno");
-            //_webView.NavigateToString(html); 
-            
+        }
 
-           // _webView.Navigate(new Uri("https://raw.githubusercontent.com/baskren/P42.Uno.HtmlExtensions/webViewBridgeEmbed/Demo/Demo.Shared/Resources/platform.uno.html"));
+        async void OnLoadTextClicked(object sender, RoutedEventArgs e)
+        {
+            var assembly = GetType().Assembly;
+            var name = assembly.GetName().Name;
+            var resourceId = name + ".Resources.HtmlForm.html";
+            if (sender is Button button && button.Content is string label)
+            {
+                if (label.ToLower().Contains("html form"))
+                    resourceId = name + ".Resources.HtmlForm.html";
+                else if (label.ToLower().Contains("uno html"))
+                    resourceId = name + ".Resources.platform.uno.html";
+                else if (label.ToLower().Contains("cbracco"))
+                    resourceId = name + ".Resources.cbracco.html";
+            }
+            System.Diagnostics.Debug.WriteLine("MainPage.OnToPngClicked resourceId = " + resourceId);
+            //var resources = assembly.GetManifestResourceNames();
+            using (var stream = assembly.GetManifestResourceStream(resourceId))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    var text = reader.ReadToEnd();
+                    _webView.NavigateToString(text);
+                }
+            }
+        }
+
+        async void OnToPngClicked(object sender, RoutedEventArgs e)
+        {
+            ShowSpinner();
+            if ( await _webView.ToPngAsync("WebView.png") is ToFileResult fileResult)
+            {
+                if (!fileResult.IsError)
+                {
+                    _messageTextBlock.Text = "Success: " + fileResult.StorageFile.Path;
+                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.StorageFile) { FileName = "WebView.png" };
+                    var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PNG", shareFile);
+                    await Xamarin.Essentials.Share.RequestAsync(shareRequest);
+                }
+                else
+                {
+                    _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
+                }
+            }
+            HideSpinner();
         }
 
         async void OnToPdfClicked(object sender, RoutedEventArgs e)
         {
-            /*
+            
             ShowSpinner();
             if (await _webView.ToPdfAsync("WebView.pdf") is ToFileResult fileResult)
             {
                 if (!fileResult.IsError)
                 {
-                    _messageTextBlock.Text = "Success: " + fileResult.Result;
-                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.Result, "application/pdf") { FileName = "WebView.pdf" };
+                    _messageTextBlock.Text = "Success: " + fileResult.StorageFile.Path;
+                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.StorageFile) { FileName = "WebView.pdf" };
                     var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PDF", shareFile);
                     await Xamarin.Essentials.Share.RequestAsync(shareRequest);
                 }
                 else
                 {
-                    _messageTextBlock.Text = "Error: " + fileResult.Result;
+                    _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
                 }
             }
             HideSpinner();
-            */
+            
         }
 
         async void OnPrintClicked(object sender, RoutedEventArgs e)
         {
-            /*
+            
             await _webView.PrintAsync("WebView PrintJob");
             System.Diagnostics.Debug.WriteLine("MainPage.OnPrintClicked: DONE");
-            */
+            
 
-            await P42.Uno.HtmlExtensions.PrintService.PrintAsync("<Button>button</Button>", "print job name");
+            //await P42.Uno.HtmlExtensions.PrintService.PrintAsync("<p><u>THIS</u> IS THE PRINT PAGE CONTENT.</p>", "print job name");
 
             //_webView.Navigate(new Uri("https://platform.uno"));
 
