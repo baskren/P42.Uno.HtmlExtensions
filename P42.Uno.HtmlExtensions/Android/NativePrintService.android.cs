@@ -1,6 +1,7 @@
 ﻿#if __ANDROID__
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.OS;
@@ -16,11 +17,21 @@ namespace P42.Uno.HtmlExtensions
     {
         public bool IsAvailable() => Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat;
 
+        static FieldInfo ApplicationActivityFieldInfo;
+
+        static Android.App.Activity Activity
+        {
+            get
+            {
+                ApplicationActivityFieldInfo = ApplicationActivityFieldInfo ?? typeof(Windows.UI.Xaml.ApplicationActivity).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
+                return ApplicationActivityFieldInfo.GetValue(null) as Android.App.Activity;
+            }
+        }
+
         public async Task PrintAsync(WebView unoWebView, string jobName)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
-                var context = Android.App.Application.Context;
                 if (unoWebView.GetChildren(v => v is Android.Webkit.WebView).FirstOrDefault() is Android.Webkit.WebView droidWebView)
                 {
                     droidWebView.Settings.JavaScriptEnabled = true;
@@ -32,7 +43,7 @@ namespace P42.Uno.HtmlExtensions
                         jobName = unoWebView.DocumentTitle;
                     if (string.IsNullOrWhiteSpace(jobName))
                         jobName = AppInfo.Name;
-                    var printMgr = (PrintManager)context.GetSystemService(Context.PrintService);
+                    var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
                     printMgr.Print(jobName, droidWebView.CreatePrintDocumentAdapter(jobName), null);
                 }
                 else
@@ -69,7 +80,7 @@ namespace P42.Uno.HtmlExtensions
         {
             if (string.IsNullOrWhiteSpace(jobName))
                 jobName = AppInfo.Name;
-            var printMgr = (PrintManager)Android.App.Application.Context.GetSystemService(Context.PrintService);
+            var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
             await Task.Delay(1000); // allow a bit more time for the layout to complete ... there has to be a better way to do this!?!?;
             printMgr.Print(jobName, webView.CreatePrintDocumentAdapter(jobName), null);
             taskCompletionSource.SetResult(new ToFileResult(storageFile: null));

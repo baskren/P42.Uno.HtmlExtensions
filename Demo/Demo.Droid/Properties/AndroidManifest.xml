@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="Demo" android:versionCode="1" android:versionName="1.0">
-  <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="29" />
-  <application android:label="Demo"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="Demo.Demo" android:versionCode="1" android:versionName="1.0" android:installLocation="auto">
+	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="29" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+	<uses-permission android:name="android.permission.FLASHLIGHT" />
+	<application android:label="Demo"></application>
 </manifest>

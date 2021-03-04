@@ -59,7 +59,7 @@ namespace Demo
             System.Diagnostics.Debug.WriteLine("MainPage.OnNavigationCompleted " + args.Uri);
             //_toPngButton.IsEnabled = ToPngService.IsAvailable;
             //_toPdfButton.IsEnabled = ToPdfService.IsAvailable;
-            OnPrintClicked(null, null);
+            //OnPrintClicked(null, null);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -102,10 +102,15 @@ namespace Demo
                 using (var reader = new StreamReader(stream))
                 {
                     var text = reader.ReadToEnd();
+#if __ANDROID__
+                    // this, because ... Android
+                    text = text.Replace("<div><iframe src=\"index.html\" height=\"300\"></iframe></div>", "");
+#endif
                     _webView.NavigateToString(text);
                 }
             }
         }
+
         /*
         async void OnToPngClicked(object sender, RoutedEventArgs e)
         {
