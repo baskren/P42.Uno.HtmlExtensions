@@ -42,7 +42,7 @@ namespace Demo
 
             _toPngButton.IsEnabled = false;
             _toPdfButton.IsEnabled = false;
-
+            _printButton.IsEnabled = P42.Uno.HtmlExtensions.PrintService.IsAvailable;
 
             Grid.SetRow(_webView, 2);
             _grid.Children.Add(_webView);
@@ -146,10 +146,11 @@ namespace Demo
             
         }
 
+        int count = 0;
         async void OnPrintClicked(object sender, RoutedEventArgs e)
         {
-            
-            await _webView.PrintAsync("WebView PrintJob");
+            if (P42.Uno.HtmlExtensions.PrintService.IsAvailable)
+                await _webView.PrintAsync("WebView PrintJob" + count++);
             System.Diagnostics.Debug.WriteLine("MainPage.OnPrintClicked: DONE");
             
 

@@ -52,21 +52,7 @@ if(bases.length == 0){
         TaskCompletionSource<bool> NavigationCompleteTCS;
         public override async Task InitAsync()
         {
-            NavigationCompleteTCS = new TaskCompletionSource<bool>();
-
-            var di = DisplayInformation.GetForCurrentView();
-
-            PrintContent = _webView = new WebView
-            {
-                Name = "PrintWebView" + (instanceCount++).ToString("D3"),
-                DefaultBackgroundColor = Windows.UI.Colors.White,
-                Visibility = Visibility.Visible,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                Opacity = 1.0,
-                Width = di.RawDpiX * 8
-            };
-            _webView.NavigationCompleted += _webView_NavigationCompletedA;
+            await base.InitAsync();
             PrintSpinner = new Grid
             {
                 Background = new SolidColorBrush(Color.FromArgb(100,0,0,0)),
@@ -81,6 +67,39 @@ if(bases.length == 0){
                             }
                         }
             };
+
+            await PrintManager.ShowPrintUIAsync();
+        }
+
+        async void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            _webView.NavigationCompleted -= WebView_NavigationCompleted;
+            GC.Collect();
+            await Task.Delay(1000);
+            NavigationCompleteTCS.TrySetResult(true);
+        }
+
+
+        protected override async Task <IEnumerable<UIElement>> GeneratePagesAsync(PrintPageDescription pageDescription)
+        {
+            // Clear out any old webviews and add a new one (need a fresh start)
+            if (PrintContent != null && RootPanel.Children.Contains(PrintContent))
+            {
+                RootPanel.Children.Remove(PrintSpinner);
+                RootPanel.Children.Remove(PrintContent);
+            }
+
+            PrintContent = _webView = new WebView
+            {
+                Name = "PrintWebView" + (instanceCount++).ToString("D3"),
+                DefaultBackgroundColor = Windows.UI.Colors.White,
+                Visibility = Visibility.Visible,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Opacity = 0.0,
+                Width = pageDescription.ImageableRect.Width
+            };
+
             if (RootPanel is Grid grid)
             {
                 if ((grid.RowDefinitions?.Count ?? 1) > 1)
@@ -97,9 +116,10 @@ if(bases.length == 0){
             RootPanel.Children.Add(PrintContent);
             RootPanel.Children.Add(PrintSpinner);
 
-            //await Task.Delay(50);
-
-            if (_sourceWebView!=null)
+            // Initial loading of content in order to get content size
+            NavigationCompleteTCS = new TaskCompletionSource<bool>();
+            _webView.NavigationCompleted += WebView_NavigationCompleted;
+            if (_sourceWebView != null)
             {
                 Html = await _sourceWebView.GetHtml();
                 _webView.NavigateToString(Html);
@@ -110,53 +130,36 @@ if(bases.length == 0){
                     uri = new Uri(LocalScheme + Uri, UriKind.RelativeOrAbsolute);
                 _webView.Source = uri;
             }
-
             await NavigationCompleteTCS.Task;
-
-            await Task.Delay(1000);
-
-            await PrintManager.ShowPrintUIAsync();
-        }
-
-        private static string[] SetBodyOverFlowHiddenString = new string[] { @"function SetBodyOverFlowHidden() { document.body.style.overflow = 'hidden'; } SetBodyOverFlowHidden();" };
-
-        async void _webView_NavigationCompletedA(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            _webView.NavigationCompleted -= _webView_NavigationCompletedA;
-            _webView.NavigationCompleted += _webView_NavigationCompletedB;
+            
+            // required resize and refresh in order to have content available for use
             var contentSize = await _webView.WebViewContentSizeAsync();
-            _webView.Width = contentSize.Width;
             _webView.Height = contentSize.Height;
-
+            NavigationCompleteTCS = new TaskCompletionSource<bool>();
+            _webView.NavigationCompleted += WebView_NavigationCompleted;
             _webView.InvalidateMeasure();
             _webView.Refresh();
-        }
-
-        async void _webView_NavigationCompletedB(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            _webView.NavigationCompleted -= _webView_NavigationCompletedB;
-
-            await Task.Delay(1000);
-
-            NavigationCompleteTCS.TrySetResult(true);
-        }
-
-
-        protected override async Task <IEnumerable<UIElement>> GeneratePagesAsync(PrintPageDescription pageDescription)
-        {
-            var di = DisplayInformation.GetForCurrentView();
-            var displayDpi = di.LogicalDpi;
-
-            var pageCount = Math.Ceiling((96 / displayDpi) * _webView.ActualHeight  / (pageDescription.ImageableRect.Height ));
+            await NavigationCompleteTCS.Task;
             
+            /*
+            System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. displayDpi=[{displayDpi}]");
+            System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. pageDescription.ImageableRect=[{pageDescription.ImageableRect}]");
+            System.Diagnostics.Debug.WriteLine("GeneratePagesAsync. webView Actual=[" + _webView.ActualWidth + ", " + _webView.ActualHeight + "]");
+            System.Diagnostics.Debug.WriteLine($"GeneratePagesAsync. webView Desired=[{_webView.DesiredSize}]");
+            */
+            var pageCount = Math.Ceiling(contentSize.Height / (pageDescription.ImageableRect.Height));
+
             // create the pages
             var pages = new List<UIElement>();
             for (int i = 0; i < (int)pageCount; i++)
             {
                 var panel = GenerateWebViewPanel(pageDescription, i);
+                PrintCanvas.Children.Add(panel);
+                printPreviewPages.Add(panel);
                 pages.Add(panel);
             }
 
+            GC.Collect();
             return pages;
         }
 

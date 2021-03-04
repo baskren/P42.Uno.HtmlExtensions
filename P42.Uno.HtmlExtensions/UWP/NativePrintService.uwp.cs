@@ -21,13 +21,15 @@ namespace P42.Uno.HtmlExtensions
 		/// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
 		public bool IsAvailable()
 		{
-			return PrintManager.IsSupported();
+			return PrintManager.IsSupported() && IntPtr.Size == 8;
 		}
 
 		TaskCompletionSource<bool> _printingTCS;
 		public async Task PrintAsync(WebView webView, string jobName)
 		{
-			
+			if (IntPtr.Size != 8)
+				throw new Exception("Printing not available in 32 bit applications.  Blame Microsoft's UWP Team as they don't seem to want to fix a memory leak that keeps printing from working reliably.");
+
 			if (_printingTCS != null)
 				return;
 
@@ -49,7 +51,6 @@ namespace P42.Uno.HtmlExtensions
 				if (printHelper != null)
 				{
 					await Task.Delay(50);
-					printHelper.RegisterForPrinting();
 					await printHelper.InitAsync();
 				}
 				_printingTCS?.TrySetResult(true);

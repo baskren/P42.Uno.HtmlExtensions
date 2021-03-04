@@ -44,25 +44,12 @@ namespace P42.Uno.HtmlExtensions
         // Event callback which is called after print preview pages are generated.  Photos scenario uses this to do filtering of preview pages
         //protected event EventHandler PreviewPagesCreated;
 
+        static UIElement PreviewFailedPage;
 
         Task<IRandomAccessStreamWithContentType> wideMarginsIconTask;
         Task<IRandomAccessStreamWithContentType> moderateMarginsIconTask;
         Task<IRandomAccessStreamWithContentType> narrowMarginsIconTask;
 
-        /*
-        /// <summary>
-        ///  A reference back to the scenario page used to access XAML elements on the scenario page
-        /// </summary>
-        protected Page ApplicationPage
-        {
-            get
-            {
-                var rootFrame = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
-                var content = rootFrame.Content as Windows.UI.Xaml.Controls.Page;
-                return content;
-            }
-        }
-        */
 
         /// <summary>
         ///  A hidden canvas used to hold pages we wish to print
@@ -79,7 +66,7 @@ namespace P42.Uno.HtmlExtensions
         }
 
        
-        internal static Windows.UI.Xaml.Controls.Page RootPage
+        internal static Page RootPage
         {
             get
             {
@@ -91,7 +78,7 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-        internal static Windows.UI.Xaml.Controls.Panel RootPanel => RootPage?.Content as Panel;
+        internal static Panel RootPanel => RootPage?.Content as Panel;
 
         protected UIElement PrintContent;
 
@@ -118,24 +105,6 @@ namespace P42.Uno.HtmlExtensions
             narrowMarginsIconTask = narrowMarginsIconReference.OpenReadAsync().AsTask();
         }
 
-        /// <summary>
-        /// This function registers the app for printing with Windows and sets up the necessary event handlers for the print process.
-        /// </summary>
-        public virtual void RegisterForPrinting()
-        {
-
-            printDocument = new PrintDocument();
-            printDocumentSource = printDocument.DocumentSource;
-            printDocument.Paginate += CreatePrintPreviewPages;
-            printDocument.GetPreviewPage += GetPrintPreviewPage;
-            printDocument.AddPages += AddPrintPages;
-
-            var printMan = PrintManager.GetForCurrentView();
-            printMan.PrintTaskRequested += PrintTaskRequested;
-
-            GC.Collect();
-
-        }
 
         /// <summary>
         /// This function unregisters the app for printing with Windows.
@@ -172,6 +141,7 @@ namespace P42.Uno.HtmlExtensions
                 printPreviewPages?.Clear();
                 printPreviewPages = null;
 
+                var total = GC.GetTotalMemory(true);
                 GC.Collect();
             });
 
@@ -180,23 +150,6 @@ namespace P42.Uno.HtmlExtensions
 
         public string JobName { get; private set; }
 
-        /*
-        public static async Task ShowPrintUIAsync()
-        {
-            // Catch and print out any errors reported
-            //try
-            //{
-                await Task.Delay(100);
-                await PrintManager.ShowPrintUIAsync();
-            //}
-            //catch (Exception e)
-            //{
-            //MainPage.Current.NotifyUser("Error printing: " + e.Message + ", hr=" + e.HResult, NotifyType.ErrorMessage);
-            //await P42.Uno.Controls.Toast.CreateAsync(null, "Error printing: " + e.Message + ", hr=" + e.HResult);
-            //}
-            System.Diagnostics.Debug.WriteLine("PrintHelper.");
-        }
-        */
 
         /// <summary>
         /// Method that will generate print content for the scenario
@@ -208,15 +161,18 @@ namespace P42.Uno.HtmlExtensions
         public virtual async Task InitAsync()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            //CreatePrintPreviewPages()
-            throw new NotImplementedException();
-            // Add the (newly created) page to the print canvas which is part of the visual tree and force it to go
-            // through layout so that the linked containers correctly distribute the content inside them.
-            //PrintCanvas.Children.Add(firstPage);
-            //PrintCanvas.InvalidateMeasure();
-            //PrintCanvas.UpdateLayout();
+            GC.Collect();
+
+            printDocument = new PrintDocument();
+            printDocumentSource = printDocument.DocumentSource;
+            printDocument.Paginate += CreatePrintPreviewPages;
+            printDocument.GetPreviewPage += GetPrintPreviewPage;
+            printDocument.AddPages += AddPrintPages;
+
+            var printMan = PrintManager.GetForCurrentView();
+            printMan.PrintTaskRequested += PrintTaskRequested;
         }
-        
+
 
         /// <summary>
         /// This is the event handler for PrintManager.PrintTaskRequested.
@@ -365,6 +321,10 @@ namespace P42.Uno.HtmlExtensions
             var paperSize = e.PrintTaskOptions.GetPageDescription(0).PageSize;
             System.Diagnostics.Debug.WriteLine("CreatePrintPreviewPages: {" + paperSize.Width + "," + paperSize.Height + "}");
 
+            // Clear the cache of preview pages
+            printPreviewPages.Clear();
+            // Clear the print canvas of preview pages
+            PrintCanvas.Children.Clear();
 
             // Get the PrintTaskOptions
             var printingOptions = e.PrintTaskOptions;
@@ -373,17 +333,9 @@ namespace P42.Uno.HtmlExtensions
 
             if (await GeneratePagesAsync(pageDescription) is List<UIElement> pages)
             {
-                // Clear the cache of preview pages
-                printPreviewPages.Clear();
-                // Clear the print canvas of preview pages
-                PrintCanvas.Children.Clear();
-
-                foreach (var page in pages)
-                    PrintCanvas.Children.Add(page);
                 PrintCanvas.InvalidateMeasure();
                 PrintCanvas.UpdateLayout();
 
-                printPreviewPages.AddRange(pages);
                 await Task.Delay(1000);
             }
 
@@ -411,12 +363,11 @@ namespace P42.Uno.HtmlExtensions
 
             while (_generatingPreviewPages)
                 await Task.Delay(100);
-            //await _semaphoreSlim.WaitAsync();
+
+            GC.Collect();
 
             var printDoc = (PrintDocument)sender;
             printDoc.SetPreviewPage(e.PageNumber, printPreviewPages[e.PageNumber - 1]);
-            //printDoc.SetPreviewPage(e.PageNumber, printPreviewPages.First());
-            //_semaphoreSlim.Release();
         }
 
         /// <summary>

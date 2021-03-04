@@ -18,6 +18,8 @@ namespace P42.Uno.HtmlExtensions
                 await Forms9Patch.Debug.RequestUserHelp(null, "webView is null." );
             }
             */
+            System.Diagnostics.Debug.WriteLine("WebViewExtensions. webView Actual=[" + webView.ActualWidth + ", " + webView.ActualHeight + "]");
+            System.Diagnostics.Debug.WriteLine("WebViewExtensions. webView Desired=[" + webView.DesiredSize + "]");
 
             var contentWidth = (int)PageSize.Default.Width;
             var contentHeight = (int)PageSize.Default.Height;
@@ -44,7 +46,7 @@ namespace P42.Uno.HtmlExtensions
                 // ask the content its height
                 var docScrollHeight = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.scrollHeight.toString()" });
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.documentElement.scrollHeight " + docScrollHeight);
-                /*
+                
                 var bodyScrollHeight = await webView.InvokeScriptAsync("eval", new[] { "document.body.scrollHeight.toString()" });
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.body.scrollHeight " + bodyScrollHeight);
                 var clientRectHeight = await webView.InvokeScriptAsync("eval", new[] { "document.documentElement.getBoundingClientRect().height.toString()" });
@@ -55,7 +57,7 @@ namespace P42.Uno.HtmlExtensions
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. self.innerHeight " + innterHeight);
                 var offsetHeight = await webView.InvokeScriptAsync("eval", new[] { "document.body.offsetHeight.toString()" });
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.body.offsetHeight " + offsetHeight);
-                */
+                
                 line = 47;
                 //var heightString = await webView.InvokeScriptAsync("eval", new[] { "Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight ).toString()" });//, document.documentElement.offsetHeight ).toString()" });
                 var heightString = docScrollHeight;
