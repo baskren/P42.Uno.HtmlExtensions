@@ -5,7 +5,7 @@
     <TargetFrameworks>Xamarin.Mac20;</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup >
+  <ItemGroup>
     <Compile Include="**\*.macos.cs" />
     <Compile Include="**\*.macos.*.cs" />
   </ItemGroup>

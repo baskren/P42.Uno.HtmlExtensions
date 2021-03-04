@@ -19,7 +19,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.Children>
-                <TextBlock Text="WebView to PNG / PDF Tester!" Margin="20" FontSize="30" Grid.ColumnSpan="2" />
+                <TextBlock Text="WebView and Html Print Tester!" Margin="20" FontSize="30" Grid.ColumnSpan="2" />
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Padding="5" Spacing="5">
                     <StackPanel.Children>
                         <Button x:Name="_loadHtmlFormButton" Content="Load HTML Form" Click="OnLoadTextClicked" />
