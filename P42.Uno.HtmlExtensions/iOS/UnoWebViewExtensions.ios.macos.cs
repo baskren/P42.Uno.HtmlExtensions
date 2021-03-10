@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#if __IOS__
 using UIKit;
+#else
+using AppKit;
+#endif
 using WebKit;
 using Windows.UI.Xaml.Media;
 
