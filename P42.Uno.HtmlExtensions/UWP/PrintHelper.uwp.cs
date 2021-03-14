@@ -44,8 +44,6 @@ namespace P42.Uno.HtmlExtensions
         // Event callback which is called after print preview pages are generated.  Photos scenario uses this to do filtering of preview pages
         //protected event EventHandler PreviewPagesCreated;
 
-        static UIElement PreviewFailedPage;
-
         Task<IRandomAccessStreamWithContentType> wideMarginsIconTask;
         Task<IRandomAccessStreamWithContentType> moderateMarginsIconTask;
         Task<IRandomAccessStreamWithContentType> narrowMarginsIconTask;
@@ -396,7 +394,9 @@ namespace P42.Uno.HtmlExtensions
         }
 
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected virtual async Task<IEnumerable<UIElement>> GeneratePagesAsync(PrintPageDescription pageDescription)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             throw new NotImplementedException();
         }

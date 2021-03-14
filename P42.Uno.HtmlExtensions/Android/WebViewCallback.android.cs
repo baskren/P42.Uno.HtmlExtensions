@@ -8,8 +8,6 @@ namespace P42.Uno.HtmlExtensions.Droid
 {
     class WebViewCallBack : Android.Webkit.WebViewClient
     {
-        static volatile Handler handler;
-
         bool _complete;
         readonly string _fileName;
         readonly PageSize _pageSize;

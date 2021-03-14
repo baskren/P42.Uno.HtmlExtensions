@@ -71,7 +71,9 @@ namespace P42.Uno.HtmlExtensions
                 await PrintAsync(webView, jobName);
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         static async void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             if (sender is WebView webView && webView.Tag is TaskCompletionSource<bool> tcs)
             {

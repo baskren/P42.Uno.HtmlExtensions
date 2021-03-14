@@ -124,10 +124,12 @@ namespace P42.Uno.HtmlExtensions
 		}
 
 
-		//This should be IAsyncOperation<string> instead of Task<string> but we use an extension method to enable the same signature in Win.
-		//IAsyncOperation is not available in Xamarin.
-		public async Task<string> InvokeScriptAsync(CancellationToken ct, string script, string[] arguments)
-		{
+        //This should be IAsyncOperation<string> instead of Task<string> but we use an extension method to enable the same signature in Win.
+        //IAsyncOperation is not available in Xamarin.
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public async Task<string> InvokeScriptAsync(CancellationToken ct, string script, string[] arguments)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
 			throw new NotSupportedException();
 		}
 

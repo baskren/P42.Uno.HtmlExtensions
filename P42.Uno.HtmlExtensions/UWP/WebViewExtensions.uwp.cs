@@ -29,16 +29,12 @@ namespace P42.Uno.HtmlExtensions
             if (depth > 0)
                 await Task.Delay(100);
 
-            var line = 29;
             try
             {
 
-                line = 32;
                 var widthString = await webView.InvokeScriptAsync("eval", new[] { "document.body.scrollWidth.toString()" });
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. widthString: " + widthString);
-                line = 34;
                 int.TryParse(widthString, out contentWidth);
-                line = 36;
 
                 System.Diagnostics.Debug.WriteLine("elementHeight = " + webView.Height);
 
@@ -58,18 +54,15 @@ namespace P42.Uno.HtmlExtensions
                 var offsetHeight = await webView.InvokeScriptAsync("eval", new[] { "document.body.offsetHeight.toString()" });
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions. document.body.offsetHeight " + offsetHeight);
                 
-                line = 47;
                 //var heightString = await webView.InvokeScriptAsync("eval", new[] { "Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight ).toString()" });//, document.documentElement.offsetHeight ).toString()" });
                 var heightString = docScrollHeight;
-                line = 49;
                 int.TryParse(heightString, out contentHeight);
-                line = 51;
 
             }
             catch (Exception e)
             {
                 //await Forms9Patch.Debug.RequestUserHelp(e, "line = " + line + ", callerName=["+callerName+"]");
-                System.Diagnostics.Debug.WriteLine("UwpWebViewExtensions.WebViewContentSizeAsync FAIL");
+                System.Diagnostics.Debug.WriteLine("UwpWebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
                 return await WebViewContentSizeAsync(webView, depth + 1, callerName);
             }
             return new SizeI(contentWidth, contentHeight);

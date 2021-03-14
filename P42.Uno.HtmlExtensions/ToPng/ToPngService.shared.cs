@@ -9,11 +9,12 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class ToPngService
     {
+#if __IOS__ || __ANDROID__ || NETFX_CORE 
         static INativeToPngService _nativeToPngService;
         static INativeToPngService NativeToPngService =>
-#if __IOS__ || __ANDROID__ || NETFX_CORE 
             _nativeToPngService = _nativeToPngService ?? new NativeToPngService();
 #else   
+        static INativeToPngService NativeToPngService =>
             null;
 #endif
 

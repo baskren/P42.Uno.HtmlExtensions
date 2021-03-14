@@ -14,11 +14,12 @@ namespace P42.Uno.HtmlExtensions
 {
     public static class PrintService
     {
+#if __IOS__ || __ANDROID__ || NETFX_CORE || __WASM__
         static INativePrintService _nativePrintService;
         static INativePrintService NativePrintService =>
-#if __IOS__ || __ANDROID__ || NETFX_CORE || __WASM__
             _nativePrintService = _nativePrintService ?? new NativePrintService();
 #else
+        static INativePrintService NativePrintService =>
             null;
 #endif
 
