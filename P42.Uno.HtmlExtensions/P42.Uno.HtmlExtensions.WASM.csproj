@@ -5,31 +5,6 @@
     <TargetFrameworks>netstandard2.0;</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Uno.UI.WebAssembly" Version="3.6.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <Compile Include="**\*.unowasm.cs" />
-    <Compile Include="**\*.unowasm.*.cs" />
-
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <EmbeddedResource Include="Themes\Generic.xaml" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
-      <LogicalName>$(AssemblyName).xml</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebViewBridge.js" />
-  </ItemGroup>
+  <Import Project=".\P42.Uno.HtmlExtensions.WASM.props" />
 
 </Project>

@@ -5,10 +5,6 @@
     <TargetFrameworks>Xamarin.Mac20;</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**\*.macos.cs" />
-    <Compile Include="**\*.macos.*.cs" />
-  </ItemGroup>
-
+  <Import Project=".\P42.Uno.HtmlExtensions.MacOS.props" />
 
 </Project>

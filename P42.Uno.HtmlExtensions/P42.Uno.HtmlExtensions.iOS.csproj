@@ -5,10 +5,6 @@
     <TargetFrameworks>Xamarin.iOS10;</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**\*.ios.cs" />
-    <Compile Include="**\*.ios.*.cs" />
-  </ItemGroup>
-
+  <Import Project=".\P42.Uno.HtmlExtensions.iOS.props" />
 
 </Project>

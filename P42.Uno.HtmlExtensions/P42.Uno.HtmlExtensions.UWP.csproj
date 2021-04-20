@@ -5,9 +5,6 @@
     <TargetFrameworks>uap10.0.18362;</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup >
-    <Compile Include="**\*.uwp.cs" />
-    <Compile Include="**\*.uwp.*.cs" />
-  </ItemGroup>
+  <Import Project=".\P42.Uno.HtmlExtensions.UWP.props" />
 
 </Project>

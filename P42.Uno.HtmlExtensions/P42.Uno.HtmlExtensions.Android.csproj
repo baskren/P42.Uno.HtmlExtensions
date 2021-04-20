@@ -6,9 +6,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**\*.android.cs" />
-    <Compile Include="**\*.android.*.cs" />
-  </ItemGroup>
+  <Import Project=".\P42.Uno.HtmlExtensions.Android.props" />
 
 </Project>
