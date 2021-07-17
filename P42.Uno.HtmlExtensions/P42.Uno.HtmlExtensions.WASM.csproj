@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+    
   </PropertyGroup>
 
   <Import Project=".\P42.Uno.HtmlExtensions.WASM.props" />

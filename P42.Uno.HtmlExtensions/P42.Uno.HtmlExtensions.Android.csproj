@@ -4,6 +4,7 @@
   <PropertyGroup>
     <TargetFrameworks>MonoAndroid10.0;</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
   </PropertyGroup>
 
   <Import Project=".\P42.Uno.HtmlExtensions.Android.props" />
