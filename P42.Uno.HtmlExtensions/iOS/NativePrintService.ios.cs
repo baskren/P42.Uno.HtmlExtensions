@@ -60,7 +60,10 @@ namespace P42.Uno.HtmlExtensions
 
         public async Task PrintAsync(string html, string jobName)
         {
+            /*
             var webView = new WebView();
+
+
             webView.NavigationCompleted += OnNavigationComplete;
             webView.NavigationFailed += OnNavigationFailed;
 
@@ -69,6 +72,29 @@ namespace P42.Uno.HtmlExtensions
             webView.NavigateToString(html);
             if (await tcs.Task)
                 await PrintAsync(webView, jobName);
+            */
+
+            if (!string.IsNullOrWhiteSpace(html))
+            {
+                var printInfo = UIPrintInfo.PrintInfo;
+
+                printInfo.JobName = jobName;
+                printInfo.Duplex = UIPrintInfoDuplex.None;
+                printInfo.OutputType = UIPrintInfoOutputType.General;
+
+                var printController = UIPrintInteractionController.SharedPrintController;
+                printController.ShowsPageRange = true;
+                printController.ShowsPaperSelectionForLoadedPapers = true;
+                printController.PrintInfo = printInfo;
+                printController.Delegate = this;
+                printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
+
+                printController.Present(true, (printInteractionController, completed, error) =>
+                {
+                    System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync : PRESENTED completed[" + completed + "] error[" + error + "]");
+                });
+
+            }
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
