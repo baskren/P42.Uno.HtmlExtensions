@@ -58,7 +58,9 @@ namespace P42.Uno.HtmlExtensions
             return UIPrintInteractionController.PrintingAvailable;
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task PrintAsync(string html, string jobName)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             /*
             var webView = new WebView();
