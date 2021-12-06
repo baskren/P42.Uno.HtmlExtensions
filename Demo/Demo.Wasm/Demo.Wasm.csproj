@@ -57,7 +57,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj" />
     <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.WASM.csproj" />
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.WASM.csproj" />
+    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.Wasm.csproj" />
   </ItemGroup>
   <Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" Condition="Exists('..\Demo.Shared\Demo.Shared.projitems')" />
 </Project>
