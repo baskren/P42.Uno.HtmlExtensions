@@ -34,7 +34,7 @@ namespace P42.Uno.HtmlExtensions
             Loaded += OnLoaded;
 		}
 
-        #region CanGoBack
+#region CanGoBack
 
         public bool CanGoBack
 		{
@@ -45,9 +45,9 @@ namespace P42.Uno.HtmlExtensions
 		public static DependencyProperty CanGoBackProperty { get; } =
 			DependencyProperty.Register("CanGoBack", typeof(bool), typeof(WebViewX), new FrameworkPropertyMetadata(false));
 
-		#endregion
+#endregion
 
-		#region CanGoForward
+#region CanGoForward
 
 		public bool CanGoForward
 		{
@@ -58,9 +58,9 @@ namespace P42.Uno.HtmlExtensions
 		public static DependencyProperty CanGoForwardProperty { get; } =
 			DependencyProperty.Register("CanGoForward", typeof(bool), typeof(WebViewX), new FrameworkPropertyMetadata(false));
 
-		#endregion
+#endregion
 
-		#region Source
+#region Source
 
 		public Uri Source
 		{
@@ -73,9 +73,9 @@ namespace P42.Uno.HtmlExtensions
 				FrameworkPropertyMetadataOptions.Default,
 				(s, e) => ((WebViewX)s)?.Navigate((Uri)e.NewValue)));
 
-		#endregion
+#endregion
 
-		#region DocumentTitle
+#region DocumentTitle
 #if __ANDROID__ || __IOS__ || __MACOS__
 		public string DocumentTitle
 		{
@@ -86,9 +86,9 @@ namespace P42.Uno.HtmlExtensions
 		public static DependencyProperty DocumentTitleProperty { get; } =
 			DependencyProperty.Register(nameof(DocumentTitle), typeof(string), typeof(WebViewX), new FrameworkPropertyMetadata(null));
 #endif
-		#endregion
+#endregion
 
-		#region IsScrollEnabled
+#region IsScrollEnabled
 		public bool IsScrollEnabled
 		{
 			get { return (bool)GetValue(IsScrollEnabledProperty); }
@@ -101,7 +101,7 @@ namespace P42.Uno.HtmlExtensions
 				(s, e) => ((WebViewX)s)?.OnScrollEnabledChangedPartial((bool)e.NewValue)));
 
 		partial void OnScrollEnabledChangedPartial(bool scrollingEnabled);
-		#endregion
+#endregion
 
 #pragma warning disable 67
 		public event TypedEventHandler<WebViewX, WebViewXNavigationStartingEventArgs> NavigationStarting;

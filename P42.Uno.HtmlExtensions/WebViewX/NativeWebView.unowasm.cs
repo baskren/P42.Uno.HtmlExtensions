@@ -51,7 +51,6 @@ namespace P42.Uno.HtmlExtensions
                     parent.InternalSetCanGoBack(false);
                     parent.InternalSetCanGoForward(false);
                 }
-                nativeWebView.ClearCssStyle("pointer-events");
             }
             System.Diagnostics.Debug.WriteLine("NativeWebView.OnFrameLoaded EXIT");
         }
@@ -152,19 +151,38 @@ namespace P42.Uno.HtmlExtensions
             Id = this.GetHtmlAttribute("id");
             Instances.Add(InstanceGuid.ToString(), new WeakReference<NativeWebView>(this));
             this.SetCssStyle("border", "none");
-            //this.ClearCssStyle("pointer-events");  // doesn't seem to work here as it seems to get reset by Uno during layout.
             this.SetHtmlAttribute("name", $"{SessionGuid}:{InstanceGuid}");
             this.SetHtmlAttribute("onLoad", $"UnoWebView_OnLoad('{InstanceGuid}')");
             System.Diagnostics.Debug.WriteLine("NativeWebView.ctr WebViewRootPage: " + WebViewBridgeRootPage);
             this.SetHtmlAttribute("src", WebViewBridgeRootPage);
         }
 
+        void UpdatePointerEvents()
+        {
+            Console.WriteLine("THIS : " + this);
+
+
+            Console.WriteLine("PARENT : " + Parent);
+            if (Parent is UIElement parent)
+            {
+                parent.SetCssStyle("pointer-events", "auto");
+
+                if (parent.GetVisualTreeParent() is UIElement grandParent)
+                {
+                    Console.WriteLine("GRAND PARENT : " + grandParent);
+                    grandParent.SetCssStyle("pointer-events", "auto");
+                }
+            }
+            this.SetCssStyle("pointer-events", "auto");
+        }
 
         void Navigate(Uri uri)
         {
             _bridgeConnected = false;
             _internalSource = null;
+            UpdatePointerEvents();
             WebAssemblyRuntime.InvokeJS(new Message<Uri>(this, uri));
+            UpdatePointerEvents();
         }
 
         void NavigateToText(string text)
@@ -176,7 +194,9 @@ namespace P42.Uno.HtmlExtensions
             _bridgeConnected = false;
             _internalSource = null;
             System.Diagnostics.Debug.WriteLine("NativeWebView.NavigateToText " + text.Substring(0,Math.Min(256,text.Length)));
+            UpdatePointerEvents();
             WebAssemblyRuntime.InvokeJS(new Message<string>(this, "data:text/html;charset=utf-8;base64," + base64));
+            UpdatePointerEvents();
         }
 
         internal void GoBack()
