@@ -220,7 +220,7 @@ namespace P42.Uno.HtmlExtensions
 			UnsupportedUriSchemeIdentified?.Invoke(this, args);
 		}
 
-		internal bool GetIsHistoryEntryValid(string url) => !url.IsNullOrWhiteSpace() && !url.Equals(BlankUrl, StringComparison.OrdinalIgnoreCase);
+		internal bool GetIsHistoryEntryValid(string url) => url != null && !string.IsNullOrWhiteSpace(url.ToString()) && !url.Equals(BlankUrl, StringComparison.OrdinalIgnoreCase);
 	}
 }
 #endif

@@ -8,8 +8,7 @@
 			you need to make sure that the version provided here matches https://github.com/onovotny/MSBuildSdkExtras/blob/master/Source/MSBuild.Sdk.Extras/DefaultItems/ImplicitPackages.targets#L11.
 			This is not an issue when libraries are referenced through nuget packages. See https://github.com/unoplatform/uno/issues/446 for more details.
 			-->
-    <PackageReference Include="Uno.Core" Version="3.0.0" />
-    <PackageReference Include="Uno.UI" Version="3.11.6" />
+    <PackageReference Include="Uno.UI" Version="4.0.13" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debuig" Version="5.0.0" />
   </ItemGroup>
