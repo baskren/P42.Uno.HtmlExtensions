@@ -10,7 +10,16 @@ namespace P42.Uno.HtmlExtensions
 {
     public static partial class WebViewExtensions
     {
-        internal static async Task<SizeI> WebViewContentSizeAsync(this Windows.UI.Xaml.Controls.WebView webView, int depth = 0, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
+#if WINDOWS_UWP
+        internal static async Task<SizeI> WebViewContentSizeIAsync(this Windows.UI.Xaml.Controls.WebView webView)
+        {
+            var size = await webView.WebViewContentSizeAsync();
+            //return new Windows.Foundation.Size(sizeI.Width, sizeI.Height);
+            return new SizeI((int)size.Width, (int)size.Height);
+        }
+#endif
+
+        public static async Task<Windows.Foundation.Size> WebViewContentSizeAsync(this Windows.UI.Xaml.Controls.WebView webView, int depth = 0, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
         {
             /*
             if (webView is null)
@@ -25,7 +34,7 @@ namespace P42.Uno.HtmlExtensions
             var contentHeight = (int)PageSize.Default.Height;
 
             if (depth > 50)
-                return new SizeI(contentWidth, contentHeight);
+                return new Windows.Foundation.Size(contentWidth, contentHeight);
             if (depth > 0)
                 await Task.Delay(100);
 
@@ -65,7 +74,7 @@ namespace P42.Uno.HtmlExtensions
                 System.Diagnostics.Debug.WriteLine("UwpWebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
                 return await WebViewContentSizeAsync(webView, depth + 1, callerName);
             }
-            return new SizeI(contentWidth, contentHeight);
+            return new Windows.Foundation.Size(contentWidth, contentHeight);
         }
 
         public static async Task<string> GetHtml(this Windows.UI.Xaml.Controls.WebView webView)
