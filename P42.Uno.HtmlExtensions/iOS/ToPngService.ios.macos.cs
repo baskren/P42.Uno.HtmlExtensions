@@ -20,13 +20,22 @@ namespace P42.Uno.HtmlExtensions
     {
         const string LocalStorageFolderName = "P42.Uno.HtmlWevViewExtensions.ToPngService";
 
-
+        /// <summary>
+        /// Is PNG generation available?
+        /// </summary>
 #if __IOS__
         public bool IsAvailable => UIPrintInteractionController.PrintingAvailable && NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0));
 #else
         public bool IsAvailable => true;
 #endif
 
+        /// <summary>
+        /// Convert HTML to PNG
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="fileName"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPngAsync(string html, string fileName, int width)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
@@ -58,6 +67,13 @@ namespace P42.Uno.HtmlExtensions
             return await Task.FromResult(new ToFileResult("PNG output not available prior to iOS 11"));
         }
 
+        /// <summary>
+        /// Convernt content of WebView to PNG
+        /// </summary>
+        /// <param name="unoWebView"></param>
+        /// <param name="fileName"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPngAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, int width)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))

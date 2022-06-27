@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 using Uno.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-#if __WASM__
 using WebView = P42.Uno.HtmlExtensions.WebViewX;
 using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
 using WebViewNavigationFailedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationFailedEventArgs;
-#else
-using WebView = Windows.UI.Xaml.Controls.WebView;
-using WebViewNavigationCompletedEventArgs = Windows.UI.Xaml.Controls.WebViewNavigationCompletedEventArgs;
-using WebViewNavigationFailedEventArgs = Windows.UI.Xaml.Controls.WebViewNavigationFailedEventArgs;
-#endif
 
 namespace P42.Uno.HtmlExtensions
 {

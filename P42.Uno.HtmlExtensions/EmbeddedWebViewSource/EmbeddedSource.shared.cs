@@ -9,6 +9,9 @@ using Windows.Storage;
 
 namespace P42.Uno.HtmlExtensions
 {
+    /// <summary>
+    /// Provide WebView content from an EmbeddedResource
+    /// </summary>
     public class EmbeddedSource
     {
         #region Static Implementation
@@ -22,6 +25,12 @@ namespace P42.Uno.HtmlExtensions
         static readonly Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
 
         // DO NOT CHANGE Environment.ApplicationDataPath to another path.  This is used to pass EmbeddedResource Fonts to UWP Text elements and there is zero flexibility here.
+        /// <summary>
+        /// Path to local cache location for Assembly's embedded resources
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
         public static string FolderPath(Assembly assembly, string folderName = null)
         {
             if (!Directory.Exists(ApplicationData.Current.LocalFolder.Path))
@@ -46,6 +55,12 @@ namespace P42.Uno.HtmlExtensions
             return folderPath;
         }
 
+        /// <summary>
+        /// Finds the folder for a embedded resource id
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
         static string FindFolder(Assembly assembly, string resourceId)
         {
             var files = assembly.GetManifestResourceNames();
@@ -70,6 +85,12 @@ namespace P42.Uno.HtmlExtensions
             return string.Join(".", folderPath);
         }
 
+        /// <summary>
+        /// Lists the contents of an embedded resource folder
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
         public static List<string> List(Assembly assembly, string folderName)
         {
             var folderPath = FolderPath(assembly, folderName);
@@ -77,6 +98,13 @@ namespace P42.Uno.HtmlExtensions
             return files.ToList();
         }
 
+        /// <summary>
+        /// Local cache path for an embedded resource
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="assembly"></param>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
         public static async Task<string> LocalStorageFullPathForEmbeddedResourceAsync(string resourceId, Assembly assembly, string folderName = null)
         {
             if (await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName) is string subPath)
@@ -120,8 +148,7 @@ namespace P42.Uno.HtmlExtensions
                     {
                         if (isZip)
                         {
-                            //System.IO.Compression.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
-                            P42.Uno.CompressionBridge.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
+                            System.IO.Compression.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
                             _cacheTasks.Remove(path);
                             return FolderPath(assembly, folderName);
                         }

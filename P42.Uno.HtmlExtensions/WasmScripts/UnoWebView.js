@@ -34,7 +34,7 @@ function UnoWebView_SetMessageListener() {
             //console.log('UnoWebView[' + UnoWebView_InstanceGuid +']: messageListener ENTER : ' + JSON.stringify(event.data));
             //console.log('UnoWebView[' + UnoWebView_InstanceGuid +']: messageListener href: ' + window.location.href);
             if (event.data.Target == sessionStorage.getItem('Uno.WebView.Session')) {
-                const OnMessageReceived = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions] P42.Uno.HtmlExtensions.NativeWebView:OnMessageReceived");
+                const OnMessageReceived = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions.Wasm] P42.Uno.HtmlExtensions.NativeWebView:OnMessageReceived");
                 var json = JSON.stringify(event.data);
                 OnMessageReceived(json);
             }
@@ -46,7 +46,7 @@ function UnoWebView_SetMessageListener() {
 function UnoWebView_OnLoad(index) {
     //console.log('UnoWebView_OnLoad[' + UnoWebView_InstanceGuid +']: ENTER ' + index);
     UnoWebView_SetMessageListener();
-    const OnFrameLoaded = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions] P42.Uno.HtmlExtensions.NativeWebView:OnFrameLoaded");
+    const OnFrameLoaded = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions.Wasm] P42.Uno.HtmlExtensions.NativeWebView:OnFrameLoaded");
     OnFrameLoaded(index);
     //console.log('UnoWebView_OnLoad[' + UnoWebView_InstanceGuid +']: EXIT ' + index);
 }

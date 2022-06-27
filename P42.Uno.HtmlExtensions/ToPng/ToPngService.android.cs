@@ -17,9 +17,18 @@ namespace P42.Uno.HtmlExtensions
 
     public class NativeToPngService : Java.Lang.Object, INativeToPngService
     {
-
+        /// <summary>
+        /// Is HtmlToPNG available?
+        /// </summary>
         public bool IsAvailable => true;
 
+        /// <summary>
+        /// Convert HTML to PNG
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="fileName"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPngAsync(string html, string fileName, int width)
         {
             using (var webView = new Android.Webkit.WebView(Android.App.Application.Context))
@@ -41,6 +50,13 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
+        /// <summary>
+        /// Convert content of WebView to PNG
+        /// </summary>
+        /// <param name="unoWebView"></param>
+        /// <param name="fileName"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPngAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, int width)
         {
             if (unoWebView.GetChildren(v => v is Android.Webkit.WebView).FirstOrDefault() is Android.Webkit.WebView droidWebView)

@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace P42.Uno.HtmlExtensions
 {
+    /// <summary>
+    /// Windows.UI.Xaml.Controls.WebView extensions
+    /// </summary>
     public static partial class WebViewExtensions
     {
+        /// <summary>
+        /// Returns the WebView's current Source value as an HTML string
+        /// </summary>
+        /// <param name="unoWebView"></param>
+        /// <returns></returns>
         public static async Task<string> GetSourceAsHtmlAsync(this Windows.UI.Xaml.Controls.WebView unoWebView)
         {
             var result = await unoWebView.InvokeScriptAsync("eval", new string[] { "document.documentElement.outerHTML" });

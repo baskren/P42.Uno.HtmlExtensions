@@ -1,9 +1,5 @@
 using System;
-#if __WASM__
 using WebView = P42.Uno.HtmlExtensions.WebViewX;
-#else
-using WebView = Windows.UI.Xaml.Controls.WebView;
-#endif
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -11,7 +7,6 @@ namespace P42.Uno.HtmlExtensions
     {
         internal static string InjectWebBridge(string text)
         {
-#if __WASM__
             var script = "<script src='" +
                 NativeWebView.WebViewBridgeScriptUrl +
                 "'></script>";
@@ -36,7 +31,6 @@ namespace P42.Uno.HtmlExtensions
                 text = script + text;
             }
             //System.Diagnostics.Debug.WriteLine("WebViewXExtensions. new text: " + text);
-#endif
             return text;
         }
     }

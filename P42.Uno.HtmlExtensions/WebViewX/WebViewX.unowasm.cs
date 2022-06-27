@@ -17,6 +17,9 @@ using System.IO;
 
 namespace P42.Uno.HtmlExtensions
 {
+	/// <summary>
+	/// Alternative WebView for WASM that enables more functionality
+	/// </summary>
 	public partial class WebViewX
 	{
 		private NativeWebView _nativeWebView;
@@ -47,6 +50,10 @@ namespace P42.Uno.HtmlExtensions
 			UpdateFromInternalSource();
 		}
 
+		/// <summary>
+		/// Toggles scrolling
+		/// </summary>
+		/// <param name="scrollingEnabled"></param>
 		partial void OnScrollEnabledChangedPartial(bool scrollingEnabled)
         {
 			if (scrollingEnabled)
@@ -124,20 +131,12 @@ namespace P42.Uno.HtmlExtensions
 		}
 
 
-        //This should be IAsyncOperation<string> instead of Task<string> but we use an extension method to enable the same signature in Win.
-        //IAsyncOperation is not available in Xamarin.
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<string> InvokeScriptAsync(CancellationToken ct, string script, string[] arguments)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-			throw new NotSupportedException();
-		}
+			=>  await _nativeWebView.InvokeScriptAsync(script, arguments);
+		
 
 		public async Task<string> InvokeScriptAsync(string script, string[] arguments)
-		{
-			return await _nativeWebView.InvokeScriptAsync(script, arguments);
-			//_nativeWebView.PostMessageToTennant
-		}
+			=> await _nativeWebView.InvokeScriptAsync(script, arguments);
 
 
 		private bool VerifyNativeWebViewAvailability()

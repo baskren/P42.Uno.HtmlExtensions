@@ -22,19 +22,24 @@ namespace P42.Uno.HtmlExtensions
             private set;
         }
 
-        // Resutling output file (or null)
+        /// <summary>
+        /// Windows.Storage.IStorageFile representation of PNG / PDF result file
+        /// </summary>
         public IStorageFile StorageFile { get; private set; }
 
         /// <summary>
-        /// Html to PNG result
+        /// Constructor
         /// </summary>
-        /// <param name="isError"></param>
-        /// <param name="errorMessage"></param>
+        /// <param name="storageFile"></param>
 		public ToFileResult(IStorageFile storageFile)
         {
             StorageFile = storageFile;
         }
 
+        /// <summary>
+        /// Error constructor
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public ToFileResult(string errorMessage)
         {
             IsError = true;

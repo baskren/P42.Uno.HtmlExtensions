@@ -12,6 +12,9 @@ using WebView = Windows.UI.Xaml.Controls.WebView;
 
 namespace P42.Uno.HtmlExtensions
 {
+    /// <summary>
+    /// Platform Printing
+    /// </summary>
     public static class PrintService
     {
 #if __IOS__ || __ANDROID__ || NETFX_CORE || __WASM__

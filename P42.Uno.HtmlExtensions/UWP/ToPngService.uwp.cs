@@ -28,12 +28,21 @@ namespace P42.Uno.HtmlExtensions
 
 		readonly static DependencyProperty ToFileResultProperty = DependencyProperty.Register("ToFileResult", typeof(string), typeof(ToPngService), null);
 
+		/// <summary>
+		/// Is PNG conversion available
+		/// </summary>
 		public bool IsAvailable => true;
 
 
 		int instanceCount = 0;
 
-
+		/// <summary>
+		/// Convert HTML to PNG
+		/// </summary>
+		/// <param name="html"></param>
+		/// <param name="fileName"></param>
+		/// <param name="width"></param>
+		/// <returns></returns>
 		public async Task<ToFileResult> ToPngAsync(string html, string fileName, int width)
 		{
 			var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
@@ -73,6 +82,13 @@ namespace P42.Uno.HtmlExtensions
 			return await taskCompletionSource.Task;
 		}
 
+		/// <summary>
+		/// Convert contents of WebView to PNG
+		/// </summary>
+		/// <param name="unoWebView"></param>
+		/// <param name="fileName"></param>
+		/// <param name="width"></param>
+		/// <returns></returns>
 		public async Task<ToFileResult> ToPngAsync(WebView unoWebView, string fileName, int width)
 		{
 			var taskCompletionSource = new TaskCompletionSource<ToFileResult>();

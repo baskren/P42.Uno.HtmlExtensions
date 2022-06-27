@@ -1,17 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="MSbuild.Sdk.Extras/3.0.23">
-
+﻿<Project Sdk="MSbuild.Sdk.Extras/3.0.23">
   <PropertyGroup>
 
-    <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>P42.Uno.HtmlExtensions</AssemblyName>
-    <RootNamespace>P42.Uno.HtmlExtensions</RootNamespace>
-    <NoWarn>Uno0001;VSX1000</NoWarn>
 
-    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.vsmac')) ">netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;net6.0;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">Xamarin.Mac20</TargetFrameworks>
@@ -19,114 +12,62 @@
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Tizen')) ">Tizen50</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.UWP')) ">uap10.0.18362</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Wasm')) ">netstandard2.0</TargetFrameworks>
-
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-	  <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
-    <DebugType>portable</DebugType>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
-    <Authors>Ben Askren</Authors>
-    <Company>42nd Parallel, LLC</Company>
-    <Description>Print and create PDF extensions for HTML and Uno's Windows.UI.Xaml.Controls.WebView.</Description>
-    <Copyright>2022, 42nd Parallel</Copyright>
-    <PackageProjectUrl>https://github.com/baskren/P42.Uno.HtmlExtensions</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/baskren/P42.Uno.HtmlExtensions</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
 
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**\*.shared.cs" />
-    <Compile Include="**\*.shared.*.cs" />
-    
-    <PackageReference Include="Uno.UI" Version="4.3.6" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.3.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\moderateMargins.svg" />
-    <Content Include="Assets\narrowMargins.svg" />
-    <Content Include="Assets\wideMargins.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj" />
-  </ItemGroup>
-
 
 
   <!-- Android -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
+  <PropertyGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
+  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
     <Compile Include="**\*.android.cs" />
     <Compile Include="**\*.android.*.cs" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
 
   <!-- iOS -->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
+  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('ios')) OR $(TargetFramework.ToLower().Contains('maccatalyst'))">
     <Compile Include="**\*.ios.cs" />
     <Compile Include="**\*.ios.*.cs" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
 
   <!-- MacOS -->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.Mac')) ">
+  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('macos')) OR $(TargetFramework.ToLower().Contains('xamarin.mac'))">
     <Compile Include="**\*.macos.cs" />
     <Compile Include="**\*.macos.*.cs" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
+    <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+
+  <!-- MacCatylst -->
+  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('maccatalyst')) ">
+    <Compile Include="**\*.maccatylst.cs" />
+    <Compile Include="**\*.maccatylst.*.cs" />
+  </ItemGroup>  
+
+  <!-- TIZEN -->
+  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
+    <PackageReference Include="Uno.UI.Runtime.Skia.Tizen" Version="4.3.8" />
+    <Compile Include="**\*.tizen.cs" />
+    <Compile Include="**\*.tizen.*.cs" />
   </ItemGroup>
 
   <!-- UWP -->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+  <ItemGroup Condition=" $(TargetFramework.ToLower().StartsWith('uap10.0')) ">
     <Compile Include="**\*.uwp.cs" />
     <Compile Include="**\*.wup.*.cs" />
   </ItemGroup>
 
-  <!-- WASM -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net')) ">
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net')) ">
-    <PackageReference Include="Uno.UI.WebAssembly" Version="4.3.6" />
+  <!-- .NetStandard bait -->
+  <ItemGroup Condition=" $(TargetFramework.ToLower().StartsWith('net')) ">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <Compile Include="**\*.unowasm.cs" />
-    <Compile Include="**\*.unowasm.*.cs" />
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <EmbeddedResource Include="Themes\Generic.xaml" />
-    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
-      <LogicalName>P42.Uno.HtmlExtensions.xml</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebViewBridge.js" />
+    <Compile Include="**\*.netstandard.cs" />
+    <Compile Include="**\*.netstandard.*.cs" />
   </ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\README.md">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
 
 
 </Project>

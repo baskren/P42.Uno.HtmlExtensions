@@ -1,0 +1,46 @@
+﻿<Project Sdk="MSbuild.Sdk.Extras/3.0.23">
+  <PropertyGroup>
+
+    <AssemblyName>P42.Uno.HtmlExtensions.Wasm</AssemblyName>
+
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+
+
+
+
+
+
+
+
+
+
+
+
+    <DefineConstants>__WASM__;$(DefineConstants);</DefineConstants>
+
+  </PropertyGroup>
+
+
+
+  <!-- WASM -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net')) ">
+    <PackageReference Include="Uno.UI.WebAssembly" Version="4.3.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <Compile Include="**\*.unowasm.cs" />
+    <Compile Include="**\*.unowasm.*.cs" />
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <EmbeddedResource Include="Themes\Generic.xaml" />
+    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
+      <LogicalName>P42.Uno.HtmlExtensions.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
+    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
+    <EmbeddedResource Include="WasmScripts\UnoWebViewBridge.js" />
+  </ItemGroup>
+
+
+</Project>

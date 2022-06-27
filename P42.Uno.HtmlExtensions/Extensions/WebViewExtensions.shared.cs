@@ -19,6 +19,13 @@ namespace P42.Uno.HtmlExtensions
         }
 #endif
 
+        /// <summary>
+        /// Get the size of a WebView's current content
+        /// </summary>
+        /// <param name="webView"></param>
+        /// <param name="depth"></param>
+        /// <param name="callerName"></param>
+        /// <returns></returns>
         public static async Task<Windows.Foundation.Size> WebViewContentSizeAsync(this Windows.UI.Xaml.Controls.WebView webView, int depth = 0, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
         {
             /*
@@ -77,6 +84,11 @@ namespace P42.Uno.HtmlExtensions
             return new Windows.Foundation.Size(contentWidth, contentHeight);
         }
 
+        /// <summary>
+        /// Get content of a WebView as HTML
+        /// </summary>
+        /// <param name="webView"></param>
+        /// <returns></returns>
         public static async Task<string> GetHtml(this Windows.UI.Xaml.Controls.WebView webView)
         {
             var html = await webView.InvokeScriptAsync("eval", new string[] { "document.documentElement.outerHTML;" });

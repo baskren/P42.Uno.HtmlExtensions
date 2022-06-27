@@ -21,8 +21,19 @@ namespace P42.Uno.HtmlExtensions
 
     public class NativeToPdfService : Java.Lang.Object, INativeToPdfService
     {
+        /// <summary>
+        /// Is to PDF conversion available?
+        /// </summary>
         public bool IsAvailable => Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Kitkat;
 
+        /// <summary>
+        /// Convert HTLM to PDF
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="fileName"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin)
         {
             using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
@@ -44,6 +55,14 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
+        /// <summary>
+        /// Convert current content of WebView to PDF
+        /// </summary>
+        /// <param name="unoWebView"></param>
+        /// <param name="fileName"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (unoWebView.GetChildren(v => v is Android.Webkit.WebView).FirstOrDefault() is Android.Webkit.WebView droidWebView)

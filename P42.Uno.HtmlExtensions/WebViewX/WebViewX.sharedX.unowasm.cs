@@ -1,8 +1,5 @@
-﻿#if __WASM__ || __MACOS__
-#pragma warning disable CS0067, CS0414
-#endif
+﻿#pragma warning disable CS0067, CS0414
 
-#if XAMARIN || __WASM__ || __SKIA__
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using System;
@@ -28,14 +25,19 @@ namespace P42.Uno.HtmlExtensions
 		private bool _isLoaded;
 		private string _invokeScriptResponse = string.Empty;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public WebViewX()
 		{
 			DefaultStyleKey = typeof(WebViewX);
             Loaded += OnLoaded;
 		}
 
-#region CanGoBack
-
+		#region CanGoBack
+		/// <summary>
+		/// True if WebView can navigate back
+		/// </summary>
         public bool CanGoBack
 		{
 			get { return (bool)GetValue(CanGoBackProperty); }
@@ -45,10 +47,12 @@ namespace P42.Uno.HtmlExtensions
 		public static DependencyProperty CanGoBackProperty { get; } =
 			DependencyProperty.Register("CanGoBack", typeof(bool), typeof(WebViewX), new FrameworkPropertyMetadata(false));
 
-#endregion
+		#endregion
 
-#region CanGoForward
-
+		#region CanGoForward
+		/// <summary>
+		/// True if WebView can navigate forward
+		/// </summary>
 		public bool CanGoForward
 		{
 			get { return (bool)GetValue(CanGoForwardProperty); }
@@ -58,10 +62,12 @@ namespace P42.Uno.HtmlExtensions
 		public static DependencyProperty CanGoForwardProperty { get; } =
 			DependencyProperty.Register("CanGoForward", typeof(bool), typeof(WebViewX), new FrameworkPropertyMetadata(false));
 
-#endregion
+		#endregion
 
-#region Source
-
+		#region Source
+		/// <summary>
+		/// Source for WebView content
+		/// </summary>
 		public Uri Source
 		{
 			get { return (Uri)GetValue(SourceProperty); }
@@ -73,22 +79,12 @@ namespace P42.Uno.HtmlExtensions
 				FrameworkPropertyMetadataOptions.Default,
 				(s, e) => ((WebViewX)s)?.Navigate((Uri)e.NewValue)));
 
-#endregion
+		#endregion
 
-#region DocumentTitle
-#if __ANDROID__ || __IOS__ || __MACOS__
-		public string DocumentTitle
-		{
-			get { return (string)GetValue(DocumentTitleProperty); }
-			internal set { SetValue(DocumentTitleProperty, value); }
-		}
-
-		public static DependencyProperty DocumentTitleProperty { get; } =
-			DependencyProperty.Register(nameof(DocumentTitle), typeof(string), typeof(WebViewX), new FrameworkPropertyMetadata(null));
-#endif
-#endregion
-
-#region IsScrollEnabled
+		#region IsScrollEnabled
+		/// <summary>
+		/// True if scrolling is enabled for webview
+		/// </summary>
 		public bool IsScrollEnabled
 		{
 			get { return (bool)GetValue(IsScrollEnabledProperty); }
@@ -101,47 +97,74 @@ namespace P42.Uno.HtmlExtensions
 				(s, e) => ((WebViewX)s)?.OnScrollEnabledChangedPartial((bool)e.NewValue)));
 
 		partial void OnScrollEnabledChangedPartial(bool scrollingEnabled);
-#endregion
+		#endregion
 
 #pragma warning disable 67
+		/// <summary>
+		/// Fired when navigation is starting
+		/// </summary>
 		public event TypedEventHandler<WebViewX, WebViewXNavigationStartingEventArgs> NavigationStarting;
+		/// <summary>
+		/// Fired when navigation has completed
+		/// </summary>
 		public event TypedEventHandler<WebViewX, WebViewXNavigationCompletedEventArgs> NavigationCompleted;
+		/// <summary>
+		/// Fired when a new when has been requested
+		/// </summary>
 		public event TypedEventHandler<WebViewX, WebViewXNewWindowRequestedEventArgs> NewWindowRequested;
+		/// <summary>
+		/// Fired when an unsupported Uri scheme has been requested
+		/// </summary>
 		public event TypedEventHandler<WebViewX, WebViewUnsupportedUriSchemeIdentifiedEventArgs> UnsupportedUriSchemeIdentified;
 #pragma warning restore 67
 
 		//Remove pragma when implemented for Android
 #pragma warning disable 0067
+		/// <summary>
+		/// Fired when navigation has failed
+		/// </summary>
 		public event WebViewXNavigationFailedEventHandler NavigationFailed;
 #pragma warning restore 0067
 
+		/// <summary>
+		/// Go back to the last page
+		/// </summary>
 		public void GoBack()
 		{
 			GoBackPartial();
 		}
 
+		/// <summary>
+		/// Go forward to the last page
+		/// </summary>
 		public void GoForward()
 		{
 			GoForwardPartial();
 		}
 
+		/// <summary>
+		/// Loads the content at the specified uri as a new document.
+		/// </summary>
+		/// <param name="uri"></param>
 		public void Navigate(Uri uri)
 		{
 			this.SetInternalSource(uri ?? BlankUri);
 		}
 
-		//
-		// Summary:
-		//     Loads the specified HTML content as a new document.
-		//
-		// Parameters:
-		//   text:
-		//     The HTML content to display in the WebView control.
+		/// <summary>
+		/// Loads the specified HTML content as a new document.
+		/// </summary>
+		/// <param name="text">The HTML content to display in the WebView control.</param>
 		public void NavigateToString(string text)
 		{
 			this.SetInternalSource(text ?? "");
 		}
 
+		/// <summary>
+		/// Loads the content at the specified HttpRequestMessage as a new document
+		/// </summary>
+		/// <param name="requestMessage"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public void NavigateWithHttpRequestMessage(HttpRequestMessage requestMessage)
 		{
 			if (requestMessage?.RequestUri == null)
@@ -152,6 +175,9 @@ namespace P42.Uno.HtmlExtensions
 			SetInternalSource(requestMessage);
 		}
 
+		/// <summary>
+		/// Stop the loading process
+		/// </summary>
 		public void Stop()
 		{
 			StopPartial();
@@ -223,4 +249,3 @@ namespace P42.Uno.HtmlExtensions
 		internal bool GetIsHistoryEntryValid(string url) => url != null && !string.IsNullOrWhiteSpace(url.ToString()) && !url.Equals(BlankUrl, StringComparison.OrdinalIgnoreCase);
 	}
 }
-#endif
