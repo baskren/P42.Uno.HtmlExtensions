@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Graphics.Printing;
@@ -91,9 +92,14 @@ namespace P42.Uno.HtmlExtensions
             JobName = jobName;
 
             printPreviewPages = new List<UIElement>();
+
+            /*
             // Start these tasks early because we know we're going to need the
             // streams in PrintTaskRequested.
-            var wideMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/wideMargins.svg"));
+            //var wideMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/wideMargins.svg"));
+            var wideMarginsIconStream = GetType().Assembly.GetManifestResourceStream("P42.Uno.HtmlExtensions.Resources.wideMargins.svg");
+            var wideMarginsIconRandomStream = wideMarginsIconStream.AsRandomAccessStream();
+            var wideMarginsIconReference = RandomAccessStreamReference.CreateFromStream(wideMarginsIconRandomStream);
             wideMarginsIconTask = wideMarginsIconReference.OpenReadAsync().AsTask();
 
             var moderateMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/moderateMargins.svg"));
@@ -101,6 +107,7 @@ namespace P42.Uno.HtmlExtensions
 
             var narrowMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/narrowMargins.svg"));
             narrowMarginsIconTask = narrowMarginsIconReference.OpenReadAsync().AsTask();
+            */
         }
 
 

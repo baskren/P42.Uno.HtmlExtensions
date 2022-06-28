@@ -60,9 +60,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\moderateMargins.svg" />
-    <Content Include="Assets\narrowMargins.svg" />
-    <Content Include="Assets\wideMargins.svg" />
+    <EmbeddedResource Include="Resources\moderateMargins.svg" />
+    <EmbeddedResource Include="Resources\narrowMargins.svg" />
+    <EmbeddedResource Include="Resources\wideMargins.svg" />
   </ItemGroup>
 
   <!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022#default-build-targets -->
