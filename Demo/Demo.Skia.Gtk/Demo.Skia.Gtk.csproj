@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\Demo.UWP')">
     <EmbeddedResource Include="..\Demo.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
