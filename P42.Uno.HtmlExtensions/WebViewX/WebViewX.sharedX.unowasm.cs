@@ -204,30 +204,20 @@ namespace P42.Uno.HtmlExtensions
 		private void SetInternalSource(object source)
 		{
 			_internalSource = source;
-
 			this.UpdateFromInternalSource();
 		}
 
 		private void UpdateFromInternalSource()
 		{
-			var uri = _internalSource as Uri;
-			if (uri != null)
-			{
+			if (_internalSource is Uri uri)
 				NavigatePartial(uri);
-				return;
-			}
-
-			var html = _internalSource as string;
-			if (html != null)
+			else if (_internalSource is string html && !string.IsNullOrWhiteSpace(html))
 			{
+				System.Console.WriteLine($"WebViewX.UpdateFromInternalSource TEXT");
 				NavigateToStringPartial(html);
 			}
-
-			var message = _internalSource as HttpRequestMessage;
-			if (message != null)
-			{
+			else if (_internalSource is HttpRequestMessage message)
 				NavigateWithHttpRequestMessagePartial(message);
-			}
 		}
 
 		private static string ConcatenateJavascriptArguments(string[] arguments)
