@@ -23,10 +23,12 @@ namespace P42.Uno.HtmlExtensions
 	public partial class WebViewX
 	{
 		private NativeWebView _nativeWebView;
+		public readonly string Id;
+
 
 		protected override void OnApplyTemplate()
 		{
-            System.Diagnostics.Debug.WriteLine("WebViewX.OnApplyTemplate");
+            Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
 			base.OnApplyTemplate();
 
 			_nativeWebView = this
@@ -36,8 +38,14 @@ namespace P42.Uno.HtmlExtensions
 
 			if (_nativeWebView == null)
 			{
-				this.Log().Error($"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ");
+				var text = $"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ";
+				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
+				this.Log().Error(text);
 			}
+			else
+            {
+				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
+            }
 			/*
 			var text =
 				"<script>" +
@@ -48,6 +56,7 @@ namespace P42.Uno.HtmlExtensions
 			_nativeWebView.SetHtmlAttribute("srcdoc", text);
 			*/
 			UpdateFromInternalSource();
+			Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
 		}
 
 		/// <summary>
@@ -72,7 +81,7 @@ namespace P42.Uno.HtmlExtensions
 		internal void OnNavigationCompleted(bool isSuccess, Uri uri, Windows.Web.WebErrorStatus status)
         {
 			var args = new WebViewXNavigationCompletedEventArgs(isSuccess, uri, status);
-            System.Diagnostics.Debug.WriteLine("WebViewX.OnNavigationCompleted " + uri);
+            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
 			NavigationCompleted?.Invoke(this, args);
         }
 
@@ -103,7 +112,7 @@ namespace P42.Uno.HtmlExtensions
 
 		partial void NavigatePartial(Uri uri)
 		{
-            System.Diagnostics.Debug.WriteLine("WebViewX.NavigatePartial("+uri+")");
+            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigatePartial(" +uri+")");
 			if (!VerifyNativeWebViewAvailability())
 			{
 				return;
@@ -119,7 +128,7 @@ namespace P42.Uno.HtmlExtensions
 			}
 			else
 			{
-                System.Diagnostics.Debug.WriteLine("WebViewX.NavigatePartial: Absolute");
+                System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigatePartial: Absolute");
 				//_nativeWebView.SetHtmlAttribute("src", uri.AbsoluteUri);
 				_nativeWebView?.SetInternalSource(uri);
 			}
@@ -127,6 +136,7 @@ namespace P42.Uno.HtmlExtensions
 
 		partial void NavigateToStringPartial(string text)
         {
+			System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigateToStringPartial(string text)");
 			_nativeWebView?.SetInternalSource(text);
 		}
 
@@ -145,7 +155,9 @@ namespace P42.Uno.HtmlExtensions
 			{
 				if (_isLoaded)
 				{
-					this.Log().Warn("This WebView control instance does not have a native web view child, a Control template may be missing.");
+					var text = "This WebView control instance does not have a native web view child, a Control template may be missing.";
+					Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
+					this.Log().Warn(text);
 				}
 
 				return false;

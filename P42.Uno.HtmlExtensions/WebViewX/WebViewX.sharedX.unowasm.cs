@@ -31,7 +31,8 @@ namespace P42.Uno.HtmlExtensions
 		public WebViewX()
 		{
 			DefaultStyleKey = typeof(WebViewX);
-            Loaded += OnLoaded;
+			Id = this.GetHtmlAttribute("id");
+			Loaded += OnLoaded;
 		}
 
 		#region CanGoBack
@@ -157,6 +158,7 @@ namespace P42.Uno.HtmlExtensions
 		/// <param name="text">The HTML content to display in the WebView control.</param>
 		public void NavigateToString(string text)
 		{
+			System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigateToString(string text)");
 			this.SetInternalSource(text ?? "");
 		}
 
@@ -213,7 +215,7 @@ namespace P42.Uno.HtmlExtensions
 				NavigatePartial(uri);
 			else if (_internalSource is string html && !string.IsNullOrWhiteSpace(html))
 			{
-				System.Console.WriteLine($"WebViewX.UpdateFromInternalSource TEXT");
+				System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource TEXT");
 				NavigateToStringPartial(html);
 			}
 			else if (_internalSource is HttpRequestMessage message)

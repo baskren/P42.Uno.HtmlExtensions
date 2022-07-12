@@ -95,33 +95,39 @@ namespace P42.Uno.HtmlExtensions
                             case "OnBridgeLoaded":
                                 // called after bridged page is loaded
                                 {
-                                    System.Diagnostics.Debug.WriteLine("NativeWebView.OnMessageReceived : OnBridgeLoaded  ENTER");
+                                    System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived : OnBridgeLoaded  ENTER");
                                     if (message.TryGetValue("Source", out var source))
                                     {
-                                        System.Diagnostics.Debug.WriteLine("NativeWebView.OnMessageReceived Source:" + source.ToString());
+                                        System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived Source:" + source.ToString());
                                         if (Instances.TryGetValue(source.ToString(), out var weakReference) &&
                                         weakReference.TryGetTarget(out var nativeWebView))
                                         {
+                                            System.Diagnostics.Debug.WriteLine($"NativeWebView[{nativeWebView.Id}].NavigateToText: _bridgeConnected=[{nativeWebView._bridgeConnected}] _internalSource=[{nativeWebView._internalSource?.GetType()}] _raceSource=[{nativeWebView._raceSource?.GetType()}]");
                                             if (!nativeWebView._bridgeConnected)
                                             {
                                                 nativeWebView._bridgeConnected = true;
                                                 nativeWebView.UpdateFromInternalSource();
                                             }
+
+                                            System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived nativeWebView[{nativeWebView.Id}].Parent={nativeWebView.Parent}");
                                             if (nativeWebView.Parent is WebViewX parent &&
                                                 message.TryGetValue("Pages", out var pages) && int.TryParse(pages.ToString(), out var pageCount) &&
                                                 message.TryGetValue("Page", out var page) && int.TryParse(page.ToString(), out var pageIndex))
                                             {
+                                                System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived PARENT!");
                                                 parent.InternalSetCanGoBack(pageIndex > 1);
                                                 parent.InternalSetCanGoForward(pageCount > pageIndex);
                                                 if (message.TryGetValue("Href", out var hrefJObject))
                                                 {
                                                     var href = hrefJObject.ToString();
-                                                    System.Diagnostics.Debug.WriteLine("NativeWebView.OnMessageReceived Href:" + hrefJObject.ToString());
+                                                    System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived Href:" + hrefJObject.ToString());
                                                     Uri uri = null;
                                                     if (href.StartsWith("http") || href.StartsWith("file"))
                                                         uri = new Uri(href);
                                                     else if (href.StartsWith("data"))
                                                         uri = new Uri("data:");
+
+                                                    System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived uri={uri}");
                                                     if (href == WebViewBridgeRootPage)
                                                     {
                                                         nativeWebView._activated = true;
@@ -129,14 +135,21 @@ namespace P42.Uno.HtmlExtensions
                                                     }   
                                                     else
                                                     {
-                                                        System.Diagnostics.Debug.WriteLine("NativeWebView.OnBridgeLoaded uri:" + uri);
+                                                        System.Diagnostics.Debug.WriteLine($"NativeWebView.OnBridgeLoaded uri:" + uri);
                                                         parent.OnNavigationCompleted(true, uri, Windows.Web.WebErrorStatus.Found);
+                                                    }
+
+                                                    if (nativeWebView._raceSource != null)
+                                                    {
+                                                        nativeWebView._internalSource = nativeWebView._raceSource;
+                                                        nativeWebView._raceSource = null;
+                                                        nativeWebView.UpdateFromInternalSource();
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    System.Diagnostics.Debug.WriteLine("NativeWebView.OnMessageReceived : OnBridgeLoaded  EXIT");
+                                    System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived : OnBridgeLoaded  EXIT");
                                 }
                                 break;
                         }
@@ -144,7 +157,7 @@ namespace P42.Uno.HtmlExtensions
                 }
 
             }
-            System.Diagnostics.Debug.WriteLine("NativeWebView.OnMessageReceived EXIT");
+            System.Diagnostics.Debug.WriteLine($"NativeWebView.OnMessageReceived EXIT");
 
         }
 
@@ -156,6 +169,7 @@ namespace P42.Uno.HtmlExtensions
         readonly Guid InstanceGuid;
 
         private object _internalSource;
+        private object _raceSource;
         private bool _bridgeConnected;
         internal bool _activated;
 
@@ -163,12 +177,14 @@ namespace P42.Uno.HtmlExtensions
         {
             InstanceGuid = Guid.NewGuid();
             Id = this.GetHtmlAttribute("id");
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].ctr ENTER");
             Instances.Add(InstanceGuid.ToString(), new WeakReference<NativeWebView>(this));
             this.SetCssStyle("border", "none");
             this.SetHtmlAttribute("name", $"{SessionGuid}:{InstanceGuid}");
             this.SetHtmlAttribute("onLoad", $"UnoWebView_OnLoad('{InstanceGuid}')");
-            System.Diagnostics.Debug.WriteLine("NativeWebView.ctr WebViewRootPage: " + WebViewBridgeRootPage);
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].ctr WebViewRootPage: " + WebViewBridgeRootPage);
             this.SetHtmlAttribute("src", WebViewBridgeRootPage);
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].ctr EXIT");
         }
 
         void UpdatePointerEvents()
@@ -201,18 +217,19 @@ namespace P42.Uno.HtmlExtensions
 
         void NavigateToText(string text)
         {
-            System.Diagnostics.Debug.WriteLine("NativeWebView.NavigateToText: text (before): " + text.Substring(0, Math.Min(256, text.Length)));
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].NavigateToText: ENTER: " + text.Substring(0, Math.Min(256, text.Length)));
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].NavigateToText: _bridgeConnected=[{_bridgeConnected}] _internalSource=[{_internalSource?.GetType()}]");
             text = WebViewXExtensions.InjectWebBridge(text);
             var valueBytes = Encoding.UTF8.GetBytes(text);
             var base64 = Convert.ToBase64String(valueBytes);
             _bridgeConnected = false;
             _internalSource = null;
-            System.Diagnostics.Debug.WriteLine("NativeWebView.NavigateToText: text (after) " + text.Substring(0,Math.Min(256,text.Length)));
             var message = new Message<string>(this, "data:text/html;charset=utf-8;base64," + base64);
-            System.Diagnostics.Debug.WriteLine($"NaviteWebView.NavigateToText: message ::: {message}");
+            System.Diagnostics.Debug.WriteLine($"NaviteWebView[{Id}].NavigateToText: message ::: {message}");
             UpdatePointerEvents();
             WebAssemblyRuntime.InvokeJS(message);
             UpdatePointerEvents();
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].NavigateToText: EXIT " + text.Substring(0, Math.Min(256, text.Length)));
         }
 
         internal void GoBack()
@@ -246,24 +263,29 @@ namespace P42.Uno.HtmlExtensions
 
         internal void SetInternalSource(object source)
         {
-            _internalSource = source;
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].SetInternalSource(object source)");
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].SetInternalSource(object source): _bridgeConnected=[{_bridgeConnected}] _internalSource=[{_internalSource?.GetType()}]");
+            _raceSource = _internalSource = source;
             UpdateFromInternalSource();
         }
 
         private void UpdateFromInternalSource()
         {
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].unowasm UpdateFromInternalSource ENTER");
+
             if (_bridgeConnected && _activated)
             {
                 if (_internalSource is Uri uri)
                     Navigate(uri);
                 else if (_internalSource is string html)
                 {
-                    System.Diagnostics.Debug.WriteLine($"NativeWebView.unowasm UpdateFromInternalSource TEXT");
+                    System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].unowasm UpdateFromInternalSource TEXT");
                     NavigateToText(html);
                 }
                 else if (_internalSource is HttpRequestMessage message)
                     NavigateWithHttpRequestMessage(message);
             }
+            System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].unowasm UpdateFromInternalSource EXIT");
         }
 
         class Message
