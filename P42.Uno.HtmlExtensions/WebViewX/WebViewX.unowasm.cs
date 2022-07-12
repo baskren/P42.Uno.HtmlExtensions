@@ -28,7 +28,7 @@ namespace P42.Uno.HtmlExtensions
 
 		protected override void OnApplyTemplate()
 		{
-            Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
+            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
 			base.OnApplyTemplate();
 
 			_nativeWebView = this
@@ -39,12 +39,12 @@ namespace P42.Uno.HtmlExtensions
 			if (_nativeWebView == null)
 			{
 				var text = $"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ";
-				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
+				System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
 				this.Log().Error(text);
 			}
 			else
             {
-				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
+				System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
             }
 			/*
 			var text =
@@ -56,7 +56,7 @@ namespace P42.Uno.HtmlExtensions
 			_nativeWebView.SetHtmlAttribute("srcdoc", text);
 			*/
 			UpdateFromInternalSource();
-			Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
+			System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace P42.Uno.HtmlExtensions
 				if (_isLoaded)
 				{
 					var text = "This WebView control instance does not have a native web view child, a Control template may be missing.";
-					Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
+					System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
 					this.Log().Warn(text);
 				}
 
