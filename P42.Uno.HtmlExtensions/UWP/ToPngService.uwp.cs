@@ -1,4 +1,4 @@
-﻿#if NETFX_CORE
+﻿#if NET6_0_WINDOWS10_0_19041_0
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -19,7 +20,7 @@ namespace P42.Uno.HtmlExtensions
 	{
 		readonly static DependencyProperty PngFileNameProperty = DependencyProperty.Register("PngFileName", typeof(string), typeof(ToPngService), null);
 		readonly static DependencyProperty TaskCompletionSourceProperty = DependencyProperty.Register("OnPngComplete", typeof(TaskCompletionSource<ToFileResult>), typeof(ToPngService), null);
-		//readonly static DependencyProperty WebViewProperty = DependencyProperty.Register("WebView", typeof(Windows.UI.Xaml.Controls.WebView), typeof(ToPngService), null);
+
 		readonly static DependencyProperty HtmlStringProperty = DependencyProperty.Register("HtmlString", typeof(string), typeof(ToPngService), null);
 		readonly static DependencyProperty PngWidthProperty = DependencyProperty.Register("PngWidth", typeof(int), typeof(ToPngService), null);
 
@@ -48,18 +49,18 @@ namespace P42.Uno.HtmlExtensions
 			var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
 			MainThread.BeginInvokeOnMainThread(async () =>
 			{
-				var webView = new Windows.UI.Xaml.Controls.WebView(WebViewExecutionMode.SameThread)
+				var webView = new Microsoft.UI.Xaml.Controls.WebView2()
 				{
 					Name = "PrintWebView" + (instanceCount++).ToString("D3"),
-					DefaultBackgroundColor = Windows.UI.Colors.White,
+					DefaultBackgroundColor = Microsoft.UI.Colors.White,
 					Visibility = Visibility.Visible,
 				};
-				webView.Settings.IsJavaScriptEnabled = true;
-				webView.Settings.IsIndexedDBEnabled = true;
+				//webView.Settings.IsJavaScriptEnabled = true;
+				//webView.Settings.IsIndexedDBEnabled = true;
 
 				PrintHelper.RootPanel.Children.Insert(0, webView);
 
-				webView.DefaultBackgroundColor = Windows.UI.Colors.White;
+				webView.DefaultBackgroundColor = Microsoft.UI.Colors.White;
 				webView.Width = width;
 				//webView.Height = PageSize.Default.Height - 72;
 
@@ -72,7 +73,6 @@ namespace P42.Uno.HtmlExtensions
 				//webView.Width = width;
 
 				webView.NavigationCompleted += NavigationCompleteAAsync;
-				webView.NavigationFailed += WebView_NavigationFailed;
 
 				webView.NavigateToString(html);
 
@@ -89,7 +89,7 @@ namespace P42.Uno.HtmlExtensions
 		/// <param name="fileName"></param>
 		/// <param name="width"></param>
 		/// <returns></returns>
-		public async Task<ToFileResult> ToPngAsync(WebView unoWebView, string fileName, int width)
+		public async Task<ToFileResult> ToPngAsync(WebView2 unoWebView, string fileName, int width)
 		{
 			var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
 			MainThread.BeginInvokeOnMainThread(async () =>
@@ -107,7 +107,6 @@ namespace P42.Uno.HtmlExtensions
 				unoWebView.Width = width;
 
 				unoWebView.NavigationCompleted += NavigationCompleteAAsync;
-				unoWebView.NavigationFailed += WebView_NavigationFailed;
 
 				NavigationCompleteAAsync(unoWebView, null);
 			});
@@ -115,32 +114,32 @@ namespace P42.Uno.HtmlExtensions
 		}
 
 
-		static void WebView_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
+		private async void NavigationCompleteAAsync(Microsoft.UI.Xaml.Controls.WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
 		{
-			var webView = (Windows.UI.Xaml.Controls.WebView)sender;
-			if (webView != null)
+
+			if (args.IsSuccess)
 			{
-				var onComplete = (Action<string>)webView.GetValue(TaskCompletionSourceProperty);
-				onComplete.Invoke(null);
+				webView.NavigationCompleted -= NavigationCompleteAAsync;
+				var contentSize = await webView.WebViewContentSizeAsync();
+				System.Diagnostics.Debug.WriteLine("A contentSize=[" + contentSize + "]");
+				System.Diagnostics.Debug.WriteLine("A webView.Size=[" + webView.Width + "," + webView.Height + "] IsOnMainThread=[" + MainThread.IsMainThread + "]");
+
+				var width = (int)webView.GetValue(PngWidthProperty);
+				webView.Width = width;
+				webView.Height = contentSize.Height;
+
+				webView.NavigationCompleted += NavigationCompleteBAsync;
+				webView.Reload();
 			}
-		}
+			else
+			{
+                var onComplete = (Action<string>)webView.GetValue(TaskCompletionSourceProperty);
+                onComplete.Invoke(null);
 
-		private async void NavigationCompleteAAsync(Windows.UI.Xaml.Controls.WebView webView, WebViewNavigationCompletedEventArgs args)
-		{
-			webView.NavigationCompleted -= NavigationCompleteAAsync;
-			var contentSize = await webView.WebViewContentSizeAsync();
-			System.Diagnostics.Debug.WriteLine("A contentSize=[" + contentSize + "]");
-			System.Diagnostics.Debug.WriteLine("A webView.Size=[" + webView.Width + "," + webView.Height + "] IsOnMainThread=[" + MainThread.IsMainThread + "]");
+            }
+        }
 
-			var width = (int)webView.GetValue(PngWidthProperty);
-			webView.Width = width;
-			webView.Height = contentSize.Height;
-
-			webView.NavigationCompleted += NavigationCompleteBAsync;
-			webView.Refresh();
-		}
-
-		private async void NavigationCompleteBAsync(Windows.UI.Xaml.Controls.WebView webView, WebViewNavigationCompletedEventArgs args)
+		private async void NavigationCompleteBAsync(Microsoft.UI.Xaml.Controls.WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
 		{
 			webView.NavigationCompleted -= NavigationCompleteBAsync;
 			webView.NavigationCompleted += NavigationCompleteC;
@@ -169,37 +168,14 @@ namespace P42.Uno.HtmlExtensions
 						System.Diagnostics.Debug.WriteLine("B webView.Size=[" + webView.Width + "," + webView.Height + "] IsOnMainThread=[" + MainThread.IsMainThread + "]");
 					}
 
-					await webView.CapturePreviewToStreamAsync(ms);
+                    var piclib = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFolderAsync(Guid.NewGuid().ToString());
+                    var fileName = (string)webView.GetValue(PngFileNameProperty);
+                    var file = await piclib.CreateFileAsync(fileName, Windows.Storage.CreationCollisionOption.GenerateUniqueName);
+                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        await webView.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, stream);
+                    }
 
-					var decoder = await BitmapDecoder.CreateAsync(ms);
-
-					var transform = new BitmapTransform
-					{
-						ScaledHeight = (uint)Math.Ceiling(webView.Height),
-						ScaledWidth = (uint)Math.Ceiling(webView.Width)
-					};
-
-					var pixelData = await decoder.GetPixelDataAsync(
-						BitmapPixelFormat.Bgra8,
-						BitmapAlphaMode.Straight,
-						transform,
-						ExifOrientationMode.RespectExifOrientation,
-						ColorManagementMode.DoNotColorManage);
-					var bytes = pixelData.DetachPixelData();
-
-
-					var piclib = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFolderAsync( Guid.NewGuid().ToString());
-					var fileName = (string)webView.GetValue(PngFileNameProperty);
-					var file = await piclib.CreateFileAsync(fileName, Windows.Storage.CreationCollisionOption.GenerateUniqueName);
-					using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-					{
-						var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-						encoder.SetPixelData(BitmapPixelFormat.Bgra8,
-											BitmapAlphaMode.Ignore,
-											(uint)Math.Ceiling(webView.Width),(uint)Math.Ceiling(webView.Height),
-											0, 0, bytes);
-						await encoder.FlushAsync();
-					}
 
 					var toFileResult = new ToFileResult(file);
 					if (webView.GetValue(HtmlStringProperty) is string html &&
@@ -211,7 +187,7 @@ namespace P42.Uno.HtmlExtensions
 					webView.Width = (int)webView.GetValue(BeforeWidthProperty);
 					webView.Height = (int)webView.GetValue(BeforeHeightProperty);
 					webView.SetValue(ToFileResultProperty, toFileResult);
-					webView.Refresh();
+					//webView.Reload();
 				}
 				catch (Exception e)
 				{
@@ -225,13 +201,16 @@ namespace P42.Uno.HtmlExtensions
 					webView.Width = (int)webView.GetValue(BeforeWidthProperty);
 					webView.Height = (int)webView.GetValue(BeforeHeightProperty);
 					webView.SetValue(ToFileResultProperty, toFileResult);
-					webView.Refresh();
+					//webView.Reload();
 				}
-			}
-			webView.Refresh();
+                finally
+                {
+                    webView.Reload();
+                }
+            }
 		}
 
-		private void NavigationCompleteC(Windows.UI.Xaml.Controls.WebView webView, WebViewNavigationCompletedEventArgs args)
+		private void NavigationCompleteC(Microsoft.UI.Xaml.Controls.WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
         {
 			webView.NavigationCompleted -= NavigationCompleteC;
 			if (webView.GetValue(TaskCompletionSourceProperty) is TaskCompletionSource<ToFileResult> onComplete)
@@ -258,19 +237,6 @@ namespace P42.Uno.HtmlExtensions
 			
 		}
 
-		/*
-        static bool IsMainPageChild(Windows.UI.Xaml.Controls.WebView webView)
-		{
-			var currentPage = Forms9Patch.PageExtensions.FindCurrentPage(Xamarin.Forms.Application.Current?.MainPage);
-			var rootPageRenderer = (Xamarin.Forms.Platform.UWP.PageRenderer)Platform.GetRenderer(currentPage);
-
-			var result = rootPageRenderer.Children.Contains(webView);
-
-			System.Diagnostics.Debug.WriteLine("IsMainPageChild : [" + result + "]  WebView.Parent=[" + webView.Parent + "]");
-
-			return result;
-		}
-		*/
 	}
 }
 #endif

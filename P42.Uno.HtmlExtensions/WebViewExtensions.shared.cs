@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace P42.Uno.HtmlExtensions
 {
     /// <summary>
-    /// Windows.UI.Xaml.Controls.WebView extensions
+    /// Microsoft.UI.Xaml.Controls.WebView extensions
     /// </summary>
     public static partial class WebViewExtensions
     {
@@ -16,9 +16,9 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="unoWebView"></param>
         /// <returns></returns>
-        public static async Task<string> GetSourceAsHtmlAsync(this Windows.UI.Xaml.Controls.WebView unoWebView)
+        public static async Task<string> GetSourceAsHtmlAsync(this Microsoft.UI.Xaml.Controls.WebView2 unoWebView)
         {
-            var result = await unoWebView.InvokeScriptAsync("eval", new string[] { "document.documentElement.outerHTML" });
+            var result = await unoWebView.ExecuteScriptAsync( "document.documentElement.outerHTML" );
             return result;
         }
 

@@ -9,7 +9,7 @@ using Android.Print;
 using Android.Views;
 using P42.Uno.HtmlExtensions.Droid;
 using Uno.UI;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -23,12 +23,12 @@ namespace P42.Uno.HtmlExtensions
         {
             get
             {
-                ApplicationActivityFieldInfo = ApplicationActivityFieldInfo ?? typeof(Windows.UI.Xaml.ApplicationActivity).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
+                ApplicationActivityFieldInfo = ApplicationActivityFieldInfo ?? typeof(Microsoft.UI.Xaml.ApplicationActivity).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
                 return ApplicationActivityFieldInfo.GetValue(null) as Android.App.Activity;
             }
         }
 
-        public async Task PrintAsync(WebView unoWebView, string jobName)
+        public async Task PrintAsync(WebView2 unoWebView, string jobName)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
@@ -40,7 +40,7 @@ namespace P42.Uno.HtmlExtensions
 
                     // Only valid for API 19+
                     if (string.IsNullOrWhiteSpace(jobName))
-                        jobName = unoWebView.DocumentTitle;
+                        jobName = await unoWebView.ExecuteScriptAsync("document.title");
                     if (string.IsNullOrWhiteSpace(jobName))
                         jobName = AppInfo.Name;
                     var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);

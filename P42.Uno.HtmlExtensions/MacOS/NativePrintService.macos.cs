@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -12,7 +12,7 @@ namespace P42.Uno.HtmlExtensions
     {
         public bool IsAvailable() => false;
 
-        public Task PrintAsync(WebView webView, string jobName)
+        public Task PrintAsync(WebView2 webView, string jobName)
         {
             throw new NotImplementedException();
         }

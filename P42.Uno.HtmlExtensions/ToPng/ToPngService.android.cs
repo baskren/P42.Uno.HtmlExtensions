@@ -57,7 +57,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="fileName"></param>
         /// <param name="width"></param>
         /// <returns></returns>
-        public async Task<ToFileResult> ToPngAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, int width)
+        public async Task<ToFileResult> ToPngAsync(Microsoft.UI.Xaml.Controls.WebView2 unoWebView, string fileName, int width)
         {
             if (unoWebView.GetChildren(v => v is Android.Webkit.WebView).FirstOrDefault() is Android.Webkit.WebView droidWebView)
             {

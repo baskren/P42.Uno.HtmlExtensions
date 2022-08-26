@@ -74,12 +74,12 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="fileName"></param>
         /// <param name="width"></param>
         /// <returns></returns>
-        public async Task<ToFileResult> ToPngAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, int width)
+        public async Task<ToFileResult> ToPngAsync(Microsoft.UI.Xaml.Controls.WebView2 unoWebView, string fileName, int width)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
             {
                 var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-                if (unoWebView.GetNativeWebView() is Windows.UI.Xaml.Controls.UnoWKWebView wkWebView)
+                if (unoWebView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.UnoWKWebView wkWebView)
                 {
 #if __IOS__
                     wkWebView.BackgroundColor = UIColor.White;

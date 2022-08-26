@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Uno.Foundation;
 using Uno.UI;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -18,7 +18,7 @@ namespace P42.Uno.HtmlExtensions
             throw new NotImplementedException();
         }
 
-        public async Task<ToFileResult> ToPngAsync(WebView webView, string fileName, int width)
+        public async Task<ToFileResult> ToPngAsync(WebView2 webView, string fileName, int width)
         {
             var id = webView.GetHtmlAttribute("id");
             var result = await WebAssemblyRuntime.InvokeAsync($"UnoScreenshot_GetUrlPromise('{id}', {width})");

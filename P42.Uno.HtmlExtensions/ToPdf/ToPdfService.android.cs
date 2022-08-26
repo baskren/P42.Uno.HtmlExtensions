@@ -63,7 +63,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="pageSize"></param>
         /// <param name="margin"></param>
         /// <returns></returns>
-        public async Task<ToFileResult> ToPdfAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView2 unoWebView, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (unoWebView.GetChildren(v => v is Android.Webkit.WebView).FirstOrDefault() is Android.Webkit.WebView droidWebView)
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Uno.UI.Runtime.WebAssembly;
 using Uno.Foundation;
 using System.Net.Http;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 #if __WASM__
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
+using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
 #else
-using WebView = Windows.UI.Xaml.Controls.WebView;
+using WebView2 = Microsoft.UI.Xaml.Controls.WebView2;
 #endif
 
 namespace P42.Uno.HtmlExtensions
@@ -18,7 +18,7 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="webView">Web view.</param>
         /// <param name="jobName">Job name.</param>
-        Task PrintAsync(WebView webView, string jobName);
+        Task PrintAsync(WebView2 webView, string jobName);
 
         /// <summary>
         /// Print the specified HTML with jobName

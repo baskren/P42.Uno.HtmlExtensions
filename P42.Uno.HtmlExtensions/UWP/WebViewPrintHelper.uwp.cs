@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using Windows.Graphics.Printing;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Printing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Printing;
+using Microsoft.UI;
+using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
 {
     class WebViewPrintHelper : PrintHelper
     {
-        WebView _webView;
-        WebView _sourceWebView;
+        WebView2 _webView;
+        WebView2 _sourceWebView;
         string Html;
         string BaseUrl;
         Uri Uri;
@@ -29,7 +31,7 @@ if(bases.length == 0){
     head.innerHTML = 'baseTag' + head.innerHTML;
 }";
 
-        internal WebViewPrintHelper(WebView webView, string jobName) : base(jobName)
+        internal WebViewPrintHelper(WebView2 webView, string jobName) : base(jobName)
         {
             _sourceWebView = webView;
         }
@@ -71,7 +73,7 @@ if(bases.length == 0){
             await PrintManager.ShowPrintUIAsync();
         }
 
-        async void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        async void WebView_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
         {
             _webView.NavigationCompleted -= WebView_NavigationCompleted;
             GC.Collect();
@@ -89,10 +91,10 @@ if(bases.length == 0){
                 RootPanel.Children.Remove(PrintContent);
             }
 
-            PrintContent = _webView = new WebView
+            PrintContent = _webView = new WebView2
             {
                 Name = "PrintWebView" + (instanceCount++).ToString("D3"),
-                DefaultBackgroundColor = Windows.UI.Colors.White,
+                DefaultBackgroundColor = Microsoft.UI.Colors.White,
                 Visibility = Visibility.Visible,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -138,7 +140,7 @@ if(bases.length == 0){
             NavigationCompleteTCS = new TaskCompletionSource<bool>();
             _webView.NavigationCompleted += WebView_NavigationCompleted;
             _webView.InvalidateMeasure();
-            _webView.Refresh();
+            _webView.Reload();
             await NavigationCompleteTCS.Task;
             
             /*
@@ -165,6 +167,7 @@ if(bases.length == 0){
 
         UIElement GenerateWebViewPanel(PrintPageDescription pageDescription, int pageNumber)
         {
+            /*
             var brush = new WebViewBrush
             {
                 Stretch = Stretch.UniformToFill,
@@ -174,8 +177,9 @@ if(bases.length == 0){
                 SourceName = _webView.Name,
             };
             brush.Redraw();
+            */
 
-            var rect = new Windows.UI.Xaml.Shapes.Rectangle
+            var rect = new Microsoft.UI.Xaml.Shapes.Rectangle
             {
                 Height = pageDescription.ImageableRect.Height,
                 Width = pageDescription.ImageableRect.Width,
@@ -186,11 +190,11 @@ if(bases.length == 0){
             rect.Loaded += Rect_Loaded;
             void Rect_Loaded(object sender, RoutedEventArgs e)
             {
-                rect.Fill = brush;
+                //rect.Fill = brush;
                 rect.Loaded -= Rect_Loaded;
             }
 
-            var panel = new Windows.UI.Xaml.Controls.Grid
+            var panel = new Microsoft.UI.Xaml.Controls.Grid
             {
                 Height = pageDescription.PageSize.Height,
                 Width = pageDescription.PageSize.Width,

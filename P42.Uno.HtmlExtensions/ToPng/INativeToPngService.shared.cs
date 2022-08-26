@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -10,7 +10,7 @@ namespace P42.Uno.HtmlExtensions
 
 		Task<ToFileResult> ToPngAsync(string html, string fileName, int width);
 
-        Task<ToFileResult> ToPngAsync(WebView webView, string fileName, int width);
+        Task<ToFileResult> ToPngAsync(WebView2 webView, string fileName, int width);
     }
 
 

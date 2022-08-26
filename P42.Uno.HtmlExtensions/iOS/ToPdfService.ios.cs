@@ -60,11 +60,11 @@ namespace P42.Uno.HtmlExtensions
             return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
         }
 
-        public async Task<ToFileResult> ToPdfAsync(Windows.UI.Xaml.Controls.WebView unoWebView, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView2 unoWebView, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
             {
-                if (unoWebView.GetNativeWebView() is Windows.UI.Xaml.Controls.NativeWebView wkWebView)
+                if (unoWebView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
                 {
                     var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
                     wkWebView.BackgroundColor = UIColor.White;

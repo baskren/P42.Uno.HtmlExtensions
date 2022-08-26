@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Windows.Graphics.Printing;
 using Windows.Graphics.Printing.OptionDetails;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Printing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Printing;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -69,8 +69,8 @@ namespace P42.Uno.HtmlExtensions
         {
             get
             {
-                var rootFrame = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
-                var page = rootFrame?.Content as Windows.UI.Xaml.Controls.Page;
+                var rootFrame = Window.Current.Content as Microsoft.UI.Xaml.Controls.Frame;
+                var page = rootFrame?.Content as Microsoft.UI.Xaml.Controls.Page;
                 //var panel = page?.Content as Panel;
                 //var children = panel.Children.ToList();
                 return page;

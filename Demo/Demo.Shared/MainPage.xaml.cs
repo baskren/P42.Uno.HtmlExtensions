@@ -5,13 +5,13 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using P42.Uno.HtmlExtensions;
 using Windows.UI;
 using System.Net;
@@ -19,8 +19,8 @@ using System.Net;
 using WebView = P42.Uno.HtmlExtensions.WebViewX;
 using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
 #else
-using WebView = Windows.UI.Xaml.Controls.WebView;
-using WebViewNavigationCompletedEventArgs = Windows.UI.Xaml.Controls.WebViewNavigationCompletedEventArgs;
+using WebView = Microsoft.UI.Xaml.Controls.WebView;
+using WebViewNavigationCompletedEventArgs = Microsoft.UI.Xaml.Controls.WebViewNavigationCompletedEventArgs;
 #endif
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409

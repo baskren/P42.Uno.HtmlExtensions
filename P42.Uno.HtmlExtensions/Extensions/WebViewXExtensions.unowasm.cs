@@ -1,5 +1,5 @@
 using System;
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
+using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
 
 namespace P42.Uno.HtmlExtensions
 {

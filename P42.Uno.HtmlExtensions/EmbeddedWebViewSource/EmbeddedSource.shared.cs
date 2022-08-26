@@ -10,7 +10,7 @@ using Windows.Storage;
 namespace P42.Uno.HtmlExtensions
 {
     /// <summary>
-    /// Provide WebView content from an EmbeddedResource
+    /// Provide WebView2 content from an EmbeddedResource
     /// </summary>
     public class EmbeddedSource
     {

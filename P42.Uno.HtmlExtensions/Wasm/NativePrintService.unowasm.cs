@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Uno.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
 using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
 using WebViewNavigationFailedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationFailedEventArgs;
 
@@ -14,19 +14,19 @@ namespace P42.Uno.HtmlExtensions
 {
     class NativePrintService : INativePrintService
     {
-        internal static Windows.UI.Xaml.Controls.Page RootPage
+        internal static Microsoft.UI.Xaml.Controls.Page RootPage
         {
             get
             {
-                var rootFrame = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
-                var page = rootFrame?.Content as Windows.UI.Xaml.Controls.Page;
+                var rootFrame = Window.Current.Content as Microsoft.UI.Xaml.Controls.Frame;
+                var page = rootFrame?.Content as Microsoft.UI.Xaml.Controls.Page;
                 var panel = page?.Content as Panel;
                 var children = panel.Children.ToList();
                 return page;
             }
         }
 
-        internal static Windows.UI.Xaml.Controls.Panel RootPanel => RootPage?.Content as Panel;
+        internal static Microsoft.UI.Xaml.Controls.Panel RootPanel => RootPage?.Content as Panel;
 
         public bool IsAvailable()
         {
@@ -34,17 +34,17 @@ namespace P42.Uno.HtmlExtensions
             return result == "true";
         }
 
-        public async Task PrintAsync(WebView webView, string jobName)
+        public async Task PrintAsync(WebView2 webView, string jobName)
         {
             //var id = webView.GetHtmlAttribute("id");
             //var result = WebAssemblyRuntime.InvokeJS($"UnoPrint_PrintElement('{id}');");
-            var result = await webView.InvokeScriptAsync("window.print", null);
+            var result = await webView.ExecuteJavascriptAsync("window.print()");
             //await Task.CompletedTask;
         }
 
         public async Task PrintAsync(string html, string jobName)
         {
-            var webView = new WebView();
+            var webView = new WebView2();
             webView.Opacity = 0.01;
             webView.NavigationCompleted += OnNavigationComplete;
             webView.NavigationFailed += OnNavigationFailed;
@@ -62,7 +62,7 @@ namespace P42.Uno.HtmlExtensions
 
         static void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
         {
-            if (sender is WebView webView && webView.Tag is TaskCompletionSource<bool> tcs)
+            if (sender is WebView2 webView && webView.Tag is TaskCompletionSource<bool> tcs)
             {
                 tcs.TrySetResult(false);
                 //await P42.Uno.Controls.Toast.CreateAsync("Print Service Error", "WebView failed to navigate to provided string.  Please try again.\n\nWebErrorStatus: " + e.WebErrorStatus);
@@ -71,7 +71,7 @@ namespace P42.Uno.HtmlExtensions
             throw new Exception("Cannot locate WebView or TaskCompletionSource for WebView.OnNavigationFailed");
         }
 
-        static void OnNavigationComplete(WebView webView, WebViewNavigationCompletedEventArgs args)
+        static void OnNavigationComplete(WebView2 webView, WebViewNavigationCompletedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine("NativePrintService.OnNavigationComplete: " + args.Uri);
             if (webView.Tag is TaskCompletionSource<bool> tcs)

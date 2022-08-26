@@ -116,5 +116,31 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static PageMargin CreateInMillimeters(double all)
             => CreateInInches(all * 25.4);
+
+        public static PageMargin Default
+        {
+            get
+            {
+                var countryCode = System.Globalization.RegionInfo.CurrentRegion.ThreeLetterISORegionName;
+                //var country = locale.GetCountryCodeDisplayName(countryCode);
+                if (//Counties that use Letter
+                    countryCode == "CA" || countryCode == "CAN" || // Canada
+                    countryCode == "CL" || countryCode == "CHL" || // Chile
+                    countryCode == "CO" || countryCode == "COL" || // Columbia
+                    countryCode == "CR" || countryCode == "CRI" || // Costa Rica
+                    countryCode == "MX" || countryCode == "MEX" || // Mexico
+                    countryCode == "PA" || countryCode == "PAN" || // Panama
+                    countryCode == "DO" || countryCode == "DOM" || // Domincan Republi
+                    countryCode == "US" || countryCode == "USA" // United States
+                    )
+                    return CreateInInches(0.5, 0.5, 0.5, 0.75);
+                return CreateInMillimeters(10, 10, 10, 20);
+            }
         }
+
+
+    }
+
+
+
 }

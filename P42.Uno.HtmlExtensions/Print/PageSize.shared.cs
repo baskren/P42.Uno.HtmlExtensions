@@ -7,6 +7,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public class PageSize
     {
+
         #region Properties
 
         #region Width

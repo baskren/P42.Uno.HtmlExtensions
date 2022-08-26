@@ -5,7 +5,7 @@ using System.Text;
 using Uno.UI;
 using Uno.Extensions;
 using Uno.UI.Extensions;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Uno.UI.Web;
 using System.Globalization;
 using System.Net.Http;

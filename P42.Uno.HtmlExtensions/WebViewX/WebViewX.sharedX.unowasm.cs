@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS0067, CS0414
 
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions;
 using Uno.UI.Xaml;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace P42.Uno.HtmlExtensions
 {

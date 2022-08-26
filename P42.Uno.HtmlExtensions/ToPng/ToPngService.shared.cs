@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -9,7 +9,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class ToPngService
     {
-#if __IOS__ || __ANDROID__ || NETFX_CORE 
+#if __IOS__ || __ANDROID__ || NET6_0_WINDOWS10_0_19041_0 
         static INativeToPngService _nativeToPngService;
         static INativeToPngService NativeToPngService =>
             _nativeToPngService = _nativeToPngService ?? new NativeToPngService();
@@ -44,7 +44,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="fileName">Name (not path), excluding suffix, of PNG file</param>
         /// <param name="width">Width of resulting PNG (in pixels).</param>
         /// <returns></returns>
-        public static async Task<ToFileResult> ToPngAsync(this WebView webView, string fileName, int width = -1)
+        public static async Task<ToFileResult> ToPngAsync(this WebView2 webView, string fileName, int width = -1)
         {
             if (width <= 0)
                 width = (int)Math.Ceiling((PageSize.Default.Width - (12 * 25.4)) * 4);

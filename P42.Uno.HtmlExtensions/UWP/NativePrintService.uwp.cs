@@ -1,12 +1,13 @@
-﻿#if NETFX_CORE
+﻿#if NET6_0_WINDOWS10_0_19041_0
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Graphics.Printing;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -25,7 +26,7 @@ namespace P42.Uno.HtmlExtensions
 		}
 
 		TaskCompletionSource<bool> _printingTCS;
-		public async Task PrintAsync(WebView webView, string jobName)
+		public async Task PrintAsync(WebView2 webView, string jobName)
 		{
 			if (IntPtr.Size != 8)
 				throw new Exception("Printing not available in 32 bit applications.  Blame Microsoft's UWP Team as they don't seem to want to fix a memory leak that keeps printing from working reliably.");
@@ -44,7 +45,7 @@ namespace P42.Uno.HtmlExtensions
                 {
 					printHelper = new WebViewPrintHelper(Uri, jobName);
                 }
-				else if (webView is Windows.UI.Xaml.Controls.WebView nativeWebView)
+				else if (webView is Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
 				{
 					printHelper = new WebViewPrintHelper(webView, jobName);
 				}
@@ -82,9 +83,8 @@ namespace P42.Uno.HtmlExtensions
 
 		public async Task PrintAsync(string html, string jobName)
 		{
-			var webView = new WebView();
+			var webView = new WebView2();
             webView.NavigationCompleted += OnNavigationComplete;
-            webView.NavigationFailed += OnNavigationFailed;
 
 			var tcs = new TaskCompletionSource<bool>();
 			webView.Tag = tcs;
@@ -93,22 +93,12 @@ namespace P42.Uno.HtmlExtensions
 				await PrintAsync(webView, jobName);
 		}
 
-        static void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
-        {
-            if (sender is WebView webView && webView.Tag is TaskCompletionSource<bool> tcs)
-            {
-				tcs.SetResult(false);
-				//await P42.Uno.Controls.Toast.CreateAsync("Print Service Error", "WebView failed to navigate to provided string.  Please try again.\n\nWebErrorStatus: " + e.WebErrorStatus);
-				return;
-			}
-			throw new Exception("Cannot locate WebView or TaskCompletionSource for WebView.OnNavigationFailed");
-		}
-
-		static void OnNavigationComplete(WebView webView, WebViewNavigationCompletedEventArgs args)
+		static void OnNavigationComplete(WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
         {
             if (webView.Tag is TaskCompletionSource<bool> tcs)
             {
-				tcs.SetResult(true);
+
+				tcs.SetResult(args.IsSuccess);
 				return;
             }
 			throw new Exception("Cannot locate TaskCompletionSource for WebView.NavigationToString");

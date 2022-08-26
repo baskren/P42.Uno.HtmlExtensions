@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Foundation;
 using UIKit;
 using WebKit;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -22,8 +22,11 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="unoWebView">View to print.</param>
         /// <param name="jobName">Job name.</param>
-        public async Task PrintAsync(WebView unoWebView, string jobName)
+        public async Task PrintAsync(WebView2 unoWebView, string jobName)
         {
+            await unoWebView.ExecuteScriptAsync("window.print();");
+
+            /*
             //var effectApplied = viewToPrint.Effects.Any(e => e is Forms9Patch.WebViewPrintEffect);
             //var actualSource = viewToPrint.ActualSource() as WebViewSource;
             var printInfo = UIPrintInfo.PrintInfo;
@@ -37,7 +40,7 @@ namespace P42.Uno.HtmlExtensions
             printController.PrintInfo = printInfo;
             printController.Delegate = this;
 
-            if (unoWebView.GetNativeWebView() is Windows.UI.Xaml.Controls.NativeWebView wkWebView)
+            if (unoWebView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
             {
                 var html = await wkWebView.EvaluateJavaScriptAsync("document.documentElement.outerHTML") as NSString;
                 printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
@@ -46,6 +49,9 @@ namespace P42.Uno.HtmlExtensions
                     System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync: PRESENTED completed[" + completed + "] error[" + error + "]");
                 });
             }
+            */
+
+
 
         }
 
@@ -62,19 +68,6 @@ namespace P42.Uno.HtmlExtensions
         public async Task PrintAsync(string html, string jobName)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            /*
-            var webView = new WebView();
-
-
-            webView.NavigationCompleted += OnNavigationComplete;
-            webView.NavigationFailed += OnNavigationFailed;
-
-            var tcs = new TaskCompletionSource<bool>();
-            webView.Tag = tcs;
-            webView.NavigateToString(html);
-            if (await tcs.Task)
-                await PrintAsync(webView, jobName);
-            */
 
             if (!string.IsNullOrWhiteSpace(html))
             {
@@ -99,26 +92,5 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        static async void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-            if (sender is WebView webView && webView.Tag is TaskCompletionSource<bool> tcs)
-            {
-                tcs.SetResult(false);
-                return;
-            }
-            throw new Exception("Cannot locate WebView or TaskCompletionSource for WebView.OnNavigationFailed");
-        }
-
-        static void OnNavigationComplete(WebView webView, WebViewNavigationCompletedEventArgs args)
-        {
-            if (webView.Tag is TaskCompletionSource<bool> tcs)
-            {
-                tcs.SetResult(true);
-                return;
-            }
-            throw new Exception("Cannot locate TaskCompletionSource for WebView.NavigationToString");
-        }
     }
 }

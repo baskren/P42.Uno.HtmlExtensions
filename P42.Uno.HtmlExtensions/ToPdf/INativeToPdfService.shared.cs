@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -10,7 +10,7 @@ namespace P42.Uno.HtmlExtensions
 
         Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin);
 
-        Task<ToFileResult> ToPdfAsync(WebView webView, string fileName, PageSize pageSize, PageMargin margin);
+        Task<ToFileResult> ToPdfAsync(WebView2 webView, string fileName, PageSize pageSize, PageMargin margin);
     }
 
 }
