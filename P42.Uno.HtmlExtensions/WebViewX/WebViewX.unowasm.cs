@@ -14,6 +14,7 @@ using System.Threading;
 using Windows.UI.Core;
 using Uno.Logging;
 using System.IO;
+//using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -80,7 +81,7 @@ namespace P42.Uno.HtmlExtensions
 
 		internal void OnNavigationCompleted(bool isSuccess, Uri uri, Windows.Web.WebErrorStatus status)
         {
-			var args = new WebViewXNavigationCompletedEventArgs(isSuccess, uri, status);
+            var args = new WebViewXNavigationCompletedEventArgs(isSuccess, uri, status);
             System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
 			NavigationCompleted?.Invoke(this, args);
         }
