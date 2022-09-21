@@ -276,7 +276,22 @@ namespace P42.Uno.HtmlExtensions
             if (_bridgeConnected && _activated)
             {
                 if (_internalSource is Uri uri)
-                    Navigate(uri);
+                {
+                    if (uri.IsFile)
+                    {
+                        try
+                        {
+                            var text = System.IO.File.ReadAllText(uri.AbsolutePath);
+                            NavigateToText(text);
+                        }
+                        catch (Exception)
+                        {
+                            Navigate(uri);
+                        }
+                    }
+                    else
+                        Navigate(uri);
+                }
                 else if (_internalSource is string html)
                 {
                     System.Diagnostics.Debug.WriteLine($"NativeWebView[{Id}].unowasm UpdateFromInternalSource TEXT");
