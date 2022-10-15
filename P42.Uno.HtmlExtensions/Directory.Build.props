@@ -5,7 +5,7 @@
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>P42.Uno.HtmlExtensions</RootNamespace>
-    <Version>4.5.9-winui.0.4</Version>
+    <Version>4.5.14-winui.0.4</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
 	<!--
@@ -52,10 +52,10 @@
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
     
-    <PackageReference Include="Uno.WinUI" Version="4.5.9" />
+    <PackageReference Include="Uno.WinUI" Version="4.5.14" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.14" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
