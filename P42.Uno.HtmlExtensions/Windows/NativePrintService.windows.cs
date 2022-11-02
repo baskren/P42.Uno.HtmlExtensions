@@ -8,46 +8,92 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Web.WebView2.Core;
+using Windows.UI.WebUI;
 
 namespace P42.Uno.HtmlExtensions
 {
 	/// <summary>
 	/// Web view extensions service.
 	/// </summary>
-	public class NativePrintService : INativePrintService
+	class NativePrintService : INativePrintService
 	{
-		/// <summary>
-		/// Cans the print.
-		/// </summary>
-		/// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
-		public bool IsAvailable()
-		{
-			return PrintManager.IsSupported() && IntPtr.Size == 8;
-		}
+        readonly static DependencyProperty JobNameProperty = DependencyProperty.Register("JobName", typeof(string), typeof(ToPdfService), null);
+        readonly static DependencyProperty TaskCompletionSourceProperty = DependencyProperty.Register("OnPrintComplete", typeof(TaskCompletionSource<ToFileResult>), typeof(ToPdfService), null);
 
-		TaskCompletionSource<bool> _printingTCS;
+
+        /// <summary>
+        /// Cans the print.
+        /// </summary>
+        /// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
+        public bool IsAvailable => true;
+
+
+
+
 		public async Task PrintAsync(WebView2 webView, string jobName)
 		{
-			await webView.CoreWebView2.ExecuteScriptAsync("print()");
+			try
+			{
+				var result = await webView.CoreWebView2.ExecuteScriptAsync("print()");
+            }
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"NativePrintService. : ");
+			}
 		}
 
-		public async Task PrintAsync(string html, string jobName)
+        int instanceCount = 0;
+
+
+        public async Task PrintAsync(Uri uri, string jobName)
 		{
-			var webView = new WebView2();
-            webView.NavigationCompleted += OnNavigationComplete;
+            //var completeTcs = new TaskCompletionSource<bool>();
+            var navigateTcv = new TaskCompletionSource<bool>();
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var webView = new WebView2()
+                {
+                    Name = "PrintWebView" + (instanceCount++).ToString("D3"),
+                    DefaultBackgroundColor = Microsoft.UI.Colors.White,
+                    Visibility = Visibility.Visible,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                };
 
-			var tcs = new TaskCompletionSource<bool>();
-			webView.Tag = tcs;
-			webView.NavigateToString(html);
-			if (await tcs.Task)
-				await PrintAsync(webView, jobName);
-		}
+                webView.DefaultBackgroundColor = Microsoft.UI.Colors.White;
+                //webView.Width = PageSize.Default.Width;
+                webView.Visibility = Visibility.Visible;
+                webView.SetValue(JobNameProperty, jobName);
 
-		static void OnNavigationComplete(WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
+                var grid = new Grid();
+                var content = Platform.RootPanel;
+
+                Platform.RootPage.Content = null;
+                Platform.RootPage.Content = grid;
+
+                grid.Children.Add(content);
+                grid.Children.Add(webView);
+
+                webView.NavigationCompleted += OnNavigationComplete;
+
+                webView.Tag = navigateTcv;
+                webView.Source = uri;
+
+
+                if (await navigateTcv.Task)
+                    await PrintAsync(webView, jobName);
+
+                Platform.RootPage.Content = null;
+                grid.Children.Clear();
+                Platform.RootPage.Content = content;
+            });
+
+        }
+
+        static void OnNavigationComplete(WebView2 webView, CoreWebView2NavigationCompletedEventArgs args)
         {
             if (webView.Tag is TaskCompletionSource<bool> tcs)
             {
-
 				tcs.SetResult(args.IsSuccess);
 				return;
             }

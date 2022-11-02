@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 //using Microsoft.UI.Xaml.Controls;
 #if __WASM__
 using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
@@ -27,21 +28,27 @@ namespace P42.Uno.HtmlExtensions
 #endif
 
         /// <summary>
-        /// Print the specified webview and jobName.
+        /// Gets a value indicating whether this <see cref="T:Forms9Patch.WebViewExtensions"/> can print.
         /// </summary>
-        /// <param name="webview">Webview.</param>
-        /// <param name="jobName">Job name.</param>
-        public static async Task PrintAsync(this WebView2 webview, string jobName)
-        {
-            try
-            {
-                await (NativePrintService?.PrintAsync(webview, jobName) ?? Task.CompletedTask);
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine($"PrintService. : ");
-            }
-        }
+        /// <value><c>true</c> if can print; otherwise, <c>false</c>.</value>
+        public static bool IsAvailable => NativePrintService?.IsAvailable ?? false;
+
+        /// <summary>
+        /// Print contents of Uri
+        /// </summary>
+        /// <param name="uri">Uri source</param>
+        /// <param name="jobName">print job name</param>
+        /// <returns></returns>
+        public static async Task PrintAsync(this Uri uri, string jobName)
+            =>await (NativePrintService?.PrintAsync(uri, jobName) ?? Task.CompletedTask);
+
+        /// <summary>
+        /// Print HTML in file
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="jobName"></param>
+        public static async Task PrintAsync(this StorageFile file, string jobName)
+            => await new Uri(file.Path).PrintAsync(jobName);
 
         /// <summary>
         /// Print HTML string
@@ -50,13 +57,18 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="jobName"></param>
         public static async Task PrintAsync(this string html, string jobName)
         {
-            await (NativePrintService?.PrintAsync(html, jobName) ?? Task.CompletedTask);
+            var uri = await html.ToTempFileUriAsync();
+            await uri.PrintAsync(jobName);
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Forms9Patch.WebViewExtensions"/> can print.
+        /// Print the specified webview and jobName.
         /// </summary>
-        /// <value><c>true</c> if can print; otherwise, <c>false</c>.</value>
-        public static bool IsAvailable => NativePrintService?.IsAvailable() ?? false;
+        /// <param name="webview">Webview.</param>
+        /// <param name="jobName">Job name.</param>
+        public static async Task PrintAsync(this WebView2 webview, string jobName)
+            => await (NativePrintService?.PrintAsync(webview, jobName) ?? Task.CompletedTask);
+        
+
     }
 }

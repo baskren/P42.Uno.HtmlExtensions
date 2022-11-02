@@ -13,9 +13,9 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace P42.Uno.HtmlExtensions
 {
-    public class NativePrintService : INativePrintService
+    class NativePrintService : INativePrintService
     {
-        public bool IsAvailable() => Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat;
+        public bool IsAvailable => Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat;
 
         static FieldInfo ApplicationActivityFieldInfo;
 
@@ -53,7 +53,7 @@ namespace P42.Uno.HtmlExtensions
             throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
         }
 
-        public async Task PrintAsync(string html, string jobName)
+        public async Task PrintAsync(Uri uri, string jobName)
         {
             var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
             using (var webView = new Android.Webkit.WebView(Android.App.Application.Context))
@@ -69,7 +69,8 @@ namespace P42.Uno.HtmlExtensions
                 using (var webViewCallBack = new WebViewCallBack(taskCompletionSource, jobName, PageSize.Default, null, OnPageFinishedAsync))
                 {
                     webView.SetWebViewClient(webViewCallBack);
-                    webView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
+                    //webView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
+                    webView.LoadUrl(uri.AbsoluteUri);
                     await taskCompletionSource.Task;
                 }
             }

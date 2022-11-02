@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Storage;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -23,6 +24,24 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         public static bool IsAvailable => NativeToPdfService?.IsAvailable ?? false;
 
+        public static async Task<ToFileResult> ToPdfAsync(this StorageFile file, string fileName, PageSize pageSize = default, PageMargin margin = default)
+        {
+            var uri = new Uri(file.Path);
+            return await ToPdfAsync(uri, fileName, pageSize, margin);
+        }
+
+        public static async Task<ToFileResult> ToPdfAsync(this Uri uri, string fileName, PageSize pageSize = default, PageMargin margin = default)
+        {
+            if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
+                pageSize = PageSize.Default;
+
+            margin = margin ?? new PageMargin();
+            if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
+                return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
+
+            return await (NativeToPdfService?.ToPdfAsync(uri, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
+        }
+
         /// <summary>
         /// Converts HTML text to PNG
         /// </summary>
@@ -33,14 +52,8 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<ToFileResult> ToPdfAsync(this string html, string fileName, PageSize pageSize = default, PageMargin margin = default)
         {
-            if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
-                pageSize = PageSize.Default;
-
-            margin = margin ?? new PageMargin();
-            if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
-                return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
-
-            return await (NativeToPdfService?.ToPdfAsync(html, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
+            var uri = await html.ToTempFileUriAsync();
+            return await ToPdfAsync(uri, fileName, pageSize, margin);
         }
 
         /// <summary>

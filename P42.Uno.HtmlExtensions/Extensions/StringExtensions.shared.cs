@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,19 @@ namespace P42.Uno.HtmlExtensions
 
     static class StringExtensions
     {
+        public static async Task<Windows.Storage.StorageFile> ToTempFileAsync(this string text)
+        {
+            var file = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName() + ".html");
+            await File.WriteAllTextAsync(file.Path, text);
+            return file;
+        }
+
+        public static async Task<Uri> ToTempFileUriAsync(this string text)
+        {
+            var file = await text.ToTempFileAsync();
+            return new Uri(file.Path);
+        }
+
         public static bool EqualsWildcard(this string text, string wildcardString)
         {
             bool isLike = true;

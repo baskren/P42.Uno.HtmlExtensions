@@ -33,7 +33,7 @@
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Padding="5" Spacing="5">
                     <StackPanel.Children>
-                        <Button x:Name="_toPngButton" Content="To PNG" Click="OnToPngClicked" />
+                        <ToggleSwitch x:Name="_fromWebViewToggleSwitch" OnContent="WebView" OffContent="File" />
                         <Button x:Name="_toPdfButton" Content="To PDF" Click="OnToPdfClicked" />
                         <Button x:Name="_printButton" Content="Print" Click="OnPrintClicked" />
                     </StackPanel.Children>

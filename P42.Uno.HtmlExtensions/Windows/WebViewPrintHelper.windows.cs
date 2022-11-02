@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Printing;
 using Microsoft.UI;
 using Microsoft.Web.WebView2.Core;
-
+/*
 namespace P42.Uno.HtmlExtensions
 {
     class WebViewPrintHelper : PrintHelper
@@ -143,12 +143,11 @@ if(bases.length == 0){
             _webView.Reload();
             await NavigationCompleteTCS.Task;
             
-            /*
-            System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. displayDpi=[{displayDpi}]");
-            System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. pageDescription.ImageableRect=[{pageDescription.ImageableRect}]");
-            System.Diagnostics.Debug.WriteLine("GeneratePagesAsync. webView Actual=[" + _webView.ActualWidth + ", " + _webView.ActualHeight + "]");
-            System.Diagnostics.Debug.WriteLine($"GeneratePagesAsync. webView Desired=[{_webView.DesiredSize}]");
-            */
+            //System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. displayDpi=[{displayDpi}]");
+            //System.Diagnostics.Debug.WriteLine($"WebViewPrintHelper. pageDescription.ImageableRect=[{pageDescription.ImageableRect}]");
+            //System.Diagnostics.Debug.WriteLine("GeneratePagesAsync. webView Actual=[" + _webView.ActualWidth + ", " + _webView.ActualHeight + "]");
+            //System.Diagnostics.Debug.WriteLine($"GeneratePagesAsync. webView Desired=[{_webView.DesiredSize}]");
+
             var pageCount = Math.Ceiling(contentSize.Height / (pageDescription.ImageableRect.Height));
 
             // create the pages
@@ -167,17 +166,15 @@ if(bases.length == 0){
 
         UIElement GenerateWebViewPanel(PrintPageDescription pageDescription, int pageNumber)
         {
-            /*
-            var brush = new WebViewBrush
-            {
-                Stretch = Stretch.UniformToFill,
-                AlignmentX = AlignmentX.Left,
-                AlignmentY = AlignmentY.Top,
-                Transform = new TranslateTransform { Y = -pageDescription.ImageableRect.Height * pageNumber },
-                SourceName = _webView.Name,
-            };
-            brush.Redraw();
-            */
+            //var brush = new WebViewBrush
+            //{
+            //    Stretch = Stretch.UniformToFill,
+            //    AlignmentX = AlignmentX.Left,
+            //    AlignmentY = AlignmentY.Top,
+            //    Transform = new TranslateTransform { Y = -pageDescription.ImageableRect.Height * pageNumber },
+            //    SourceName = _webView.Name,
+            //};
+            //brush.Redraw();
 
             var rect = new Microsoft.UI.Xaml.Shapes.Rectangle
             {
@@ -207,3 +204,4 @@ if(bases.length == 0){
 
     }
 }
+*/

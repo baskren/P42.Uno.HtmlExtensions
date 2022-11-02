@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Uno.Foundation;
 using Uno.UI;
 using Microsoft.UI.Xaml;
-
+/*
 namespace P42.Uno.HtmlExtensions
 {
     class NativeToPngService : INativeToPngService
@@ -31,3 +31,4 @@ namespace P42.Uno.HtmlExtensions
         }
     }
 }
+*/

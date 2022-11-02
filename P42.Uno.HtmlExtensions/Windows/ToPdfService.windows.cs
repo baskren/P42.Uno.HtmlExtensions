@@ -15,13 +15,6 @@ namespace P42.Uno.HtmlExtensions
         readonly static DependencyProperty PdfFileNameProperty = DependencyProperty.Register("PdfFileName", typeof(string), typeof(ToPdfService), null);
         readonly static DependencyProperty TaskCompletionSourceProperty = DependencyProperty.Register("OnPdfComplete", typeof(TaskCompletionSource<ToFileResult>), typeof(ToPdfService), null);
 
-        readonly static DependencyProperty HtmlStringProperty = DependencyProperty.Register("HtmlString", typeof(string), typeof(ToPdfService), null);
-
-        readonly static DependencyProperty BeforeWidthProperty = DependencyProperty.Register("BeforeWidth", typeof(int), typeof(ToPdfService), null);
-        readonly static DependencyProperty BeforeHeightProperty = DependencyProperty.Register("BeforeHeight", typeof(int), typeof(ToPdfService), null);
-
-        readonly static DependencyProperty ToFileResultProperty = DependencyProperty.Register("ToFileResult", typeof(string), typeof(ToPdfService), null);
-
         readonly static DependencyProperty PageMarginProperty = DependencyProperty.Register("PageMargin", typeof(PageMargin), typeof(ToPdfService), new PropertyMetadata(PageMargin.Default));
         readonly static DependencyProperty PageSizeProperty = DependencyProperty.Register("PageSize", typeof(PageSize), typeof(ToPdfService), new PropertyMetadata(PageSize.Default));
 
@@ -30,41 +23,33 @@ namespace P42.Uno.HtmlExtensions
 
         int instanceCount = 0;
 
-        public async Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin)
         {
             var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var webView = new Microsoft.UI.Xaml.Controls.WebView2()
+                var webView = new WebView2()
                 {
-                    Name = "PrintWebView" + (instanceCount++).ToString("D3"),
+                    Name = "PdfWebView" + (instanceCount++).ToString("D3"),
                     DefaultBackgroundColor = Microsoft.UI.Colors.White,
                     Visibility = Visibility.Visible,
                 };
-                //webView.Settings.IsJavaScriptEnabled = true;
-                //webView.Settings.IsIndexedDBEnabled = true;
-
-                PrintHelper.RootPanel.Children.Insert(0, webView);
+                
+                Platform.RootPanel.Children.Insert(0, webView);
 
                 webView.DefaultBackgroundColor = Microsoft.UI.Colors.White;
                 webView.Width = pageSize.Width;
-                //webView.Height = PageSize.Default.Height - 72;
-
                 webView.Visibility = Visibility.Visible;
-
                 webView.SetValue(PdfFileNameProperty, fileName);
                 webView.SetValue(TaskCompletionSourceProperty, taskCompletionSource);
-                webView.SetValue(HtmlStringProperty, html);
                 webView.SetValue(PageSizeProperty, pageSize);
                 webView.SetValue(PageMarginProperty, margin);
-                //webView.Width = width;
 
                 webView.NavigationCompleted += NavigationCompleteAAsync;
-
-                webView.NavigateToString(html);
+                webView.Source = uri;
 
                 await taskCompletionSource.Task;
-                PrintHelper.RootPanel.Children.Remove(webView);
+                Platform.RootPanel.Children.Remove(webView);
             });
             return await taskCompletionSource.Task;
 

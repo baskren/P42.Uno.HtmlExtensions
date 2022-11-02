@@ -10,13 +10,13 @@ using AppKit;
 #endif
 using WebKit;
 using Windows.Storage;
-
+/*
 namespace P42.Uno.HtmlExtensions
 {
     /// <summary>
     /// HTML to PDF service.
     /// </summary>
-    public class NativeToPngService : INativeToPngService
+    public class NativeToPngService //: INativeToPngService
     {
         const string LocalStorageFolderName = "P42.Uno.HtmlWevViewExtensions.ToPngService";
 
@@ -204,3 +204,4 @@ namespace P42.Uno.HtmlExtensions
         }
     }
 }
+*/

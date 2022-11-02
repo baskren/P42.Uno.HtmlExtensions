@@ -10,14 +10,14 @@ namespace P42.Uno.HtmlExtensions
 {
     class NativePrintService : INativePrintService
     {
-        public bool IsAvailable() => false;
+        public bool IsAvailable => false;
 
         public Task PrintAsync(WebView2 webView, string jobName)
         {
             throw new NotImplementedException();
         }
 
-        public Task PrintAsync(string html, string jobName)
+        public Task PrintAsync(Uri uri, string jobName)
         {
             throw new NotImplementedException();
         }

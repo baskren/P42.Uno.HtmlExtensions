@@ -15,16 +15,41 @@ using P42.Uno.HtmlExtensions;
 //using Uno.UI;
 using System.Linq;
 using Windows.Storage;
+using Android.Text;
 
 namespace P42.Uno.HtmlExtensions
 {
 
-    public class NativeToPdfService : Java.Lang.Object, INativeToPdfService
+    class NativeToPdfService : Java.Lang.Object, INativeToPdfService
     {
         /// <summary>
         /// Is to PDF conversion available?
         /// </summary>
         public bool IsAvailable => Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Kitkat;
+
+
+        public async Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin)
+        {
+            using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
+            {
+                droidWebView.Settings.JavaScriptEnabled = true;
+#pragma warning disable CS0618 // Type or member is obsolete
+                droidWebView.DrawingCacheEnabled = true;
+#pragma warning restore CS0618 // Type or member is obsolete
+                droidWebView.SetLayerType(LayerType.Software, null);
+                droidWebView.Layout(0, 0, (int)System.Math.Ceiling(pageSize.Width), (int)System.Math.Ceiling(pageSize.Height));
+                //droidWebView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
+
+                droidWebView.LoadUrl(uri.AbsoluteUri);
+
+                var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
+                using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
+                {
+                    droidWebView.SetWebViewClient(callback);
+                    return await taskCompletionSource.Task;
+                }
+            }
+        }
 
         /// <summary>
         /// Convert HTLM to PDF
@@ -36,6 +61,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin)
         {
+            /*
             using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
             {
                 droidWebView.Settings.JavaScriptEnabled = true;
@@ -53,6 +79,9 @@ namespace P42.Uno.HtmlExtensions
                     return await taskCompletionSource.Task;
                 }
             }
+            */
+            var uri = await html.ToTempFileUriAsync();
+            return await ToPdfAsync(uri, fileName, pageSize, margin);
         }
 
         /// <summary>

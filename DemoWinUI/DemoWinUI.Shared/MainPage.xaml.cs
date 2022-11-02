@@ -17,6 +17,9 @@ using Microsoft.UI.Xaml.Navigation;
 using P42.Uno.HtmlExtensions;
 using Windows.UI;
 using Windows.Storage;
+using System.Threading.Tasks;
+using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 
 #if __WASM__
@@ -72,40 +75,33 @@ namespace DemoWinUI
 
         private void _webView_NavigationStarting(WebView sender, WebViewXNavigationStartingEventArgs args)
         {
-            //throw new NotImplementedException();
         }
 
         private void _webView_NavigationFailed(object sender, WebViewXNavigationFailedEventArgs e)
         {
-            //throw new NotImplementedException();
         }
 
         private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine("MainPage.OnNavigationCompleted ");// + args.Uri);
-            //_toPngButton.IsEnabled = ToPngService.IsAvailable;
-            //_toPdfButton.IsEnabled = ToPdfService.IsAvailable;
-            //OnPrintClicked(null, null);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        Button _currentResourceButton;
+        StorageFile _currentFile;
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var assembly = GetType().Assembly;
-            var resourceId = ".Resources.HtmlForm.html";
-            System.Diagnostics.Debug.WriteLine("MainPage.OnToPngClicked resourceId = " + resourceId);
-            var resources = assembly.GetManifestResourceNames();
-            foreach (var resource in resources)
-                System.Diagnostics.Debug.WriteLine($"MainPage. Resource : [{resource}]");
-
-            if (resources.FirstOrDefault(r => r.EndsWith(resourceId)) is String newId)
-                _webView.NavigateToResource(newId, assembly);
-
+            _currentResourceButton = _loadHtmlFormButton;
+            await LoadResource(_currentResourceButton);
         }
 
-        void OnLoadTextClicked(object sender, RoutedEventArgs e)
+        async void OnLoadTextClicked(object sender, RoutedEventArgs e)
         {
-            var assembly = GetType().Assembly;
+            await LoadResource(sender);
+        }
+
+        async Task LoadResource(object sender)
+        {
             var resourceId = ".Resources.HtmlForm.html";
             if (sender is Button button && button.Content is string label)
             {
@@ -116,38 +112,33 @@ namespace DemoWinUI
                 else if (label.ToLower().Contains("cbracco"))
                     resourceId = ".Resources.cbracco.html";
             }
-            System.Diagnostics.Debug.WriteLine("MainPage.OnToPngClicked resourceId = " + resourceId);
-            var resources = assembly.GetManifestResourceNames();
-            if (resources.FirstOrDefault(r => r.EndsWith(resourceId)) is String newId)
-                _webView.NavigateToResource(newId, assembly);
-
-        }
-
-        async void OnToPngClicked(object sender, RoutedEventArgs e)
-        {
-            ShowSpinner();
-            if ( await _webView.ToPngAsync("WebView.png") is ToFileResult fileResult)
+            if (await ResourceAsStorageFile(resourceId) is StorageFile file)
             {
-                if (!fileResult.IsError)
-                {
-                    _messageTextBlock.Text = "Success: " + fileResult.StorageFile.Path;
-                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.StorageFile.Path) { FileName = "WebView.png" };
-                    var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PNG", shareFile);
-                    await Xamarin.Essentials.Share.RequestAsync(shareRequest);
-                }
-                else
-                {
-                    _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
-                }
+                _currentFile = file;
+                _webView.Source = new Uri(file.Path); ;
             }
-            HideSpinner();
         }
 
         async void OnToPdfClicked(object sender, RoutedEventArgs e)
         {
-            
-            ShowSpinner();
-            if (await _webView.ToPdfAsync("WebView.pdf") is ToFileResult fileResult)
+            if (!P42.Uno.HtmlExtensions.ToPdfService.IsAvailable)
+            {
+                _messageTextBlock.Text = "PDF NOT AVAILABLE";
+                return;
+            }
+
+            await ShowSpinner();
+
+            ToFileResult fileResult = null;
+            if (_fromWebViewToggleSwitch.IsOn)
+            {
+                if (await _webView.ToPdfAsync("WebView.pdf") is ToFileResult fileResult1)
+                    fileResult = fileResult1;
+            }
+            else if (await _currentFile.ToPdfAsync("WebView.pdf") is ToFileResult fileResult2)
+                fileResult = fileResult2;
+
+            if (fileResult != null)
             {
                 if (!fileResult.IsError)
                 {
@@ -161,6 +152,7 @@ namespace DemoWinUI
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+                        _messageTextBlock.Text = $"Exception: {ex.Message} ";
                     }
                 }
                 else
@@ -168,30 +160,59 @@ namespace DemoWinUI
                     _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
                 }
             }
-            HideSpinner();
+            else
+            {
+                _messageTextBlock.Text = "Error: Failed to generate PDF";
+            }
+
+            await HideSpinner();
             
         }
 
         int count = 0;
         async void OnPrintClicked(object sender, RoutedEventArgs e)
         {
-            
-            try
+            if (!P42.Uno.HtmlExtensions.PrintService.IsAvailable)
             {
-                if (P42.Uno.HtmlExtensions.PrintService.IsAvailable)
+                _messageTextBlock.Text = "PRINTING NOT AVAILABLE";
+                return;
+            }
+
+            await ShowSpinner();
+
+            if (_fromWebViewToggleSwitch.IsOn)
+            {
+                try
+                {
                     await _webView.PrintAsync("WebView PrintJob" + count++);
-                System.Diagnostics.Debug.WriteLine("MainPage.OnPrintClicked: DONE");
+                    _messageTextBlock.Text = "PRINTING DONE";
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+                    _messageTextBlock.Text = $"Exception: {ex.Message} ";
+                }
             }
-            catch (Exception ex)
+            else
             {
-                System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+                try
+                {
+                    await _currentFile.PrintAsync("WebView PrintJob" + count++);
+                    _messageTextBlock.Text = "PRINTING DONE";
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+                    _messageTextBlock.Text = $"Exception: {ex.Message} ";
+                }
             }
-            
+
+            await HideSpinner();
         }
 
         Grid _spinner;
         Microsoft.UI.Xaml.Controls.ProgressRing _ring;
-        void ShowSpinner()
+        async Task ShowSpinner()
         {
             if (_spinner is null)
             {
@@ -230,12 +251,38 @@ namespace DemoWinUI
             Grid.SetColumnSpan(_spinner, _grid.ColumnDefinitions.Count);
             _grid.Children.Add(_spinner);
             _ring.IsActive = true;
+            await Task.Delay(50);
+
         }
 
-        void HideSpinner()
+        async Task HideSpinner()
         {
             _grid.Children.Remove(_spinner);
             _ring.IsActive = false;
+            await Task.Delay(50);
+        }
+
+        async Task<StorageFile> ResourceAsStorageFile(string resourceId, Assembly asm = null)
+        {
+            if (string.IsNullOrWhiteSpace(resourceId))
+                throw new ArgumentException(nameof(resourceId));
+
+            asm = asm ?? GetType().Assembly;
+
+            if (asm.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is String resourceName)
+            {
+                using (var inStream = asm.GetManifestResourceStream(resourceName))
+                {
+                    var file = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName() + ".html");
+                    using (var outStream = File.OpenWrite(file.Path))
+                    {
+                        inStream.CopyTo(outStream);
+                    }
+                    return file;
+                }
+            }
+
+            return null;
         }
     }
 }

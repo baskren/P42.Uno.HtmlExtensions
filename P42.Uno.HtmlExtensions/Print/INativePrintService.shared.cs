@@ -11,27 +11,14 @@ namespace P42.Uno.HtmlExtensions
     /// <summary>
     /// Print service.
     /// </summary>
-    public interface INativePrintService
+    internal interface INativePrintService
     {
-        /// <summary>
-        /// Print the specified webView and jobName.
-        /// </summary>
-        /// <param name="webView">Web view.</param>
-        /// <param name="jobName">Job name.</param>
+        bool IsAvailable { get; }
+
         Task PrintAsync(WebView2 webView, string jobName);
 
-        /// <summary>
-        /// Print the specified HTML with jobName
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="jobName"></param>
-        Task PrintAsync(string html, string jobName);
+        Task PrintAsync(Uri uri, string jobName);
 
-        /// <summary>
-        /// Cans the print.
-        /// </summary>
-        /// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
-        bool IsAvailable();
 
     }
 }

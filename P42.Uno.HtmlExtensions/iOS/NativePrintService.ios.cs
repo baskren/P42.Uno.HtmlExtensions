@@ -14,8 +14,14 @@ namespace P42.Uno.HtmlExtensions
     /// <summary>
     /// Web view extensions service.
     /// </summary>
-    public class NativePrintService : UIPrintInteractionControllerDelegate, INativePrintService
+    class NativePrintService : UIPrintInteractionControllerDelegate, INativePrintService
     {
+        /// <summary>
+        /// Cans the print.
+        /// </summary>
+        /// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
+        public bool IsAvailable => UIPrintInteractionController.PrintingAvailable;
+
 
         /// <summary>
         /// Print the specified viewToPrint and jobName.
@@ -55,21 +61,13 @@ namespace P42.Uno.HtmlExtensions
 
         }
 
-        /// <summary>
-        /// Cans the print.
-        /// </summary>
-        /// <returns><c>true</c>, if print was caned, <c>false</c> otherwise.</returns>
-        public bool IsAvailable()
-        {
-            return UIPrintInteractionController.PrintingAvailable;
-        }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task PrintAsync(string html, string jobName)
+        public async Task PrintAsync(Uri uri, string jobName)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
 
-            if (!string.IsNullOrWhiteSpace(html))
+            //if (!string.IsNullOrWhiteSpace(html))
             {
                 var printInfo = UIPrintInfo.PrintInfo;
 
@@ -82,6 +80,11 @@ namespace P42.Uno.HtmlExtensions
                 printController.ShowsPaperSelectionForLoadedPapers = true;
                 printController.PrintInfo = printInfo;
                 printController.Delegate = this;
+
+                var web = new HtmlAgilityPack.HtmlWeb();
+                var doc = web.Load(uri.AbsoluteUri);
+                var html = doc.DocumentNode.OuterHtml;
+
                 printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
 
                 printController.Present(true, (printInteractionController, completed, error) =>

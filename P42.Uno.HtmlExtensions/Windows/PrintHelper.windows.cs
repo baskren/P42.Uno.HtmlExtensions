@@ -9,12 +9,14 @@ using Windows.Storage.Streams;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
+        /*
 
 namespace P42.Uno.HtmlExtensions
 {
     public class PrintHelper
     {
         const string CanvasName = "P42.Uno.HtmlExtensions.PrintCanvas";
+
         /// <summary>
         /// The percent of app's margin width, content is set at 85% (0.85) of the area's width
         /// </summary>
@@ -45,11 +47,6 @@ namespace P42.Uno.HtmlExtensions
         // Event callback which is called after print preview pages are generated.  Photos scenario uses this to do filtering of preview pages
         //protected event EventHandler PreviewPagesCreated;
 
-        Task<IRandomAccessStreamWithContentType> wideMarginsIconTask;
-        Task<IRandomAccessStreamWithContentType> moderateMarginsIconTask;
-        Task<IRandomAccessStreamWithContentType> narrowMarginsIconTask;
-
-
         /// <summary>
         ///  A hidden canvas used to hold pages we wish to print
         /// </summary>
@@ -64,16 +61,13 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-       
+
         internal static Page RootPage
         {
             get
             {
-                var rootFrame = Window.Current.Content as Microsoft.UI.Xaml.Controls.Frame;
-                var page = rootFrame?.Content as Microsoft.UI.Xaml.Controls.Page;
-                //var panel = page?.Content as Panel;
-                //var children = panel.Children.ToList();
-                return page;
+                var rootFrame = Platform.WinUiWindow.Content as Microsoft.UI.Xaml.Controls.Frame; //Window.Current.Content as Microsoft.UI.Xaml.Controls.Frame;
+                return rootFrame?.Content as Microsoft.UI.Xaml.Controls.Page;
             }
         }
 
@@ -93,21 +87,7 @@ namespace P42.Uno.HtmlExtensions
 
             printPreviewPages = new List<UIElement>();
 
-            /*
-            // Start these tasks early because we know we're going to need the
-            // streams in PrintTaskRequested.
-            //var wideMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/wideMargins.svg"));
-            var wideMarginsIconStream = GetType().Assembly.GetManifestResourceStream("P42.Uno.HtmlExtensions.Resources.wideMargins.svg");
-            var wideMarginsIconRandomStream = wideMarginsIconStream.AsRandomAccessStream();
-            var wideMarginsIconReference = RandomAccessStreamReference.CreateFromStream(wideMarginsIconRandomStream);
-            wideMarginsIconTask = wideMarginsIconReference.OpenReadAsync().AsTask();
 
-            var moderateMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/moderateMargins.svg"));
-            moderateMarginsIconTask = moderateMarginsIconReference.OpenReadAsync().AsTask();
-
-            var narrowMarginsIconReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///P42.Uno.HtmlExtensions/Assets/narrowMargins.svg"));
-            narrowMarginsIconTask = narrowMarginsIconReference.OpenReadAsync().AsTask();
-            */
         }
 
 
@@ -154,7 +134,6 @@ namespace P42.Uno.HtmlExtensions
         }
 
         public string JobName { get; private set; }
-
 
         /// <summary>
         /// Method that will generate print content for the scenario
@@ -206,26 +185,6 @@ namespace P42.Uno.HtmlExtensions
 
                 // Create a new list option
                 //var margins = printDetailedOptions.CreateItemListOption("Margins", "Margins");
-                /*
-                if (Forms9Patch.OsInfoService.Version >= new Version(10, 0, 17134, 0))
-                {
-                    margins.AddItem("WideMargins", "Wide", "Each margin is 20% of the paper size", await wideMarginsIconTask);
-                    margins.AddItem("ModerateMargins", "Moderate", "Each margin is 10% of the paper size", await moderateMarginsIconTask);
-                    margins.AddItem("NarrowMargins", "Narrow", "Each margin is 5% of the paper size", await narrowMarginsIconTask);
-                    // App tells the user some more information about what the feature means.
-                    margins.Description = "The space between the content of your document and the edge of the paper";
-                }
-                else
-                */
-                /*
-                {
-                    margins.AddItem("WideMargins", "Wide");
-                    margins.AddItem("ModerateMargins", "Moderate");
-                    margins.AddItem("NarrowMargins", "Narrow");
-                }
-                // The default is ModerateMargins
-                */
-
                 ApplicationContentMarginTop = 0.1;
                 ApplicationContentMarginLeft = 0.1;
                 //margins.TrySetValue("ModerateMargins");
@@ -288,19 +247,6 @@ namespace P42.Uno.HtmlExtensions
                     default:
                         break;
                 }
-                /*
-                if (Forms9Patch.OsInfoService.Version >= new Version(10, 0, 17134, 0))
-                {
-                    if (marginsValue == "NarrowMargins")
-                    {
-                        marginsOption.WarningText = "Narrow margins may not be supported by some printers";
-                    }
-                    else
-                    {
-                        marginsOption.WarningText = "";
-                    }
-                }
-                */
                 invalidatePreview = true;
             }
 
@@ -407,6 +353,6 @@ namespace P42.Uno.HtmlExtensions
         {
             throw new NotImplementedException();
         }
- 
     }
 }
+ */

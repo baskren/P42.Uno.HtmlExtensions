@@ -11,11 +11,11 @@ using P42.Uno.HtmlExtensions.Droid;
 //using Uno.UI;
 using System.Linq;
 using Windows.Storage;
-
+/*
 namespace P42.Uno.HtmlExtensions
 {
 
-    public class NativeToPngService : Java.Lang.Object, INativeToPngService
+    public class NativeToPngService : Java.Lang.Object //, INativeToPngService
     {
         /// <summary>
         /// Is HtmlToPNG available?
@@ -178,3 +178,4 @@ namespace P42.Uno.HtmlExtensions
     }
 
 }
+*/

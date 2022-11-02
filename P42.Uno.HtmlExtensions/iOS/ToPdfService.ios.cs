@@ -9,7 +9,7 @@ using Windows.Storage;
 
 namespace P42.Uno.HtmlExtensions
 {
-    public class NativeToPdfService : UIPrintInteractionControllerDelegate, INativeToPdfService
+    class NativeToPdfService : UIPrintInteractionControllerDelegate, INativeToPdfService
     {
         const string LocalStorageFolderName = "P42.Uno.HtmlExtensions.ToPdfService";
 
@@ -31,7 +31,7 @@ namespace P42.Uno.HtmlExtensions
 
         public bool IsAvailable => UIPrintInteractionController.PrintingAvailable && NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0));
 
-        public async Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
             {
@@ -52,7 +52,18 @@ namespace P42.Uno.HtmlExtensions
                     })
                     {
                         webView.NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync);
-                        webView.LoadHtmlString(html, null);
+                        //webView.LoadHtmlString(html, null);
+                        if (uri.IsFile)
+                        {
+                            var path = uri.AbsolutePath;
+                            var dir = Directory.GetParent(path).FullName;
+                            var readAccessUri = new Uri(dir, UriKind.Absolute);
+                            webView.LoadFileUrl(uri, readAccessUri);
+                        }
+                        else
+                        {
+                            webView.LoadRequest(new NSUrlRequest(uri));
+                        }
                         return await taskCompletionSource.Task;
                     }
                 }
