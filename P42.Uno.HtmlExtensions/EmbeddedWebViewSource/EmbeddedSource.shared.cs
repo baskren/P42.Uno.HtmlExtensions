@@ -24,7 +24,7 @@ namespace P42.Uno.HtmlExtensions
         static readonly object _locker = new object();
         static readonly Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
 
-        // DO NOT CHANGE Environment.ApplicationDataPath to another path.  This is used to pass EmbeddedResource Fonts to UWP Text elements and there is zero flexibility here.
+        // DO NOT CHANGE Environment.ApplicationDataPath to another path.  This is used to pass EmbeddedResource Fonts to Windows Text elements and there is zero flexibility here.
         /// <summary>
         /// Path to local cache location for Assembly's embedded resources
         /// </summary>

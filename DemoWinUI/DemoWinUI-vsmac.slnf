@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "DemoWinUI.sln",
+    "projects": [
+		"DemoWinUI.Shared\\DemoWinUI.Shared.shproj",
+
+		"DemoWinUI.Mobile\\DemoWinUI.Mobile.csproj",
+
+		"DemoWinUI.Wasm\\DemoWinUI.Wasm.csproj",
+
+		"DemoWinUI.Skia.Gtk\\DemoWinUI.Skia.Gtk.csproj",
+    ]
+  }
+}

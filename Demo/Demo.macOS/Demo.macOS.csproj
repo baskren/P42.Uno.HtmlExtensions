@@ -92,14 +92,6 @@
     <ImageAsset Include="Assets.xcassets\unologo.imageset\unoplatform.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
-      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
-      <Name>P42.Uno.CompressionBridge</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.MacOS.csproj">
-      <Project>{b50407ab-0a1d-4b77-8b64-1be0511551ec}</Project>
-      <Name>P42.Uno.HtmlExtensions.MacOS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.MacOS.csproj">
       <Project>{d4db88a1-b134-405b-9836-da422a833667}</Project>
       <Name>P42.Uno.Xamarin.Essentials.MacOS</Name>

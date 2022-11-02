@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
-      <!-- 
+    <!-- 
 			If, in the same solution, you are referencing a project that uses https://github.com/onovotny/MSBuildSdkExtras,
 			you need to make sure that the version provided here matches https://github.com/onovotny/MSBuildSdkExtras/blob/master/Source/MSBuild.Sdk.Extras/DefaultItems/ImplicitPackages.targets#L11.
 			This is not an issue when libraries are referenced through nuget packages. See https://github.com/unoplatform/uno/issues/446 for more details.
@@ -139,20 +139,6 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
-      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
-      <Name>P42.Uno.CompressionBridge</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.UWP.csproj">
-      <Project>{18c96c9b-3560-4172-97ec-86c54e00f3cb}</Project>
-      <Name>P42.Uno.HtmlExtensions.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.UWP.csproj">
-      <Project>{9ebeba17-b88d-4145-9b32-4448f369b45a}</Project>
-      <Name>P42.Uno.Xamarin.Essentials.UWP</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" Condition="Exists('..\Demo.Shared\Demo.Shared.projitems')" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

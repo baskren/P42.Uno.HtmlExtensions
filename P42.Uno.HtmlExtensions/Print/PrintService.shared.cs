@@ -33,7 +33,14 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="jobName">Job name.</param>
         public static async Task PrintAsync(this WebView2 webview, string jobName)
         {
-            await (NativePrintService?.PrintAsync(webview, jobName) ?? Task.CompletedTask);
+            try
+            {
+                await (NativePrintService?.PrintAsync(webview, jobName) ?? Task.CompletedTask);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine($"PrintService. : ");
+            }
         }
 
         /// <summary>

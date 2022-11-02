@@ -1,4 +1,5 @@
-﻿using Android.Runtime;
+﻿using Android.Content;
+using Android.Runtime;
 using Android.Views;
 using System;
 using System.Reflection;
@@ -8,6 +9,20 @@ namespace P42.Uno.HtmlExtensions
 {
     static class AndroidWebViewExtensions
     {
+        public static Android.Webkit.WebView GetAndroidWebView(this Microsoft.UI.Xaml.Controls.WebView2 webView2)
+        {
+            if (webView2 is Android.Views.ViewGroup group)
+            {
+                for (int i = 0; i < group.ChildCount; i++)
+                {
+                    if (group.GetChildAt(i) is Android.Webkit.WebView droidWebView)
+                        return droidWebView;
+                }
+            }
+
+            return null;
+        }
+
         public static int ContentWidth(this Android.Webkit.WebView webView)
         {
             var method = webView.GetType().GetMethod("ComputeHorizontalScrollRange", BindingFlags.NonPublic | BindingFlags.Instance);

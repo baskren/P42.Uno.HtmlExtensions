@@ -9,7 +9,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class ToPdfService
     {
-#if __IOS__ || __ANDROID__ 
+#if __IOS__ || __ANDROID__ || NET6_0_WINDOWS10_0_19041_0
         static INativeToPdfService _nativeToPdfService;
         static INativeToPdfService NativeToPdfService =>
             _nativeToPdfService = _nativeToPdfService ?? new NativeToPdfService();

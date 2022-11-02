@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions;
-using Uno.UI.Xaml;
+//using Uno.UI.Xaml;
 using Microsoft.UI.Xaml;
 
 namespace P42.Uno.HtmlExtensions

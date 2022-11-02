@@ -63,8 +63,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
     <Page Remove="Themes\Generic.xaml" />
     <EmbeddedResource Remove="Themes\Generic.xaml" />
-    <Compile Include="**\*.uwp.cs" />
-    <Compile Include="**\*.uwp.*.cs" />
+    <Compile Include="**\*.windows.cs" />
+    <Compile Include="**\*.windows.*.cs" />
   </ItemGroup>
 
   <!-- .NetStandard bait -->

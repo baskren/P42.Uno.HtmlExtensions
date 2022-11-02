@@ -151,17 +151,9 @@
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\P42.Uno.CompressionBridge\P42.Uno.CompressionBridge.csproj">
-      <Project>{88b2eb26-2295-41fc-9213-031f20ea12c9}</Project>
-      <Name>P42.Uno.CompressionBridge</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.iOS.csproj">
-      <Project>{346350b2-63bf-4f01-9b26-30d11a8ead89}</Project>
-      <Name>P42.Uno.HtmlExtensions.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\P42.Uno.Xamarin.Essentials\Xamarin.Essentials\P42.Uno.Xamarin.Essentials.iOS.csproj">
-      <Project>{78be7566-7584-4a8d-8471-802ac0496677}</Project>
-      <Name>P42.Uno.Xamarin.Essentials.iOS</Name>
+    <ProjectReference Include="..\..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj">
+      <Project>{a50b0434-ce4d-451c-98c8-1137e48082d7}</Project>
+      <Name>P42.Uno.HtmlExtensions</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" Condition="Exists('..\Demo.Shared\Demo.Shared.projitems')" />
