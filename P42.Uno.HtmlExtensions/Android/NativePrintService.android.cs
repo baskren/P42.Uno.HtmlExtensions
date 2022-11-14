@@ -10,6 +10,7 @@ using Android.Views;
 using P42.Uno.HtmlExtensions.Droid;
 //using Uno.UI;
 using Microsoft.UI.Xaml.Controls;
+using static Android.Icu.Util.LocaleData;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -28,7 +29,7 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-        public async Task PrintAsync(WebView2 webView2, string jobName)
+        public async Task PrintAsync(WebView webView2, string jobName)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 throw new Exception("Cannot print for Android versions older than Kitkat");
@@ -38,42 +39,59 @@ namespace P42.Uno.HtmlExtensions
                 droidWebView.Settings.JavaScriptEnabled = true;
                 droidWebView.Settings.DomStorageEnabled = true;
                 droidWebView.SetLayerType(Android.Views.LayerType.Software, null);
-
+                
                 // Only valid for API 19+
                 if (string.IsNullOrWhiteSpace(jobName))
-                    jobName = await webView2.ExecuteScriptAsync("document.title");
+                {
+                    var javaResult = await droidWebView.EvaluateJavaScriptAsync("document.title"); 
+                    jobName = javaResult?.ToString();
+                }
                 if (string.IsNullOrWhiteSpace(jobName))
                     jobName = AppInfo.Name;
+
                 var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
                 printMgr.Print(jobName, droidWebView.CreatePrintDocumentAdapter(jobName), null);
 
                 await Task.CompletedTask;
             }
-
-            throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
+            else
+                throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
         }
 
         public async Task PrintAsync(Uri uri, string jobName)
         {
-            var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-            using (var webView = new Android.Webkit.WebView(Android.App.Application.Context))
+            
+            using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
             {
-                webView.Settings.JavaScriptEnabled = true;
-                webView.Settings.DomStorageEnabled = true;
+                droidWebView.Settings.AllowFileAccess = true;
+                droidWebView.Settings.AllowFileAccessFromFileURLs = true;
+                droidWebView.Settings.AllowUniversalAccessFromFileURLs = true;
+                droidWebView.Settings.JavaScriptEnabled = true;
+                droidWebView.Settings.DomStorageEnabled = true;
+                 
 #pragma warning disable CS0618 // Type or member is obsolete
-                webView.DrawingCacheEnabled = true;
+                droidWebView.DrawingCacheEnabled = true;
 #pragma warning restore CS0618 // Type or member is obsolete
-                webView.SetLayerType(LayerType.Software, null);
+                droidWebView.SetLayerType(LayerType.Software, null);
+                droidWebView.Layout(36, 36, (int)((PageSize.Default.Width - 0.5) * 72), (int)((PageSize.Default.Height - 0.5) * 72));
 
-                webView.Layout(36, 36, (int)((PageSize.Default.Width - 0.5) * 72), (int)((PageSize.Default.Height - 0.5) * 72));
-                using (var webViewCallBack = new WebViewCallBack(taskCompletionSource, jobName, PageSize.Default, null, OnPageFinishedAsync))
+                var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
+                try
                 {
-                    webView.SetWebViewClient(webViewCallBack);
-                    //webView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
-                    webView.LoadUrl(uri.AbsoluteUri);
-                    await taskCompletionSource.Task;
+                    using (var webViewCallBack = new WebViewCallBack(taskCompletionSource, jobName, PageSize.Default, null, OnPageFinishedAsync))
+                    {
+                        droidWebView.SetWebViewClient(webViewCallBack);
+                        droidWebView.LoadUrl(uri.AbsoluteUri);
+                        await taskCompletionSource.Task;
+                    }
+                } 
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"NativePrintService. : ");
+                    taskCompletionSource.SetResult(new ToFileResult(ex.Message));
                 }
             }
+            
         }
 
         static async Task OnPageFinishedAsync(Android.Webkit.WebView webView, string jobName, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource)
@@ -81,10 +99,11 @@ namespace P42.Uno.HtmlExtensions
             if (string.IsNullOrWhiteSpace(jobName))
                 jobName = AppInfo.Name;
             var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
-            await Task.Delay(1000); // allow a bit more time for the layout to complete ... there has to be a better way to do this!?!?;
             printMgr.Print(jobName, webView.CreatePrintDocumentAdapter(jobName), null);
-            taskCompletionSource.SetResult(new ToFileResult(storageFile: null));
+            taskCompletionSource.TrySetResult(new ToFileResult(storageFile: null));
+            await Task.CompletedTask;
         }
+
     }
 
 }

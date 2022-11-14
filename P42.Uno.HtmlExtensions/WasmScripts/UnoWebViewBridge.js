@@ -58,13 +58,27 @@
             }
             else if (event.data.Method == 'InvokeScriptAsync') {
                 try {
+                    let script = event.data.Script;
+                    console.log('script: ' + script);
+                    var result = eval(script);
+                    console.log('result: ' + result);
+                    if (result === undefined || result === null)
+                        result = "";
+                    UnoWebViewBridge_PostMessage({ Method: event.data.Method, TaskId: event.data.TaskId, Result: result });
+                } catch (error) {
+                    UnoWebViewBridge_PostMessage({ Method: event.data.Method, TaskId: event.data.TaskId, Error: error });
+                }
+                return;
+            }
+            else if (event.data.Method == 'InvokeScriptFunctionAsync') {
+                try {
                     let args = "";
                     if (event.data.Payload !== undefined && event.data.Payload !== null)
                         args = event.data.Payload.join();
                     let script = event.data.FunctionName + '(' + args + ');'
                     console.log('script: ' + script);
                     var result = eval(script);
-                    console.log('resutl: ' + result);
+                    console.log('result: ' + result);
                     if (result === undefined || result === null)
                         result = "";
                     UnoWebViewBridge_PostMessage({ Method: event.data.Method, TaskId: event.data.TaskId, Result: result });

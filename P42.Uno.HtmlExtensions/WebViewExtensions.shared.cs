@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if __WASM__ 
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
+#else
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
+#endif
+
 namespace P42.Uno.HtmlExtensions
 {
     /// <summary>
@@ -16,7 +24,7 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="unoWebView"></param>
         /// <returns></returns>
-        public static async Task<string> GetSourceAsHtmlAsync(this Microsoft.UI.Xaml.Controls.WebView2 unoWebView)
+        public static async Task<string> GetSourceAsHtmlAsync(this BaseWebView unoWebView)
         {
             var result = await unoWebView.ExecuteScriptAsync( "document.documentElement.outerHTML" );
             return result;

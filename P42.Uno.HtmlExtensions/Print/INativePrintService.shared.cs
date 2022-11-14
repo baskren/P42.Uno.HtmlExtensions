@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 #if __WASM__
-using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
-using WebView2 = Microsoft.UI.Xaml.Controls.WebView2;
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
 #endif
 
 namespace P42.Uno.HtmlExtensions
@@ -15,7 +17,7 @@ namespace P42.Uno.HtmlExtensions
     {
         bool IsAvailable { get; }
 
-        Task PrintAsync(WebView2 webView, string jobName);
+        Task PrintAsync(BaseWebView webView, string jobName);
 
         Task PrintAsync(Uri uri, string jobName);
 

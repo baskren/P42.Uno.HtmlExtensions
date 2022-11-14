@@ -20,10 +20,13 @@ namespace P42.Uno.HtmlExtensions
 	{
 		private const string BlankUrl = "about:blank";
 		private static readonly Uri BlankUri = new Uri(BlankUrl);
+		internal static ulong instances;
+
 
 		private object _internalSource;
 		private bool _isLoaded;
 		private string _invokeScriptResponse = string.Empty;
+		internal ulong _instanceId = instances++;
 
 		/// <summary>
 		/// Constructor
@@ -98,13 +101,24 @@ namespace P42.Uno.HtmlExtensions
 				(s, e) => ((WebViewX)s)?.OnScrollEnabledChangedPartial((bool)e.NewValue)));
 
 		partial void OnScrollEnabledChangedPartial(bool scrollingEnabled);
-		#endregion
+        #endregion
+
+        #region DocumentTitle
+		public string DocumentTitle
+		{
+			get
+			{
+				var task = Task.Run(GetDocumentTitleAsync);
+				return (string)task.Result;
+			}
+		}
+        #endregion
 
 #pragma warning disable 67
-		/// <summary>
-		/// Fired when navigation is starting
-		/// </summary>
-		public event TypedEventHandler<WebViewX, WebViewXNavigationStartingEventArgs> NavigationStarting;
+        /// <summary>
+        /// Fired when navigation is starting
+        /// </summary>
+        public event TypedEventHandler<WebViewX, WebViewXNavigationStartingEventArgs> NavigationStarting;
 		/// <summary>
 		/// Fired when navigation has completed
 		/// </summary>

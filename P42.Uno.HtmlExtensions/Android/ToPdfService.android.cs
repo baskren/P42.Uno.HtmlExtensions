@@ -32,21 +32,32 @@ namespace P42.Uno.HtmlExtensions
         {
             using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
             {
+                droidWebView.Settings.AllowFileAccess = true;
+                droidWebView.Settings.AllowFileAccessFromFileURLs = true;
+                droidWebView.Settings.AllowUniversalAccessFromFileURLs = true;
                 droidWebView.Settings.JavaScriptEnabled = true;
 #pragma warning disable CS0618 // Type or member is obsolete
                 droidWebView.DrawingCacheEnabled = true;
 #pragma warning restore CS0618 // Type or member is obsolete
                 droidWebView.SetLayerType(LayerType.Software, null);
                 droidWebView.Layout(0, 0, (int)System.Math.Ceiling(pageSize.Width), (int)System.Math.Ceiling(pageSize.Height));
-                //droidWebView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
 
-                droidWebView.LoadUrl(uri.AbsoluteUri);
-
+                System.Diagnostics.Debug.WriteLine($"NativeToPdfService.A LoadUrl({uri.AbsolutePath}) : ");
                 var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-                using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
+                try
                 {
-                    droidWebView.SetWebViewClient(callback);
-                    return await taskCompletionSource.Task;
+                    using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
+                    {
+                        droidWebView.SetWebViewClient(callback);
+                        droidWebView.LoadUrl(uri.AbsoluteUri);
+
+                        return await taskCompletionSource.Task;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"NativePrintService. : ");
+                    return new ToFileResult(ex.Message);
                 }
             }
         }
@@ -61,25 +72,6 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(string html, string fileName, PageSize pageSize, PageMargin margin)
         {
-            /*
-            using (var droidWebView = new Android.Webkit.WebView(Android.App.Application.Context))
-            {
-                droidWebView.Settings.JavaScriptEnabled = true;
-#pragma warning disable CS0618 // Type or member is obsolete
-                droidWebView.DrawingCacheEnabled = true;
-#pragma warning restore CS0618 // Type or member is obsolete
-                droidWebView.SetLayerType(LayerType.Software, null);
-                droidWebView.Layout(0, 0, (int)System.Math.Ceiling(pageSize.Width), (int)System.Math.Ceiling(pageSize.Height));
-                droidWebView.LoadData(html, "text/html; charset=utf-8", "UTF-8");
-
-                var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-                using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
-                {
-                    droidWebView.SetWebViewClient(callback);
-                    return await taskCompletionSource.Task;
-                }
-            }
-            */
             var uri = await html.ToTempFileUriAsync();
             return await ToPdfAsync(uri, fileName, pageSize, margin);
         }
@@ -92,20 +84,16 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="pageSize"></param>
         /// <param name="margin"></param>
         /// <returns></returns>
-        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView2 webView2, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView webView2, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
             {
                 droidWebView.SetLayerType(LayerType.Software, null);
-                droidWebView.Settings.JavaScriptEnabled = true;
-#pragma warning disable CS0618 // Type or member is obsolete
-                droidWebView.DrawingCacheEnabled = true;
-                droidWebView.BuildDrawingCache();
-#pragma warning restore CS0618 // Type or member is obsolete
                 var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
                 using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
                 {
                     droidWebView.SetWebViewClient(callback);
+                    droidWebView.Reload();
                     return await taskCompletionSource.Task;
                 }
             }
@@ -272,7 +260,7 @@ namespace Android.Print
         public override void OnWriteFailed(ICharSequence error)
         {
             base.OnWriteFailed(error);
-            _taskCompletionSource.SetResult(new ToFileResult(error.ToString()));
+            _taskCompletionSource.SetResult(new ToFileResult(error?.ToString() ?? "PDF File Write Failed"));
         }
     }
 

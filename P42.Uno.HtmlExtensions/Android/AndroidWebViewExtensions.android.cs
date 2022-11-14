@@ -9,7 +9,7 @@ namespace P42.Uno.HtmlExtensions
 {
     static class AndroidWebViewExtensions
     {
-        public static Android.Webkit.WebView GetAndroidWebView(this Microsoft.UI.Xaml.Controls.WebView2 webView2)
+        public static Android.Webkit.WebView GetAndroidWebView(this Microsoft.UI.Xaml.FrameworkElement webView2)
         {
             if (webView2 is Android.Views.ViewGroup group)
             {

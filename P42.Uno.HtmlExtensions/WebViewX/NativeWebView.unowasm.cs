@@ -77,6 +77,7 @@ namespace P42.Uno.HtmlExtensions
                         switch (method.ToString())
                         {
                             case nameof(InvokeScriptAsync):
+                            case nameof(InvokeScriptFunctionAsync):
                                 {
                                     if (message.TryGetValue("TaskId", out var taskId) && 
                                         TCSs.TryGetValue(taskId.ToString(), out var tcs))
@@ -250,16 +251,25 @@ namespace P42.Uno.HtmlExtensions
         }
 
 
-        internal async Task<string> InvokeScriptAsync(string functionName, string[] arguments)
+        internal async Task<string> InvokeScriptFunctionAsync(string functionName, string[] arguments)
         {
             var tcs = new TaskCompletionSource<string>();
             var taskId = Guid.NewGuid().ToString();
             TCSs.Add(taskId, tcs);
-            WebAssemblyRuntime.InvokeJS(new ScriptMessage(this, taskId, functionName, arguments));
+            WebAssemblyRuntime.InvokeJS(new ScriptFunctionMessage(this, taskId, functionName, arguments));
             return await tcs.Task;
         }
 
-        
+        internal async Task<string> InvokeScriptAsync(string script)
+        {
+            var tcs = new TaskCompletionSource<string>();
+            var taskId = Guid.NewGuid().ToString();
+            TCSs.Add(taskId, tcs);
+            WebAssemblyRuntime.InvokeJS(new ScriptMessage(this, taskId, script));
+            return await tcs.Task;
+        }
+
+
 
         internal void SetInternalSource(object source)
         {
@@ -353,13 +363,36 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
-        class ScriptMessage : Message<string[]>
+        class ScriptMessage : Message
+        {
+            public string Script { get; private set; }
+
+            public string TaskId { get; private set;}
+
+            public ScriptMessage(NativeWebView nativeWebView, string taskId, string script, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
+                : base(nativeWebView, callerName)
+            {
+                Script = script;
+                TaskId = taskId;
+            }
+
+            public override Dictionary<string, object> ToDictionary()
+            {
+                var result = base.ToDictionary();
+                result[nameof(Script)] = Script;
+                result[nameof(TaskId)] = TaskId;
+                return result;
+            }
+        }
+
+
+        class ScriptFunctionMessage : Message<string[]>
         {
             public string FunctionName { get; private set; }
 
             public string TaskId { get; private set; }
 
-            public ScriptMessage(NativeWebView nativeWebView, string taskId, string functionName, string[] arguments, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null) 
+            public ScriptFunctionMessage(NativeWebView nativeWebView, string taskId, string functionName, string[] arguments, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null) 
                 : base(nativeWebView, arguments, callerName)
             {
                 FunctionName = functionName;

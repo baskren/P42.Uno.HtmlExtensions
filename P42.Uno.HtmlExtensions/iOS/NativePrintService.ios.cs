@@ -6,6 +6,14 @@ using UIKit;
 using WebKit;
 using Microsoft.UI.Xaml.Controls;
 
+#if __WASM__
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
+#else
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
+#endif
+
 namespace P42.Uno.HtmlExtensions
 {
     // Just in case this doesn't work for MacOS, take a look at:
@@ -28,7 +36,7 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="unoWebView">View to print.</param>
         /// <param name="jobName">Job name.</param>
-        public async Task PrintAsync(WebView2 unoWebView, string jobName)
+        public async Task PrintAsync(BaseWebView unoWebView, string jobName)
         {
             await unoWebView.ExecuteScriptAsync("window.print();");
 
@@ -67,32 +75,29 @@ namespace P42.Uno.HtmlExtensions
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
 
-            //if (!string.IsNullOrWhiteSpace(html))
+            var printInfo = UIPrintInfo.PrintInfo;
+
+            printInfo.JobName = jobName;
+            printInfo.Duplex = UIPrintInfoDuplex.None;
+            printInfo.OutputType = UIPrintInfoOutputType.General;
+
+            var printController = UIPrintInteractionController.SharedPrintController;
+            printController.ShowsPageRange = true;
+            printController.ShowsPaperSelectionForLoadedPapers = true;
+            printController.PrintInfo = printInfo;
+            printController.Delegate = this;
+
+            var web = new HtmlAgilityPack.HtmlWeb();
+            var doc = web.Load(uri.AbsoluteUri);
+            var html = doc.DocumentNode.OuterHtml;
+
+            printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
+
+            printController.Present(true, (printInteractionController, completed, error) =>
             {
-                var printInfo = UIPrintInfo.PrintInfo;
+                System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync : PRESENTED completed[" + completed + "] error[" + error + "]");
+            });
 
-                printInfo.JobName = jobName;
-                printInfo.Duplex = UIPrintInfoDuplex.None;
-                printInfo.OutputType = UIPrintInfoOutputType.General;
-
-                var printController = UIPrintInteractionController.SharedPrintController;
-                printController.ShowsPageRange = true;
-                printController.ShowsPaperSelectionForLoadedPapers = true;
-                printController.PrintInfo = printInfo;
-                printController.Delegate = this;
-
-                var web = new HtmlAgilityPack.HtmlWeb();
-                var doc = web.Load(uri.AbsoluteUri);
-                var html = doc.DocumentNode.OuterHtml;
-
-                printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
-
-                printController.Present(true, (printInteractionController, completed, error) =>
-                {
-                    System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync : PRESENTED completed[" + completed + "] error[" + error + "]");
-                });
-
-            }
         }
 
     }

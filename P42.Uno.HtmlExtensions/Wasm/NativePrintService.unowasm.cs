@@ -28,10 +28,13 @@ namespace P42.Uno.HtmlExtensions
 
         internal static Microsoft.UI.Xaml.Controls.Panel RootPanel => RootPage?.Content as Panel;
 
-        public bool IsAvailable()
+        public bool IsAvailable
         {
-            var result = WebAssemblyRuntime.InvokeJS("typeof window.print == 'function';");
-            return result == "true";
+            get
+            {
+                var result = WebAssemblyRuntime.InvokeJS("typeof window.print == 'function';");
+                return result == "true";
+            }
         }
 
         public async Task PrintAsync(WebView2 webView, string jobName)
@@ -80,6 +83,24 @@ namespace P42.Uno.HtmlExtensions
                 return;
             }
             throw new Exception("Cannot locate TaskCompletionSource for WebView.NavigationToString");
+        }
+
+        public async Task PrintAsync(Uri uri, string jobName)
+        {
+            var webView = new WebView2();
+            webView.Opacity = 0.01;
+            webView.NavigationCompleted += OnNavigationComplete;
+            webView.NavigationFailed += OnNavigationFailed;
+
+            RootPanel.Children.Add(webView);
+
+            System.Diagnostics.Debug.WriteLine($"NativePrintService.PrintAsync start NavigateToString uro: [{uri}] ");
+            var tcs = new TaskCompletionSource<bool>();
+            webView.Tag = tcs;
+            webView.Navigate(uri);
+            if (await tcs.Task)
+                await PrintAsync(webView, jobName);
+            RootPanel.Children.Remove(webView);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Android.Graphics;
 using Android.OS;
 using Android.Views;
+using Java.Net;
 using System;
 using System.Threading.Tasks;
 
@@ -39,6 +40,7 @@ namespace P42.Uno.HtmlExtensions.Droid
                 _complete = true;
                 MainThread.BeginInvokeOnMainThread(() => 
                 {
+                    view.SetWebViewClient(null);
                     _onPageFinished?.Invoke(view, _fileName, _pageSize, _margin, _taskCompletionSource); 
                 });
             }
@@ -47,13 +49,27 @@ namespace P42.Uno.HtmlExtensions.Droid
         public override void OnReceivedError(Android.Webkit.WebView view, Android.Webkit.IWebResourceRequest request, Android.Webkit.WebResourceError error)
         {
             base.OnReceivedError(view, request, error);
-            _taskCompletionSource.SetResult(new ToFileResult(error.Description));
+
+            var url = view.Url;
+            if (url != null && url == request.Url.ToString())
+            {
+                System.Diagnostics.Debug.WriteLine($"WebViewCallBack.OnReceivedError : {error?.Description} {request.Url}");
+                view.SetWebViewClient(null);
+                _taskCompletionSource.TrySetResult(new ToFileResult(error.Description));
+            }
         }
 
         public override void OnReceivedHttpError(Android.Webkit.WebView view, Android.Webkit.IWebResourceRequest request, Android.Webkit.WebResourceResponse errorResponse)
         {
             base.OnReceivedHttpError(view, request, errorResponse);
-            _taskCompletionSource.SetResult(new ToFileResult(errorResponse.ReasonPhrase));
+
+            var url = view.Url;
+            if (url != null && url == request.Url.ToString())
+            {
+                System.Diagnostics.Debug.WriteLine($"WebViewCallBack.OnReceivedError : {errorResponse?.ReasonPhrase} {request.Url}");
+                view.SetWebViewClient(null);
+                _taskCompletionSource.TrySetResult(new ToFileResult(errorResponse.ReasonPhrase));
+            }
         }
 
         public override bool OnRenderProcessGone(Android.Webkit.WebView view, Android.Webkit.RenderProcessGoneDetail detail)

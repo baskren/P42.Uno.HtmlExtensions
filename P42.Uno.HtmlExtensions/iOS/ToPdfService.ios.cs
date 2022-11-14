@@ -3,9 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using CoreGraphics;
 using Foundation;
+using Microsoft.UI.Xaml.Controls;
 using UIKit;
 using WebKit;
 using Windows.Storage;
+
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -71,7 +74,7 @@ namespace P42.Uno.HtmlExtensions
             return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
         }
 
-        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView2 unoWebView, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(BaseWebView unoWebView, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
             {

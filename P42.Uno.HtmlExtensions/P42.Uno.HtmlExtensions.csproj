@@ -25,6 +25,8 @@
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
     <Compile Include="**\*.android.cs" />
     <Compile Include="**\*.android.*.cs" />
+    <Compile Include="**\*.uno.cs" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -33,6 +35,8 @@
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('ios')) OR $(TargetFramework.ToLower().Contains('maccatalyst'))">
     <Compile Include="**\*.ios.cs" />
     <Compile Include="**\*.ios.*.cs" />
+    <Compile Include="**\*.uno.cs" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -41,6 +45,8 @@
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('macos')) OR $(TargetFramework.ToLower().Contains('xamarin.mac'))">
     <Compile Include="**\*.macos.cs" />
     <Compile Include="**\*.macos.*.cs" />
+    <Compile Include="**\*.uno.cs" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -53,14 +59,16 @@
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.5.14" />
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
     <Compile Include="**\*.tizen.cs" />
     <Compile Include="**\*.tizen.*.cs" />
+    <Compile Include="**\*.uno.cs" />
   </ItemGroup>
 
   <!-- WinUI Windows -->
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.3" />
     <Page Remove="Themes\Generic.xaml" />
     <EmbeddedResource Remove="Themes\Generic.xaml" />
     <Compile Include="**\*.windows.cs" />
@@ -72,6 +80,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <Compile Include="**\*.netstandard.cs" />
     <Compile Include="**\*.netstandard.*.cs" />
+    <Compile Include="**\*.uno.cs" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Platform.shared.cs" />

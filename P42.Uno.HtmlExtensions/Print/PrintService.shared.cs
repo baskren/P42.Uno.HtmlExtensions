@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 //using Microsoft.UI.Xaml.Controls;
-#if __WASM__
-using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
+#if __WASM__ 
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
-using WebView2 = Microsoft.UI.Xaml.Controls.WebView2;
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
 #endif
 
 namespace P42.Uno.HtmlExtensions
@@ -45,7 +48,7 @@ namespace P42.Uno.HtmlExtensions
         /// <summary>
         /// Print HTML in file
         /// </summary>
-        /// <param name="html"></param>
+        /// <param name="file"></param>
         /// <param name="jobName"></param>
         public static async Task PrintAsync(this StorageFile file, string jobName)
             => await new Uri(file.Path).PrintAsync(jobName);
@@ -66,7 +69,7 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="webview">Webview.</param>
         /// <param name="jobName">Job name.</param>
-        public static async Task PrintAsync(this WebView2 webview, string jobName)
+        public static async Task PrintAsync(this BaseWebView webview, string jobName)
             => await (NativePrintService?.PrintAsync(webview, jobName) ?? Task.CompletedTask);
         
 

@@ -22,17 +22,6 @@ using System.Reflection;
 using static System.Net.Mime.MediaTypeNames;
 
 
-#if __WASM__
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
-using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
-#else
-using WebView = Microsoft.UI.Xaml.Controls.WebView2;
-//using WebViewNavigationCompletedEventArgs = Microsoft.UI.Xaml.Controls.WebViewNavigationCompletedEventArgs;
-using WebViewNavigationCompletedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs;
-using WebViewXNavigationStartingEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs;
-using WebViewXNavigationFailedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs;
-#endif
-
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace DemoWinUI
@@ -42,7 +31,10 @@ namespace DemoWinUI
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        WebView _webView = new WebView
+
+        //Microsoft.Web.WebView2.Core.CoreWebView2DownloadState;
+
+        P42.UI.Xaml.Controls.WebView2 _webView = new P42.UI.Xaml.Controls.WebView2
         {
         };
 
@@ -57,9 +49,6 @@ namespace DemoWinUI
             Grid.SetRow(_webView, 3);
             _grid.Children.Add(_webView);
 
-            _webView.NavigationCompleted += OnNavigationCompleted;
-            //_webView.NavigationFailed += _webView_NavigationFailed;
-            _webView.NavigationStarting += _webView_NavigationStarting;
 
             _webView.SizeChanged += _webView_SizeChanged;
 
@@ -71,19 +60,6 @@ namespace DemoWinUI
         private void _webView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _messageTextBlock.Text = e.NewSize.ToString();
-        }
-
-        private void _webView_NavigationStarting(WebView sender, WebViewXNavigationStartingEventArgs args)
-        {
-        }
-
-        private void _webView_NavigationFailed(object sender, WebViewXNavigationFailedEventArgs e)
-        {
-        }
-
-        private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigationCompleted ");// + args.Uri);
         }
 
         Button _currentResourceButton;
@@ -102,17 +78,20 @@ namespace DemoWinUI
 
         async Task LoadResource(object sender)
         {
-            var resourceId = ".Resources.HtmlForm.html";
+            var resourceId = ".HtmlForm.html";
             if (sender is Button button && button.Content is string label)
             {
                 if (label.ToLower().Contains("html form"))
-                    resourceId = ".Resources.HtmlForm.html";
+                    resourceId = ".HtmlForm.html";
                 else if (label.ToLower().Contains("uno html"))
-                    resourceId = ".Resources.platform.uno.html";
+                {
+                    _currentFile = null;
+                    _webView.Source = new Uri("https://platform.uno");
+                }
                 else if (label.ToLower().Contains("cbracco"))
-                    resourceId = ".Resources.cbracco.html";
+                    resourceId = ".cbracco.html";
             }
-            if (await ResourceAsStorageFile(resourceId) is StorageFile file)
+            if (await P42.Uno.HtmlExtensions.EmbeddedResourceExtensions.ResourceAsStorageFile(resourceId) is StorageFile file)
             {
                 _currentFile = file;
                 _webView.Source = new Uri(file.Path); ;
@@ -135,7 +114,7 @@ namespace DemoWinUI
                 if (await _webView.ToPdfAsync("WebView.pdf") is ToFileResult fileResult1)
                     fileResult = fileResult1;
             }
-            else if (await _currentFile.ToPdfAsync("WebView.pdf") is ToFileResult fileResult2)
+            else if (_currentFile != null &&  await _currentFile.ToPdfAsync("WebView.pdf") is ToFileResult fileResult2)
                 fileResult = fileResult2;
 
             if (fileResult != null)
@@ -193,7 +172,7 @@ namespace DemoWinUI
                     _messageTextBlock.Text = $"Exception: {ex.Message} ";
                 }
             }
-            else
+            else if (_currentFile != null)
             {
                 try
                 {
@@ -262,27 +241,8 @@ namespace DemoWinUI
             await Task.Delay(50);
         }
 
-        async Task<StorageFile> ResourceAsStorageFile(string resourceId, Assembly asm = null)
-        {
-            if (string.IsNullOrWhiteSpace(resourceId))
-                throw new ArgumentException(nameof(resourceId));
 
-            asm = asm ?? GetType().Assembly;
 
-            if (asm.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is String resourceName)
-            {
-                using (var inStream = asm.GetManifestResourceStream(resourceName))
-                {
-                    var file = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName() + ".html");
-                    using (var outStream = File.OpenWrite(file.Path))
-                    {
-                        inStream.CopyTo(outStream);
-                    }
-                    return file;
-                }
-            }
 
-            return null;
-        }
     }
 }

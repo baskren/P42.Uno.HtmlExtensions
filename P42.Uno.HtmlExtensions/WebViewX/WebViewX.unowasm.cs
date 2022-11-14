@@ -14,6 +14,7 @@ using System.Threading;
 using Windows.UI.Core;
 using Uno.Logging;
 using System.IO;
+using Uno.UI;
 //using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
@@ -25,7 +26,13 @@ namespace P42.Uno.HtmlExtensions
 	{
 		private NativeWebView _nativeWebView;
 		public readonly string Id;
+		
 
+		internal async Task<string> GetDocumentTitleAsync()
+		{
+			var result = await ExecuteScriptAsync("document.title");
+			return result ?? string.Empty;	
+		}
 
 		protected override void OnApplyTemplate()
 		{
@@ -143,12 +150,15 @@ namespace P42.Uno.HtmlExtensions
 
 
         public async Task<string> InvokeScriptAsync(CancellationToken ct, string script, string[] arguments)
-			=>  await _nativeWebView.InvokeScriptAsync(script, arguments);
+			=>  await _nativeWebView.InvokeScriptFunctionAsync(script, arguments);
 		
 
 		public async Task<string> InvokeScriptAsync(string script, string[] arguments)
-			=> await _nativeWebView.InvokeScriptAsync(script, arguments);
+			=> await _nativeWebView.InvokeScriptFunctionAsync(script, arguments);
 
+
+		public async Task<string> ExecuteScriptAsync(string script)
+			=> await _nativeWebView.InvokeScriptAsync(script);
 
 		private bool VerifyNativeWebViewAvailability()
 		{

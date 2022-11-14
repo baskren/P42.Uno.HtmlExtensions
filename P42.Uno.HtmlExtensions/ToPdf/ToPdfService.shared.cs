@@ -3,6 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
 
+#if __WASM__
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
+#else
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
+#endif
+
 namespace P42.Uno.HtmlExtensions
 {
     /// <summary>
@@ -64,7 +72,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="pageSize">PDF page size, in points. (default based upon user's region)</param>
         /// <param name="margin">PDF page's margin, in points. (default is zero)</param>
         /// <returns>Forms9Patch.ToFileResult</returns>
-        public static async Task<ToFileResult> ToPdfAsync(this WebView2 webView, string fileName, PageSize pageSize = default, PageMargin margin = default)
+        public static async Task<ToFileResult> ToPdfAsync(this BaseWebView webView, string fileName, PageSize pageSize = default, PageMargin margin = default)
         {
             if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
                 pageSize = PageSize.Default;

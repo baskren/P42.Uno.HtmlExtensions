@@ -6,16 +6,20 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.WebUI;
 
 #if __WASM__
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
+using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+#elif NET6_0_WINDOWS10_0_19041_0
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
-using WebView = Microsoft.UI.Xaml.Controls.WebView2;
+using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
 #endif
+
 
 
 namespace P42.Uno.HtmlExtensions
@@ -23,7 +27,7 @@ namespace P42.Uno.HtmlExtensions
     public static partial class WebViewExtensions
     {
 
-        public static void NavigateToResource(this WebView webView, string resourceId, Assembly assembly)
+        public static void NavigateToResource(this BaseWebView webView, string resourceId, Assembly assembly)
         {
             using (var stream = assembly.GetManifestResourceStream(resourceId))
             {
@@ -32,7 +36,9 @@ namespace P42.Uno.HtmlExtensions
                     var text = reader.ReadToEnd();
                     var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{Guid.NewGuid()}.html");
                     File.WriteAllText(path, text);
+#if __WASM__ || !NET6_0
                     webView.Source = new Uri($"file://{path}");
+#endif
                 }
             }
         }
@@ -50,26 +56,32 @@ namespace P42.Uno.HtmlExtensions
             }
         }
         
-        static async Task<TryResult<int>> TryExecuteIntScriptAsync(this WebView2 webView2, string script)
+        static async Task<TryResult<int>> TryExecuteIntScriptAsync(this BaseWebView webView2, string script)
         {
-            var result = await webView2.ExecuteScriptAsync(script);
-            if (int.TryParse(result, out int v))
-                return new TryResult<int>(true,v);
-
+            try
+            {
+                var result = await webView2.ExecuteScriptAsync(script);
+                if (int.TryParse(result, out int v))
+                    return new TryResult<int>(true, v);
+            }
+            catch (Exception ex) { }
             return new TryResult<int>(false);
         }
 
-        static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this WebView2 webView2, string script)
+        static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this BaseWebView webView2, string script)
         {
-            var result = await webView2.ExecuteScriptAsync(script);
-            System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync : [{script}] : [{result}]");
-            if (double.TryParse(result, out var v))
-                return new TryResult<double>(true, v);
-
+            try
+            {
+                var result = await webView2.ExecuteScriptAsync(script);
+                System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync : [{script}] : [{result}]");
+                if (double.TryParse(result, out var v))
+                    return new TryResult<double>(true, v);
+            }
+            catch (Exception ex) { }
             return new TryResult<double>(false);
         }
 
-        static async Task<double> TryUpdateIfLarger(this WebView2 webView2, string script, double source)
+        static async Task<double> TryUpdateIfLarger(this BaseWebView webView2, string script, double source)
         {
             if (await webView2.TryExecuteDoubleScriptAsync(script) is TryResult<double> r1 && r1.IsSuccess && r1.Value > source)
                 return r1.Value;
@@ -84,7 +96,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="depth"></param>
         /// <param name="callerName"></param>
         /// <returns></returns>
-        public static async Task<Windows.Foundation.Size> WebViewContentSizeAsync(this Microsoft.UI.Xaml.Controls.WebView2 webView, int depth = 0, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
+        public static async Task<Windows.Foundation.Size> WebViewContentSizeAsync(this BaseWebView webView, int depth = 0, [System.Runtime.CompilerServices.CallerMemberName] string callerName = null)
         {
             if (webView is null)
                 throw new ArgumentNullException(nameof(webView));
@@ -218,10 +230,38 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         /// <param name="webView"></param>
         /// <returns></returns>
-        public static async Task<string> GetHtml(this Microsoft.UI.Xaml.Controls.WebView2 webView)
+        public static async Task<string> GetHtml(this BaseWebView webView)
         {
             var html = await webView.ExecuteScriptAsync("document.documentElement.outerHTML;");
             return html;
         }
+
+#if !NET6_0_WINDOWS10_0_19041_0 && !__WASM__
+        public static async Task<string> ExecuteScriptAsync(this BaseWebView webView, string script)
+        {
+            if (string.IsNullOrWhiteSpace(script))
+                return string.Empty;
+
+#if __ANDROID__
+            if (webView.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
+            {
+                var javaResult = await droidWebView.EvaluateJavaScriptAsync(script);
+                return javaResult?.ToString() ?? string.Empty;
+            }
+#elif __IOS__ || __MACCATALYST__ || __MACOS__
+            if (webView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
+            {
+                var result = await wkWebView.EvaluateJavascriptAsync(CancellationToken.None, script);
+                return result?.ToString() ?? string.Empty;
+            }
+
+#else
+            throw new NotSupportedException();
+
+#endif
+
+            return string.Empty;
+        }
+#endif
     }
 }
