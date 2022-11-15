@@ -163,7 +163,15 @@ namespace P42.Uno.HtmlExtensions
 		/// <param name="uri"></param>
 		public void Navigate(Uri uri)
 		{
-			this.SetInternalSource(uri ?? BlankUri);
+			if (uri.IsFile)
+			{
+                var web = new HtmlAgilityPack.HtmlWeb();
+                var doc = web.Load(uri.AbsolutePath);
+                var html = doc.DocumentNode.OuterHtml;
+				NavigateToString(html);
+            }
+            else
+				this.SetInternalSource(uri ?? BlankUri);
 		}
 
 		/// <summary>

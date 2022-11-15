@@ -22,7 +22,22 @@ namespace P42.Uno.HtmlExtensions
             {
                 using (var inStream = asm.GetManifestResourceStream(resourceName))
                 {
-                    var file = await Windows.Storage.ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName() + ".html");
+                    /*
+                    using (var fileStream = File.Create(Path.Combine(Windows.Storage.ApplicationData.Current.TemporaryFolder.Path, Path.GetRandomFileName() + ".html")))
+                    {
+                        inStream.Seek(0, SeekOrigin.Begin);
+                        inStream.CopyTo(fileStream);
+                    }
+
+                    var x = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.CreateFileAsync("test.txt");
+                    */
+
+                    var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+                    var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+
+                    var folder = await localFolder.CreateFolderAsync("P42.Uno.WebViewResource", CreationCollisionOption.OpenIfExists);
+
+                    var file = await folder.CreateFileAsync(Path.GetRandomFileName() + ".html");
                     using (var outStream = File.OpenWrite(file.Path))
                     {
                         inStream.CopyTo(outStream);

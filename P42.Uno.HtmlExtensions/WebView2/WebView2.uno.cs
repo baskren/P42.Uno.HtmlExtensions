@@ -129,10 +129,12 @@ namespace P42.UI.Xaml.Controls
             NavigationStarting?.Invoke(this, newArgs);
             args.Cancel = newArgs.Cancel;
         }
-#endregion
+
+        #endregion
 
 
-#region Public Methods
+        #region Public Methods
+
         public async Task EnsureCoreWebView2Async()
             => await _loadedTcs.Task;
 
@@ -151,7 +153,8 @@ namespace P42.UI.Xaml.Controls
             Refresh();
 #endif
         }
-#endregion
+
+        #endregion
 
 
 
