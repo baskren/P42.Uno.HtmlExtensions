@@ -20,13 +20,13 @@ namespace P42.Web.WebView2.Core
         #region Properties
         public uint BrowserProcessId => _parentWebView?._instanceId ?? 0;
 
-#if __WASM__ || !NET6_0 
+#if __WASM__ || !NET7_0
         public bool CanGoBack => _parentWebView?.CanGoBack ?? false;
 #else
         public bool CanGoBack => false;
 #endif
 
-#if __WASM__ || !NET6_0 
+#if __WASM__ || !NET7_0
         public bool CanGoForward => _parentWebView?.CanGoForward ?? false;
 #else
         public bool CanGoForward => false;
@@ -36,7 +36,7 @@ namespace P42.Web.WebView2.Core
         {
             get
             {
-#if __WASM__ || !NET6_0 
+#if __WASM__ || !NET7_0 
                 var task = Task.Run(async () =>
                 {
                     if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
@@ -63,7 +63,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public Point DefaultDownloadDialogMargin { get; set; }
 
-#if __WASM__ || !NET6_0 
+#if __WASM__ || !NET7_0 
         public string DocumentTitle => _parentWebView?.DocumentTitle ?? string.Empty;
 #else
         public string DocumentTitle => string.Empty;
@@ -85,7 +85,7 @@ namespace P42.Web.WebView2.Core
 
         public CoreWebView2Settings Settings { get; private set; }
 
-#if __WASM__ || !NET6_0 
+#if __WASM__ || !NET7_0 
         public string Source => _parentWebView.Source.AbsoluteUri; // { get; private set; }
 #else
         public string Source => string.Empty;
@@ -181,14 +181,14 @@ namespace P42.Web.WebView2.Core
             ((P42.Uno.HtmlExtensions.WebViewX)webView2).NavigationStarting += OnXNavStarting;
             ((P42.Uno.HtmlExtensions.WebViewX)webView2).NavigationCompleted += OnXNavCompleted;
 
-#elif !NET6_0
+#elif !NET7_0
             ((Microsoft.UI.Xaml.Controls.WebView)webView2).NavigationStarting += OnNavStarting;
             ((Microsoft.UI.Xaml.Controls.WebView)webView2).NavigationCompleted += OnNavCompleted;
 #endif
         }
 
 
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
 
 
 #if __WASM__
@@ -322,7 +322,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void Navigate(string uri)
         {
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
                 w2.Navigate(new Uri(uri));
 #endif
@@ -331,7 +331,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void NavigateToString(string htmlContent)
         {
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
             {
                 var uri = Task.Run(async () => await P42.Uno.HtmlExtensions.StringExtensions.ToTempFileUriAsync(htmlContent)).Result;
@@ -393,7 +393,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void GoBack()
         {
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
             _parentWebView?.GoBack();
 #endif
         }
@@ -401,7 +401,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void GoForward()
         {
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
             _parentWebView?.GoForward();
 #endif
         }
@@ -415,7 +415,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void Stop()
         {
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
             _parentWebView?.Stop();
 #endif
         }

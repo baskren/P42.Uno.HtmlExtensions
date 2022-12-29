@@ -10,8 +10,12 @@ using Windows.UI;
 
 #if __WASM__ 
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
+using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
+using WebViewNavigationStartingEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationStartingEventArgs;
+using WebView = P42.Uno.HtmlExtensions.WebViewX;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
+//using WebView = Microsoft.UI.Xaml.Controls.WebView2;
 #endif
 
 namespace P42.UI.Xaml.Controls
@@ -57,6 +61,17 @@ namespace P42.UI.Xaml.Controls
         /// Occurs when the WebView2 object is initialized.
         /// </summary>
         public event TypedEventHandler<WebView2, P42.UI.Xaml.Controls.CoreWebView2InitializedEventArgs> CoreWebView2Initialized;
+
+#if NET7_0 && !__WASM__
+        /// <summary>
+        /// Occurs when the WebView2 has completely loaded (body.onload has been raised) or loading stopped with error.
+        /// </summary>
+        public event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
+        /// <summary>
+        /// Occurs when the main frame of the WebView2 navigates to a different URI.
+        /// </summary>
+        public event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs> NavigationStarting;
+#else
         /// <summary>
         /// Occurs when the WebView2 has completely loaded (body.onload has been raised) or loading stopped with error.
         /// </summary>
@@ -65,10 +80,13 @@ namespace P42.UI.Xaml.Controls
         /// Occurs when the main frame of the WebView2 navigates to a different URI.
         /// </summary>
         public new event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs> NavigationStarting;
+#endif
+
         /// <summary>
         /// Occurs when a new HTML document is loaded.
         /// </summary>
         public event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs> WebMessageReceived;
+
         #endregion
 
 
@@ -76,7 +94,7 @@ namespace P42.UI.Xaml.Controls
         public WebView2()
         {
             _instanceId = _instances++;
-#if !NET6_0
+#if !NET7_0 || __WASM__
             base.NavigationStarting += OnBaseNavigationStarting;
             base.NavigationCompleted += OnNavigationCompleted;
 #endif
@@ -130,31 +148,31 @@ namespace P42.UI.Xaml.Controls
             args.Cancel = newArgs.Cancel;
         }
 
-        #endregion
+#endregion
 
 
-        #region Public Methods
+#region Public Methods
 
         public async Task EnsureCoreWebView2Async()
             => await _loadedTcs.Task;
 
         public async Task<string> ExecuteScriptAsync(string script)
         {
-#if !NET6_0
+#if !NET7_0 || __WASM__
             return await InvokeScriptAsync(CancellationToken.None, script, new string[] { });
 #else
-            return string.Empty;
+            return await Task.FromResult(string.Empty);
 #endif
         }
 
         public void Reload()
         {
-#if !NET6_0
+#if !NET7_0 || __WASM__
             Refresh();
 #endif
         }
 
-        #endregion
+#endregion
 
 
 

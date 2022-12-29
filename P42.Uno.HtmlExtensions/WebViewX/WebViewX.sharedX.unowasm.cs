@@ -216,6 +216,10 @@ namespace P42.Uno.HtmlExtensions
 		partial void NavigateWithHttpRequestMessagePartial(HttpRequestMessage requestMessage);
 		partial void StopPartial();
 
+		internal void Refresh()
+			=> Task.Run(async () => await _nativeWebView.InvokeScriptAsync("document.location.reload()"));
+            
+	
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		//private protected override void OnLoaded()

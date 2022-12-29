@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 #if __WASM__ 
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif NET6_0_WINDOWS10_0_19041_0 || NET6_0
+#elif NET7_0_WINDOWS10_0_19041_0 || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;

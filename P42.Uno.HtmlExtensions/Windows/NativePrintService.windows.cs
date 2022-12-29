@@ -1,4 +1,4 @@
-﻿#if NET6_0_WINDOWS10_0_19041_0
+﻿#if NET7_0_WINDOWS10_0_19041_0
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

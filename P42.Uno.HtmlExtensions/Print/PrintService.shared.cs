@@ -8,7 +8,7 @@ using Windows.Storage;
 //using Microsoft.UI.Xaml.Controls;
 #if __WASM__ 
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif NET6_0_WINDOWS10_0_19041_0 || NET6_0
+#elif NET7_0_WINDOWS10_0_19041_0 || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
@@ -21,7 +21,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class PrintService
     {
-#if __IOS__ || __ANDROID__ || NET6_0_WINDOWS10_0_19041_0 || __WASM__
+#if __IOS__ || __ANDROID__ || NET7_0_WINDOWS10_0_19041_0 || __WASM__
         static INativePrintService _nativePrintService;
         static INativePrintService NativePrintService =>
             _nativePrintService = _nativePrintService ?? new NativePrintService();

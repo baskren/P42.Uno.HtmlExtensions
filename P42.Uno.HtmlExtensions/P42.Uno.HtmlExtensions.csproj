@@ -5,15 +5,15 @@
 
     <!--
     Another example of how Micrsoft just doesn't care about those who don't use only their stuff
-	  <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
     -->
-	  <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net6.0-windows10.0.19041.0;net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">net6.0-ios</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">net6.0-macos</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net6.0-windows10.0.19041.0</TargetFrameworks>
+	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.19041.0;net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">net7.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">net7.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net7.0-windows10.0.19041.0</TargetFrameworks>
 
   </PropertyGroup>
 
@@ -26,7 +26,7 @@
     <Compile Include="**\*.android.cs" />
     <Compile Include="**\*.android.*.cs" />
     <Compile Include="**\*.uno.cs" />
-    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -36,7 +36,7 @@
     <Compile Include="**\*.ios.cs" />
     <Compile Include="**\*.ios.*.cs" />
     <Compile Include="**\*.uno.cs" />
-    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -46,7 +46,7 @@
     <Compile Include="**\*.macos.cs" />
     <Compile Include="**\*.macos.*.cs" />
     <Compile Include="**\*.uno.cs" />
-    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression" />
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
@@ -59,8 +59,8 @@
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.6.19" />
-    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.6.39" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
     <Compile Include="**\*.tizen.cs" />
     <Compile Include="**\*.tizen.*.cs" />
     <Compile Include="**\*.uno.cs" />
@@ -76,12 +76,12 @@
   </ItemGroup>
 
   <!-- .NetStandard bait -->
-  <ItemGroup Condition="  $(TargetFramework.ToLower().StartsWith('netstandard')) OR $(TargetFramework.ToLower().Equals('net6.0')) ">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  <ItemGroup Condition="  $(TargetFramework.ToLower().StartsWith('netstandard')) OR $(TargetFramework.ToLower().Equals('net7.0')) ">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <Compile Include="**\*.netstandard.cs" />
     <Compile Include="**\*.netstandard.*.cs" />
     <Compile Include="**\*.uno.cs" />
-    <PackageReference Include="Uno.WinUI" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Platform.shared.cs" />

@@ -14,7 +14,7 @@ using Windows.UI.WebUI;
 
 #if __WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif NET6_0_WINDOWS10_0_19041_0 || NET6_0
+#elif NET7_0_WINDOWS10_0_19041_0 || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
@@ -36,7 +36,7 @@ namespace P42.Uno.HtmlExtensions
                     var text = reader.ReadToEnd();
                     var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{Guid.NewGuid()}.html");
                     File.WriteAllText(path, text);
-#if __WASM__ || !NET6_0
+#if __WASM__ || !NET7_0
                     webView.Source = new Uri($"file://{path}");
 #endif
                 }
@@ -236,7 +236,7 @@ namespace P42.Uno.HtmlExtensions
             return html;
         }
 
-#if !NET6_0_WINDOWS10_0_19041_0 && !__WASM__
+#if !NET7_0_WINDOWS10_0_19041_0 && !__WASM__
         public static async Task<string> ExecuteScriptAsync(this BaseWebView webView, string script)
         {
             if (string.IsNullOrWhiteSpace(script))
