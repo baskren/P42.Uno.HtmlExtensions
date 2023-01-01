@@ -54,9 +54,11 @@
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
     
+    <!--
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.39" />
+    -->
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
   </ItemGroup>

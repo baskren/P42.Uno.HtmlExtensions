@@ -82,7 +82,7 @@ namespace P42.Uno.HtmlExtensions
 
         public NavigationDelegate(TaskCompletionSource<bool> tcs)
         {
-
+            taskCompletionSource = tcs;
         }
 
         public override void DidFailNavigation(WKWebView webView, WKNavigation navigation, NSError error)

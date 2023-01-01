@@ -44,7 +44,7 @@ namespace DemoWinUI
             }
 #endif
 
-#if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
+#if NET7_0_OR_GREATER && WINDOWS && !HAS_UNO
             _window = new Xamarin.Essentials.MainWindow();
             _window.Activate();
 #else
@@ -73,7 +73,7 @@ namespace DemoWinUI
                 _window.Content = rootFrame;
             }
 
-#if !(NET6_0_OR_GREATER && WINDOWS)
+#if !(NET7_0_OR_GREATER && WINDOWS)
             if (args.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
             {

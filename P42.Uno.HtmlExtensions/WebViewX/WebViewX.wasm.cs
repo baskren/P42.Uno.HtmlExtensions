@@ -24,13 +24,13 @@ namespace P42.Uno.HtmlExtensions
 	/// </summary>
 	public partial class WebViewX
 	{
-		private NativeWebView _nativeWebView;
+		internal NativeWebView _nativeWebView;
 		public readonly string Id;
 		
 
 		internal async Task<string> GetDocumentTitleAsync()
 		{
-			var result = await ExecuteScriptAsync("document.title");
+			var result = await this.ExecuteScriptAsync("document.title");
 			return result ?? string.Empty;	
 		}
 
@@ -157,8 +157,8 @@ namespace P42.Uno.HtmlExtensions
 			=> await _nativeWebView.InvokeScriptFunctionAsync(script, arguments);
 
 
-		public async Task<string> ExecuteScriptAsync(string script)
-			=> await _nativeWebView.InvokeScriptAsync(script);
+		//public async Task<string> ExecuteScriptAsync(string script)
+		//	=> await _nativeWebView.InvokeScriptAsync(script);
 
 		private bool VerifyNativeWebViewAvailability()
 		{

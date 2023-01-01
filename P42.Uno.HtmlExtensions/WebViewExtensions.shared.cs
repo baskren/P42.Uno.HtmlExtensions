@@ -26,8 +26,12 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> GetSourceAsHtmlAsync(this BaseWebView unoWebView)
         {
+#if !NET7_0
             var result = await unoWebView.ExecuteScriptAsync( "document.documentElement.outerHTML" );
             return result;
+#else
+            return await Task.FromResult(string.Empty);
+#endif
         }
 
     }

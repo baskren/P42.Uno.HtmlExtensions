@@ -31,16 +31,8 @@ namespace P42.Uno.HtmlExtensions
 
 
 		public async Task PrintAsync(WebView2 webView, string jobName)
-		{
-			try
-			{
-				var result = await webView.CoreWebView2.ExecuteScriptAsync("print()");
-            }
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine($"NativePrintService. : ");
-			}
-		}
+		    => await webView.CoreWebView2.ExecuteScriptAsync("print()");
+		
 
         int instanceCount = 0;
 

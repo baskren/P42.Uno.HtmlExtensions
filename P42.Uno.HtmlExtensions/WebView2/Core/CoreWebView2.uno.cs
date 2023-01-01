@@ -14,11 +14,11 @@ namespace P42.Web.WebView2.Core
 {
     public sealed class CoreWebView2 : IEquatable<CoreWebView2>
     {
-        static uint _instances;
-        uint _instance = _instances++;
+        static internal ulong _instances;
+        ulong _instance = _instances++;
 
         #region Properties
-        public uint BrowserProcessId => _parentWebView?._instanceId ?? 0;
+        public ulong BrowserProcessId => _parentWebView?._instanceId ?? 0;
 
 #if __WASM__ || !NET7_0
         public bool CanGoBack => _parentWebView?.CanGoBack ?? false;

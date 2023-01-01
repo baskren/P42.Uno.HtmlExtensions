@@ -153,7 +153,7 @@ namespace P42.Uno.HtmlExtensions
                 UIGraphics.BeginPDFPage();
                 DrawPage(i, rect);
             }
-            UIGraphics.EndPDFContent();
+            UIGraphics.EndPDFContext();
             return pdfData;
         }
     }

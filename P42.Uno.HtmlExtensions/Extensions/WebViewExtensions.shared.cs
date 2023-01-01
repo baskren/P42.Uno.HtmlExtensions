@@ -58,18 +58,24 @@ namespace P42.Uno.HtmlExtensions
         
         static async Task<TryResult<int>> TryExecuteIntScriptAsync(this BaseWebView webView2, string script)
         {
+#if __WASM__ || !NET7_0
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
                 if (int.TryParse(result, out int v))
                     return new TryResult<int>(true, v);
             }
-            catch (Exception ex) { }
-            return new TryResult<int>(false);
+            catch (Exception ex) 
+            {
+                System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteIntScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
+            }
+#endif
+            return await Task.FromResult(new TryResult<int>(false));
         }
 
         static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this BaseWebView webView2, string script)
         {
+#if __WASM__ || !NET7_0
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
@@ -77,8 +83,12 @@ namespace P42.Uno.HtmlExtensions
                 if (double.TryParse(result, out var v))
                     return new TryResult<double>(true, v);
             }
-            catch (Exception ex) { }
-            return new TryResult<double>(false);
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
+            }
+#endif
+            return await Task.FromResult(new TryResult<double>(false));
         }
 
         static async Task<double> TryUpdateIfLarger(this BaseWebView webView2, string script, double source)
@@ -232,15 +242,19 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> GetHtml(this BaseWebView webView)
         {
+#if __WASM__ || !NET7_0
             var html = await webView.ExecuteScriptAsync("document.documentElement.outerHTML;");
             return html;
+#else
+            return await Task.FromResult(string.Empty);
+#endif
         }
 
-#if !NET7_0_WINDOWS10_0_19041_0 && !__WASM__
+#if HAS_UNO
         public static async Task<string> ExecuteScriptAsync(this BaseWebView webView, string script)
         {
             if (string.IsNullOrWhiteSpace(script))
-                return string.Empty;
+                return await Task.FromResult(string.Empty);
 
 #if __ANDROID__
             if (webView.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
@@ -248,19 +262,24 @@ namespace P42.Uno.HtmlExtensions
                 var javaResult = await droidWebView.EvaluateJavaScriptAsync(script);
                 return javaResult?.ToString() ?? string.Empty;
             }
+            return await Task.FromResult(string.Empty);
+
 #elif __IOS__ || __MACCATALYST__ || __MACOS__
             if (webView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
             {
                 var result = await wkWebView.EvaluateJavascriptAsync(CancellationToken.None, script);
                 return result?.ToString() ?? string.Empty;
             }
+            return await Task.FromResult(string.Empty);
+
+#elif __WASM__
+            return await webView._nativeWebView.InvokeScriptAsync(script);
 
 #else
             throw new NotSupportedException();
 
 #endif
 
-            return string.Empty;
         }
 #endif
     }

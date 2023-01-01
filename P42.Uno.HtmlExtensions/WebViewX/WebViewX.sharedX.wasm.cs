@@ -20,13 +20,13 @@ namespace P42.Uno.HtmlExtensions
 	{
 		private const string BlankUrl = "about:blank";
 		private static readonly Uri BlankUri = new Uri(BlankUrl);
-		internal static ulong instances;
+		internal static ulong _instances;
 
 
 		private object _internalSource;
 		private bool _isLoaded;
 		private string _invokeScriptResponse = string.Empty;
-		internal ulong _instanceId = instances++;
+		internal ulong _instanceId = _instances++;
 
 		/// <summary>
 		/// Constructor
