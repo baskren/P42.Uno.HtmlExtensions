@@ -42,9 +42,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <EmbeddedResource Include="Themes\Generic.xaml" />
-    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
-      <LogicalName>P42.Uno.HtmlExtensions.xml</LogicalName>
-    </EmbeddedResource>
+
+	  <EmbeddedResource Include="LinkerConfig.Wasm.xml">
+		  <LogicalName>$(AssemblyName).xml</LogicalName>
+	  </EmbeddedResource>
+
     <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
     <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
     <EmbeddedResource Include="WasmScripts\UnoPng.js" />

@@ -1,4 +1,4 @@
-﻿#if NET7_0_WINDOWS10_0_19041_0
+﻿#if !HAS_UNO
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

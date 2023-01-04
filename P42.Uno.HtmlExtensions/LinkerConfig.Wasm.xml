@@ -1,0 +1,5 @@
+﻿<linker>
+    <assembly fullname="P42.Uno.HtmlExtensions.Wasm">
+        <namespace fullname="P42.Uno.HtmlExtensions"/>    
+    </assembly>
+</linker>
