@@ -51,7 +51,19 @@
     <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
     <EmbeddedResource Include="WasmScripts\UnoPng.js" />
     <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebViewBridge.js" />
+
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.js" />
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.html" />
+
+
+    <EmbeddedResource Include="WebViewX\POC\index.html" />
+    <EmbeddedResource Include="WebViewX\POC\ScriptEmbed.html" />
+
+    <!--
+    <Content Include="Assets\UnoWebViewBridge.html"  UnoDeploy="Root" />
+    <Content Include="Assets\UnoWebViewBridge.js"  UnoDeploy="Root" />
+    -->
+
   </ItemGroup>
 
 

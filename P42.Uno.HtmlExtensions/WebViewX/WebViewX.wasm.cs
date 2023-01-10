@@ -28,15 +28,9 @@ namespace P42.Uno.HtmlExtensions
 		public readonly string Id;
 		
 
-		internal async Task<string> GetDocumentTitleAsync()
-		{
-			var result = await this.ExecuteScriptAsync("document.title");
-			return result ?? string.Empty;	
-		}
-
 		protected override void OnApplyTemplate()
 		{
-            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
+            Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
 			base.OnApplyTemplate();
 
 			_nativeWebView = this
@@ -47,12 +41,12 @@ namespace P42.Uno.HtmlExtensions
 			if (_nativeWebView == null)
 			{
 				var text = $"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ";
-				System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
+				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
 				this.Log().Error(text);
 			}
 			else
             {
-				System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
+				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
             }
 			/*
 			var text =
@@ -64,14 +58,21 @@ namespace P42.Uno.HtmlExtensions
 			_nativeWebView.SetHtmlAttribute("srcdoc", text);
 			*/
 			UpdateFromInternalSource();
-			System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
+			Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
 		}
 
-		/// <summary>
-		/// Toggles scrolling
-		/// </summary>
-		/// <param name="scrollingEnabled"></param>
-		partial void OnScrollEnabledChangedPartial(bool scrollingEnabled)
+        internal async Task<string> GetDocumentTitleAsync()
+        {
+            var result = await this.ExecuteScriptAsync("document.title");
+            return result ?? string.Empty;
+        }
+
+
+        /// <summary>
+        /// Toggles scrolling
+        /// </summary>
+        /// <param name="scrollingEnabled"></param>
+        partial void OnScrollEnabledChangedPartial(bool scrollingEnabled)
         {
 			if (scrollingEnabled)
 				_nativeWebView.SetCssStyle(("overflow", "hidden"),("height", "100%"), ("width", "100%"));
@@ -82,28 +83,31 @@ namespace P42.Uno.HtmlExtensions
 		internal bool OnNavigationStarted(Uri uri)
         {
 			var args = new WebViewXNavigationStartingEventArgs(uri);
-			NavigationStarting?.Invoke(this, args);
+            Console.WriteLine($"WebViewX[{Id}].OnNavigationStarted " + uri);
+            NavigationStarting?.Invoke(this, args);
 			return args.Cancel;
         }
 
 		internal void OnNavigationCompleted(bool isSuccess, Uri uri, Windows.Web.WebErrorStatus status)
         {
             var args = new WebViewXNavigationCompletedEventArgs(isSuccess, uri, status);
-            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
+            Console.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
 			NavigationCompleted?.Invoke(this, args);
         }
 
 		internal bool OnNewWindowRequested(Uri referrer, Uri uri)
         {
 			var args = new WebViewXNewWindowRequestedEventArgs(referrer, uri);
-			NewWindowRequested?.Invoke(this, args);
+            Console.WriteLine($"WebViewX[{Id}].OnNewWindowRequested " + uri);
+            NewWindowRequested?.Invoke(this, args);
 			return args.Handled;
 		}
 
 		internal void OnNavigationFailed(Uri uri, Windows.Web.WebErrorStatus status)
         {
 			var args = new WebViewXNavigationFailedEventArgs(uri, status);
-			NavigationFailed?.Invoke(this, args);
+            Console.WriteLine($"WebViewX[{Id}].OnNavigationFailed " + uri);
+            NavigationFailed?.Invoke(this, args);
         }
 
 		partial void GoBackPartial()
@@ -120,10 +124,11 @@ namespace P42.Uno.HtmlExtensions
 
 		partial void NavigatePartial(Uri uri)
 		{
-            System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigatePartial(" +uri+")");
+            Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" +uri+")  ENTER");
 			if (!VerifyNativeWebViewAvailability())
 			{
-				return;
+                Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT : NativeWebView not available");
+                return;
 			}
 
 			if (uri.Scheme.Equals("local", StringComparison.OrdinalIgnoreCase))
@@ -136,16 +141,19 @@ namespace P42.Uno.HtmlExtensions
 			}
 			else
 			{
-                System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigatePartial: Absolute");
+                Console.WriteLine($"WebViewX[{Id}].NavigatePartial: Absolute");
 				//_nativeWebView.SetHtmlAttribute("src", uri.AbsoluteUri);
 				_nativeWebView?.SetInternalSource(uri);
 			}
-		}
 
-		partial void NavigateToStringPartial(string text)
+            Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT");
+        }
+
+        partial void NavigateToStringPartial(string text)
         {
-			System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].NavigateToStringPartial(string text)");
-			_nativeWebView?.SetInternalSource(text);
+            //Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(0, Math.Min(100, text.Length-1))})");
+            Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(Math.Max(0, text.Length-100),100)})");
+            _nativeWebView?.SetInternalSource(text);
 		}
 
 
@@ -167,7 +175,7 @@ namespace P42.Uno.HtmlExtensions
 				if (_isLoaded)
 				{
 					var text = "This WebView control instance does not have a native web view child, a Control template may be missing.";
-					System.Diagnostics.Debug.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
+					Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
 					this.Log().Warn(text);
 				}
 
