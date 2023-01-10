@@ -18,6 +18,9 @@ namespace P42.Uno.HtmlExtensions
 {
 	public partial class WebViewX : Control
 	{
+        const bool debug = false;
+
+
         #region Static Fields and Contants
         private const string BlankUrl = "about:blank";
 		private static readonly Uri BlankUri = new Uri(BlankUrl);
@@ -120,11 +123,11 @@ namespace P42.Uno.HtmlExtensions
         /// </summary>
         public WebViewX()
 		{
-			Console.WriteLine($"WebViewX.ctr ENTER");
+			if (debug) Console.WriteLine($"WebViewX.ctr ENTER");
 			DefaultStyleKey = typeof(WebViewX);
 			Id = this.GetHtmlAttribute("id");
 			Loaded += OnLoaded;
-            Console.WriteLine($"WebViewX.ctr EXIT");
+            if (debug) Console.WriteLine($"WebViewX.ctr EXIT");
         }
         #endregion
 
@@ -187,7 +190,7 @@ namespace P42.Uno.HtmlExtensions
 		/// <param name="uri"></param>
 		public void Navigate(Uri uri)
 		{
-            Console.WriteLine($"WebViewX[{Id}].Navigate ENTER {uri} ");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].Navigate ENTER {uri} ");
             /*
 			if (uri.IsFile)
 			{
@@ -199,7 +202,7 @@ namespace P42.Uno.HtmlExtensions
             else
 			*/
             this.SetInternalSource(uri ?? BlankUri);
-            Console.WriteLine($"WebViewX[{Id}].Navigate EXIT {uri}");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].Navigate EXIT {uri}");
         }
 
         /// <summary>
@@ -208,9 +211,9 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="text">The HTML content to display in the WebView control.</param>
         public void NavigateToString(string text)
 		{
-            Console.WriteLine($"WebViewX[{Id}].NavigateToString ENTER ");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateToString ENTER ");
             this.SetInternalSource(text ?? "");
-            Console.WriteLine($"WebViewX[{Id}].NavigateToString EXIT ");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateToString EXIT ");
         }
 
         /// <summary>
@@ -220,14 +223,14 @@ namespace P42.Uno.HtmlExtensions
         /// <exception cref="ArgumentException"></exception>
         public void NavigateWithHttpRequestMessage(HttpRequestMessage requestMessage)
 		{
-            Console.WriteLine($"WebViewX[{Id}].NavigateWithHttpRequestMessage ENTER ");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateWithHttpRequestMessage ENTER ");
             if (requestMessage?.RequestUri == null)
 			{
 				throw new ArgumentException("Invalid request message. It does not have a RequestUri.");
 			}
 
 			SetInternalSource(requestMessage);
-            Console.WriteLine($"WebViewX[{Id}].NavigateWithHttpRequestMessage EXIT ");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateWithHttpRequestMessage EXIT ");
         }
 
         /// <summary>
@@ -272,35 +275,35 @@ namespace P42.Uno.HtmlExtensions
 
 		private void SetInternalSource(object source)
 		{
-            Console.WriteLine($"WebViewX[{Id}].SetInternalSource ENTER {source.GetType()}");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].SetInternalSource ENTER {source.GetType()}");
 
             _internalSource = source;
 			this.UpdateFromInternalSource();
 
-            Console.WriteLine($"WebViewX[{Id}].SetInternalSource EXIT {source.GetType()}");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].SetInternalSource EXIT {source.GetType()}");
         }
 
         private void UpdateFromInternalSource()
 		{
-            Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource ENTER");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource ENTER");
 
 			if (_internalSource is Uri uri)
 			{
-				Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource URI {uri}");
+				if (debug) Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource URI {uri}");
 				NavigatePartial(uri);
 			}
 			else if (_internalSource is string html && !string.IsNullOrWhiteSpace(html))
 			{
-				Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource TEXT");
+				if (debug) Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource TEXT");
 				NavigateToStringPartial(html);
 			}
 			else if (_internalSource is HttpRequestMessage message)
 			{
-                Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource HttpRequestMessage");
+                if (debug) Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource HttpRequestMessage");
                 NavigateWithHttpRequestMessagePartial(message);
 			}
 
-            Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource EXIT");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].UpdateFromInternalSource EXIT");
         }
 
         private static string ConcatenateJavascriptArguments(string[] arguments)

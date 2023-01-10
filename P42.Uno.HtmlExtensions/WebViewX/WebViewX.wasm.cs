@@ -30,7 +30,7 @@ namespace P42.Uno.HtmlExtensions
 
 		protected override void OnApplyTemplate()
 		{
-            Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ENTER");
 			base.OnApplyTemplate();
 
 			_nativeWebView = this
@@ -41,12 +41,12 @@ namespace P42.Uno.HtmlExtensions
 			if (_nativeWebView == null)
 			{
 				var text = $"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ";
-				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
+				if (debug) Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
 				this.Log().Error(text);
 			}
 			else
             {
-				Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
+				if (debug) Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate _nativeWebView.Id={_nativeWebView.Id}");
             }
 			/*
 			var text =
@@ -58,7 +58,7 @@ namespace P42.Uno.HtmlExtensions
 			_nativeWebView.SetHtmlAttribute("srcdoc", text);
 			*/
 			UpdateFromInternalSource();
-			Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
+			if (debug) Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate EXIT");
 		}
 
         internal async Task<string> GetDocumentTitleAsync()
@@ -83,7 +83,7 @@ namespace P42.Uno.HtmlExtensions
 		internal bool OnNavigationStarted(Uri uri)
         {
 			var args = new WebViewXNavigationStartingEventArgs(uri);
-            Console.WriteLine($"WebViewX[{Id}].OnNavigationStarted " + uri);
+            if (debug) Console.WriteLine($"WebViewX[{Id}].OnNavigationStarted " + uri);
             NavigationStarting?.Invoke(this, args);
 			return args.Cancel;
         }
@@ -91,14 +91,14 @@ namespace P42.Uno.HtmlExtensions
 		internal void OnNavigationCompleted(bool isSuccess, Uri uri, Windows.Web.WebErrorStatus status)
         {
             var args = new WebViewXNavigationCompletedEventArgs(isSuccess, uri, status);
-            Console.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
+            if (debug) Console.WriteLine($"WebViewX[{Id}].OnNavigationCompleted " + uri);
 			NavigationCompleted?.Invoke(this, args);
         }
 
 		internal bool OnNewWindowRequested(Uri referrer, Uri uri)
         {
 			var args = new WebViewXNewWindowRequestedEventArgs(referrer, uri);
-            Console.WriteLine($"WebViewX[{Id}].OnNewWindowRequested " + uri);
+            if (debug) Console.WriteLine($"WebViewX[{Id}].OnNewWindowRequested " + uri);
             NewWindowRequested?.Invoke(this, args);
 			return args.Handled;
 		}
@@ -106,7 +106,7 @@ namespace P42.Uno.HtmlExtensions
 		internal void OnNavigationFailed(Uri uri, Windows.Web.WebErrorStatus status)
         {
 			var args = new WebViewXNavigationFailedEventArgs(uri, status);
-            Console.WriteLine($"WebViewX[{Id}].OnNavigationFailed " + uri);
+            if (debug) Console.WriteLine($"WebViewX[{Id}].OnNavigationFailed " + uri);
             NavigationFailed?.Invoke(this, args);
         }
 
@@ -124,10 +124,10 @@ namespace P42.Uno.HtmlExtensions
 
 		partial void NavigatePartial(Uri uri)
 		{
-            Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" +uri+")  ENTER");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" +uri+")  ENTER");
 			if (!VerifyNativeWebViewAvailability())
 			{
-                Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT : NativeWebView not available");
+                if (debug) Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT : NativeWebView not available");
                 return;
 			}
 
@@ -141,18 +141,18 @@ namespace P42.Uno.HtmlExtensions
 			}
 			else
 			{
-                Console.WriteLine($"WebViewX[{Id}].NavigatePartial: Absolute");
+                if (debug) Console.WriteLine($"WebViewX[{Id}].NavigatePartial: Absolute");
 				//_nativeWebView.SetHtmlAttribute("src", uri.AbsoluteUri);
 				_nativeWebView?.SetInternalSource(uri);
 			}
 
-            Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigatePartial(" + uri + ")  EXIT");
         }
 
         partial void NavigateToStringPartial(string text)
         {
-            //Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(0, Math.Min(100, text.Length-1))})");
-            Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(Math.Max(0, text.Length-100),100)})");
+            //if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(0, Math.Min(100, text.Length-1))})");
+            if (debug) Console.WriteLine($"WebViewX[{Id}].NavigateToStringPartial({text.Substring(Math.Max(0, text.Length-100),100)})");
             _nativeWebView?.SetInternalSource(text);
 		}
 
@@ -175,7 +175,7 @@ namespace P42.Uno.HtmlExtensions
 				if (_isLoaded)
 				{
 					var text = "This WebView control instance does not have a native web view child, a Control template may be missing.";
-					Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
+					if (debug) Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
 					this.Log().Warn(text);
 				}
 
