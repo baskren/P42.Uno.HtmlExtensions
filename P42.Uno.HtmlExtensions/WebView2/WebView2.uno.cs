@@ -46,7 +46,7 @@ namespace P42.UI.Xaml.Controls
 
         #region Fields
         TaskCompletionSource<bool> _loadedTcs = new TaskCompletionSource<bool>();
-        internal Guid _id = Guid.NewGuid();
+        internal string Id = Guid.NewGuid().ToString();
 #if !__WASM__
         internal ulong _instanceId;
         static internal ulong _instances;
@@ -153,7 +153,7 @@ namespace P42.UI.Xaml.Controls
 #endregion
 
 
-#region Public Methods
+        #region Public Methods
 
         public async Task EnsureCoreWebView2Async()
             => await _loadedTcs.Task;
@@ -174,7 +174,7 @@ namespace P42.UI.Xaml.Controls
 #endif
         }
 
-#endregion
+        #endregion
 
 
 
