@@ -46,11 +46,14 @@ namespace P42.UI.Xaml.Controls
 
         #region Fields
         TaskCompletionSource<bool> _loadedTcs = new TaskCompletionSource<bool>();
+#if __WASM__
+        internal string _id = Guid.NewGuid().ToString();
+#else
         internal string Id = Guid.NewGuid().ToString();
-#if !__WASM__
         internal ulong _instanceId;
         static internal ulong _instances;
 #endif
+
         #endregion
 
 
