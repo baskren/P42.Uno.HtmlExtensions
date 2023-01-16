@@ -5,7 +5,7 @@
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>P42.Uno.HtmlExtensions</RootNamespace>
-    <Version>4.6.39-winui.0.4</Version>
+    <Version>4.6.39</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
 	<!--

@@ -17,7 +17,7 @@
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net7.0-macos'">10.14</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="P42.Uno.Xamarin.Essentials" Version="4.6.39-winui.0.4" />
+    <PackageReference Include="P42.Uno.Xamarin.Essentials" Version="4.6.39" />
     <PackageReference Include="Uno.WinUI" Version="4.6.39" />
     <PackageReference Include="Uno.WinUI.Lottie" Version="4.6.39" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.39" Condition="'$(Configuration)'=='Debug'" />

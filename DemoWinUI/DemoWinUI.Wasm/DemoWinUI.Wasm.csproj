@@ -42,7 +42,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="4.6.39-winui.0.4" />
+    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="4.6.39" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
     <PackageReference Include="Uno.WinUI.Lottie" Version="4.6.39" />
     <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.6.39" />
