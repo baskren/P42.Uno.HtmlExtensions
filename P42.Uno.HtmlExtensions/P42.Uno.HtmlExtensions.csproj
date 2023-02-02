@@ -53,7 +53,7 @@
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.6.39" />
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.7.37" />
     <Compile Include="**\*.tizen.cs" />
     <Compile Include="**\*.tizen.*.cs" />
   </ItemGroup>
@@ -76,7 +76,7 @@
 
   <!-- Not Windows -->
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-    <PackageReference Include="Uno.WinUI" Version="4.6.39" />
+    <PackageReference Include="Uno.WinUI" Version="4.7.37" />
     <Compile Include="**\*.uno.cs" />
   </ItemGroup>
 
