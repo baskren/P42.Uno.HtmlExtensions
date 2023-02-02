@@ -44,7 +44,7 @@
     <EmbeddedResource Include="Themes\Generic.xaml" />
 
 	  <EmbeddedResource Include="LinkerConfig.Wasm.xml">
-		  <LogicalName>$(AssemblyName).xml</LogicalName>
+		  <LogicalName>P42.Uno.HtmlExtensions.Wasm.xml</LogicalName>
 	  </EmbeddedResource>
 
     <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
