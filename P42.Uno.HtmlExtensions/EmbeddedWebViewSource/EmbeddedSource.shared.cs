@@ -63,7 +63,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         static string FindFolder(Assembly assembly, string resourceId)
         {
-            var files = assembly.GetManifestResourceNames();
+            var files = assembly.GetManifestResourceNames().Where(id => id[0] != '_');
             var resourcePath = resourceId.Split('.');
             var folderPath = new List<string>();
             foreach (var file in files)
@@ -73,6 +73,9 @@ namespace P42.Uno.HtmlExtensions
                     var filePath = file.Split('.');
                     for (int i = folderPath.Count; i < resourcePath.Length - 2; i++)
                     {
+                        if (i >= resourcePath.Length || i >= filePath.Length)
+                            System.Diagnostics.Debug.WriteLine("EmbeddedSource. "); ;
+
                         if (resourcePath[i] == filePath[i])
                             folderPath.Add(filePath[i]);
                         else
