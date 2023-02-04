@@ -45,10 +45,10 @@
     <Reference Condition=" !$(TargetFramework.ToLower().Contains('net')) " Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
 
-  <!-- MacCatylst -->
+  <!-- maccatalyst -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('maccatalyst')) ">
-    <Compile Include="**\*.maccatylst.cs" />
-    <Compile Include="**\*.maccatylst.*.cs" />
+    <Compile Include="**\*.maccatalyst.cs" />
+    <Compile Include="**\*.maccatalyst.*.cs" />
   </ItemGroup>  
 
   <!-- TIZEN -->
