@@ -36,7 +36,7 @@ function UnoWebView_SetMessageListener() {
             if (UnoWebView_Debug) console.log('UnoWebView.js[' + UnoWebView_InstanceGuid +']: messageListener ENTER : ' + JSON.stringify(event.data));
             if (UnoWebView_Debug) console.log('UnoWebView.js[' + UnoWebView_InstanceGuid +']: messageListener href: ' + window.location.href);
             if (event.data.Target == sessionStorage.getItem('Uno.WebView.Session')) {
-                const OnMessageReceived = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions.Wasm] P42.Uno.HtmlExtensions.NativeWebView:OnMessageReceived");
+                const OnMessageReceived = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions] P42.Uno.HtmlExtensions.NativeWebView:OnMessageReceived");
                 var json = JSON.stringify(event.data);
                 OnMessageReceived(json);
             }
@@ -48,7 +48,7 @@ function UnoWebView_SetMessageListener() {
 function UnoWebView_OnLoad(index) {
     if (UnoWebView_Debug) console.log('UnoWebView.js[' + UnoWebView_InstanceGuid +']_OnLoad: ENTER ' + index);
     UnoWebView_SetMessageListener();
-    const OnFrameLoaded = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions.Wasm] P42.Uno.HtmlExtensions.NativeWebView:OnFrameLoaded");
+    const OnFrameLoaded = Module.mono_bind_static_method("[P42.Uno.HtmlExtensions] P42.Uno.HtmlExtensions.NativeWebView:OnFrameLoaded");
     OnFrameLoaded(index);
     if (UnoWebView_Debug) console.log('UnoWebView.js[' + UnoWebView_InstanceGuid +']_OnLoad: EXIT ' + index);
 }

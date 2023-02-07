@@ -9,12 +9,21 @@
     -->
 	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
 	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.18362;net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">net7.0-ios</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">net7.0-macos</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">net7.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">net7.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
 
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.android')) ">net7.0-android</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.ios')) ">net7.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.macos')) ">net7.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">net7.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) OR $(P42TargetPlatform.ToLower.Contains('wasm')) ">
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <DefineConstants >__WASM__;$(DefineConstants);</DefineConstants>
+    <P42TargetPlatform>wasm</P42TargetPlatform>
   </PropertyGroup>
 
 
@@ -58,13 +67,6 @@
     <Compile Include="**\*.tizen.*.cs" />
   </ItemGroup>
 
-  <!-- .NetStandard bait -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Equals('net7.0')) ">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <Compile Include="**\*.net.cs" />
-    <Compile Include="**\*.net.*.cs" />
-  </ItemGroup>
-
   <!-- WinUI Windows -->
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.3" />
@@ -79,5 +81,43 @@
     <PackageReference Include="Uno.WinUI" Version="4.7.37" />
     <Compile Include="**\*.uno.cs" />
   </ItemGroup>
+
+	<!-- .NetStandard Bait -->
+	<ItemGroup Condition=" !$(P42TargetPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
+		<Compile Include="**\*.net.cs" Exclude="$(DefaultItemExcludes)" />
+		<Compile Include="**\*.net.*.cs" Exclude="$(DefaultItemExcludes)" />
+	</ItemGroup>
+
+  <!-- WASM -->
+  <ItemGroup Condition=" $(P42TargetPlatform.ToLower().Contains('wasm')) ">
+    <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.37" />
+    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+
+    <Compile Include="**\*.wasm.cs" />
+    <Compile Include="**\*.wasm.*.cs" />
+
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <EmbeddedResource Include="Themes\Generic.xaml" />
+
+	  <EmbeddedResource Include="LinkerConfig.Wasm.xml">
+		  <LogicalName>P42.Uno.HtmlExtensions.Wasm.xml</LogicalName>
+	  </EmbeddedResource>
+
+    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
+    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
+
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.js" />
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.html" />
+
+    <EmbeddedResource Include="WebViewX\POC\index.html" />
+    <EmbeddedResource Include="WebViewX\POC\ScriptEmbed.html" />
+
+  </ItemGroup>
+
 
 </Project>
