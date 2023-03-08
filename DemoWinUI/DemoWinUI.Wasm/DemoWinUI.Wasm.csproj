@@ -16,7 +16,7 @@
     <WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Assets\SplashScreen.png"  />
+    <Content Include="Assets\SplashScreen.png" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\DemoWinUI.Shared\**\*.xaml" />
@@ -42,12 +42,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="4.7.37" />
+    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="4.7.44" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
-    <PackageReference Include="Uno.WinUI.Lottie" Version="4.7.37" />
-    <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.37" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+    <PackageReference Include="Uno.WinUI.Lottie" Version="4.7.44" />
+    <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.44" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
   </ItemGroup>

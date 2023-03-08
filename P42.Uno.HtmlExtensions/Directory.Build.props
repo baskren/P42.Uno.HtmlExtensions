@@ -4,7 +4,7 @@
 
     <RootNamespace>P42.Uno.HtmlExtensions</RootNamespace>
     <PackageId Condition=" $(SolutionName.ToLower().Contains('.wasm')) OR $(P42TargetPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
-    <Version>4.7.37</Version>
+    <Version>4.7.44</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
 
@@ -60,7 +60,7 @@
     <!--
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
     -->
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />

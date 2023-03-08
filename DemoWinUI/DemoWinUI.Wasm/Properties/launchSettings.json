@@ -3,11 +3,11 @@
     "DemoWinUI.Wasm": {
       "commandName": "Project",
       "launchBrowser": true,
-      "not_inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "applicationUrl": "https://localhost:50545;http://localhost:50546",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:50545;http://localhost:50546"
+      "not_inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     }
   }
 }
