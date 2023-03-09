@@ -323,10 +323,10 @@ namespace P42.Web.WebView2.Core
         public void Navigate(string uri)
         {
 #if __WASM__ || !NET7_0
-            Console.WriteLine($"CoreWebView2[{this._parentWebView.Id}].Navigate ENTER {uri} ");
+            Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].Navigate ENTER {uri} ");
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
                 w2.Navigate(new Uri(uri));
-            Console.WriteLine($"CoreWebView2[{this._parentWebView.Id}].Navigate ENTER {uri}");
+            Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].Navigate ENTER {uri}");
 #endif
         }
 
@@ -334,13 +334,13 @@ namespace P42.Web.WebView2.Core
         public void NavigateToString(string htmlContent)
         {
 #if __WASM__ || !NET7_0
-            Console.WriteLine($"CoreWebView2[{this._parentWebView.Id}].NavigateToString ENTER ");
+            Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].NavigateToString ENTER ");
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
             {
                 var uri = Task.Run(async () => await P42.Uno.HtmlExtensions.StringExtensions.ToTempFileUriAsync(htmlContent)).Result;
                 w2.Navigate(uri);
             }
-            Console.WriteLine($"CoreWebView2[{this._parentWebView.Id}].NavigateToString EXIT ");
+            Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].NavigateToString EXIT ");
 #endif
         }
 
