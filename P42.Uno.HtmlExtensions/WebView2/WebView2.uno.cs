@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 
-#if __WASM__ 
+#if __P42WASM__ 
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
 using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
 using WebViewNavigationStartingEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationStartingEventArgs;
@@ -47,7 +47,7 @@ namespace P42.UI.Xaml.Controls
         #region Fields
         TaskCompletionSource<bool> _loadedTcs = new TaskCompletionSource<bool>();
         internal string _id = Guid.NewGuid().ToString();
-#if !__WASM__
+#if !__P42WASM__
         internal ulong _instanceId;
         static internal ulong _instances;
 #endif
@@ -65,7 +65,7 @@ namespace P42.UI.Xaml.Controls
         /// </summary>
         public event TypedEventHandler<WebView2, P42.UI.Xaml.Controls.CoreWebView2InitializedEventArgs> CoreWebView2Initialized;
 
-#if NET7_0 && !__WASM__
+#if NET7_0 && !__P42WASM__
         /// <summary>
         /// Occurs when the WebView2 has completely loaded (body.onload has been raised) or loading stopped with error.
         /// </summary>
@@ -97,7 +97,7 @@ namespace P42.UI.Xaml.Controls
         public WebView2()
         {
             _instanceId = _instances++;
-#if !NET7_0 || __WASM__
+#if !NET7_0 || __P42WASM__
             base.NavigationStarting += OnBaseNavigationStarting;
             base.NavigationCompleted += OnNavigationCompleted;
 #endif
@@ -161,7 +161,7 @@ namespace P42.UI.Xaml.Controls
 
         public async Task<string> ExecuteScriptAsync(string script)
         {
-#if !NET7_0 || __WASM__
+#if !NET7_0 || __P42WASM__
             return await InvokeScriptAsync(CancellationToken.None, script, new string[] { });
 #else
             return await Task.FromResult(string.Empty);
@@ -170,7 +170,7 @@ namespace P42.UI.Xaml.Controls
 
         public void Reload()
         {
-#if !NET7_0 || __WASM__
+#if !NET7_0 || __P42WASM__
             Refresh();
 #endif
         }

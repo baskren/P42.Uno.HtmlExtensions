@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 //using Microsoft.UI.Xaml.Controls;
-#if __WASM__ 
+#if __P42WASM__ 
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
 #elif !HAS_UNO || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
@@ -21,7 +21,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class PrintService
     {
-#if __IOS__ || __ANDROID__ || !HAS_UNO || __WASM__
+#if __IOS__ || __ANDROID__ || !HAS_UNO || __P42WASM__
         static INativePrintService _nativePrintService;
         static INativePrintService NativePrintService =>
             _nativePrintService = _nativePrintService ?? new NativePrintService();

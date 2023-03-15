@@ -11,7 +11,7 @@ using AppKit;
 using WebKit;
 using Microsoft.UI.Xaml.Media;
 
-#if __WASM__
+#if __P42WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
 #elif !HAS_UNO || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
