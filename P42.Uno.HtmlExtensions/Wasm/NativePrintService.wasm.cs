@@ -54,7 +54,7 @@ namespace P42.Uno.HtmlExtensions
             
             RootPanel.Children.Add(webView);
 
-            System.Diagnostics.Debug.WriteLine("NativePrintService.PrintAsync start NavigateToString html: " + html.Substring(0, Math.Min(256, html.Length)));
+            //System.Diagnostics.Debug.WriteLine("NativePrintService.PrintAsync start NavigateToString html: " + html.Substring(0, Math.Min(256, html.Length)));
             var tcs = new TaskCompletionSource<bool>();
             webView.Tag = tcs;
             webView.NavigateToString(html);
@@ -76,7 +76,7 @@ namespace P42.Uno.HtmlExtensions
 
         static void OnNavigationComplete(WebView2 webView, WebViewNavigationCompletedEventArgs args)
         {
-            System.Diagnostics.Debug.WriteLine("NativePrintService.OnNavigationComplete: " + args.Uri);
+            //System.Diagnostics.Debug.WriteLine("NativePrintService.OnNavigationComplete: " + args.Uri);
             if (webView.Tag is TaskCompletionSource<bool> tcs)
             {
                 tcs.TrySetResult(true);
@@ -94,7 +94,7 @@ namespace P42.Uno.HtmlExtensions
 
             RootPanel.Children.Add(webView);
 
-            System.Diagnostics.Debug.WriteLine($"NativePrintService.PrintAsync start NavigateToString uro: [{uri}] ");
+            //System.Diagnostics.Debug.WriteLine($"NativePrintService.PrintAsync start NavigateToString uro: [{uri}] ");
             var tcs = new TaskCompletionSource<bool>();
             webView.Tag = tcs;
             webView.Navigate(uri);

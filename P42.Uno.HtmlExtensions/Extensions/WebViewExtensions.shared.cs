@@ -230,6 +230,7 @@ namespace P42.Uno.HtmlExtensions
             {
                 //await Forms9Patch.Debug.RequestUserHelp(e, "line = " + line + ", callerName=["+callerName+"]");
                 System.Diagnostics.Debug.WriteLine("WebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
+                Console.WriteLine("WebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
                 return await WebViewContentSizeAsync(webView, depth + 1, callerName);
             }
             return new Windows.Foundation.Size(contentWidth, contentHeight);
