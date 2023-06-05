@@ -268,7 +268,8 @@ namespace P42.Uno.HtmlExtensions
 #elif __IOS__ || __MACCATALYST__ || __MACOS__
             if (webView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
             {
-                var result = await wkWebView.EvaluateJavascriptAsync(CancellationToken.None, script);
+                var result = await wkWebView.EvaluateJavaScriptAsync(script);
+                //var result = await wkWebView.EvaluateJavascriptAsync(CancellationToken.None, script);
                 return result?.ToString() ?? string.Empty;
             }
             return await Task.FromResult(string.Empty);
