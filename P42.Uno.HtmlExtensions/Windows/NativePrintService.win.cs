@@ -36,6 +36,11 @@ namespace P42.Uno.HtmlExtensions
 
         int instanceCount = 0;
 
+        public async Task PrintAsync(string html, string jobName)
+        {
+            var uri = await html.ToTempFileUriAsync();
+            await uri.PrintAsync(jobName);
+        }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task PrintAsync(Uri uri, string jobName)

@@ -60,8 +60,11 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="jobName"></param>
         public static async Task PrintAsync(this string html, string jobName)
         {
+            /*
             var uri = await html.ToTempFileUriAsync();
             await uri.PrintAsync(jobName);
+            */
+            await NativePrintService?.PrintAsync(html, jobName);
         }
 
         /// <summary>

@@ -58,6 +58,12 @@ namespace P42.Uno.HtmlExtensions
                 throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
         }
 
+        public async Task PrintAsync(string html, string jobName)
+        {
+            var uri = await html.ToTempFileUriAsync();
+            await uri.PrintAsync(jobName);
+        }
+
         public async Task PrintAsync(Uri uri, string jobName)
         {
             

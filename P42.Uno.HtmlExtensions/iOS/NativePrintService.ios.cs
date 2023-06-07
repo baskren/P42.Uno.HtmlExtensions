@@ -39,34 +39,6 @@ namespace P42.Uno.HtmlExtensions
         public async Task PrintAsync(BaseWebView unoWebView, string jobName)
         {
             await unoWebView.ExecuteScriptAsync("window.print();");
-
-            /*
-            //var effectApplied = viewToPrint.Effects.Any(e => e is Forms9Patch.WebViewPrintEffect);
-            //var actualSource = viewToPrint.ActualSource() as WebViewSource;
-            var printInfo = UIPrintInfo.PrintInfo;
-            printInfo.JobName = jobName;
-            printInfo.Duplex = UIPrintInfoDuplex.None;
-            printInfo.OutputType = UIPrintInfoOutputType.General;
-
-            var printController = UIPrintInteractionController.SharedPrintController;
-            printController.ShowsPageRange = true;
-            printController.ShowsPaperSelectionForLoadedPapers = true;
-            printController.PrintInfo = printInfo;
-            printController.Delegate = this;
-
-            if (unoWebView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
-            {
-                var html = await wkWebView.EvaluateJavaScriptAsync("document.documentElement.outerHTML") as NSString;
-                printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
-                printController.Present(true, (printInteractionController, completed, error) =>
-                {
-                    System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync: PRESENTED completed[" + completed + "] error[" + error + "]");
-                });
-            }
-            */
-
-
-
         }
 
 
@@ -98,6 +70,12 @@ namespace P42.Uno.HtmlExtensions
                 System.Diagnostics.Debug.WriteLine(GetType() + ".PrintAsync : PRESENTED completed[" + completed + "] error[" + error + "]");
             });
 
+        }
+
+        public async Task PrintAsync(string html, string jobName)
+        {
+            var uri = await html.ToTempFileUriAsync();
+            await uri.PrintAsync(jobName);
         }
 
     }

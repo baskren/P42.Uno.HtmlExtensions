@@ -74,6 +74,13 @@ namespace P42.Uno.HtmlExtensions
             });
             */
         }
+
+        public async Task PrintAsync(string html, string jobName)
+        {
+            var uri = await html.ToTempFileUriAsync();
+            await uri.PrintAsync(jobName);
+        }
+
     }
 
     class NavigationDelegate : WKNavigationDelegate

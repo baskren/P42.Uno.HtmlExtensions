@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
 using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
 using WebViewNavigationFailedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationFailedEventArgs;
+using static Uno.UI.FeatureConfiguration;
 
 namespace P42.Uno.HtmlExtensions
 {
@@ -47,46 +48,13 @@ namespace P42.Uno.HtmlExtensions
 
         public async Task PrintAsync(string html, string jobName)
         {
-            var webView = new WebView2();
-            webView.Opacity = 0.01;
-            webView.NavigationCompleted += OnNavigationComplete;
-            webView.NavigationFailed += OnNavigationFailed;
-            
-            RootPanel.Children.Add(webView);
-
-            //System.Diagnostics.Debug.WriteLine("NativePrintService.PrintAsync start NavigateToString html: " + html.Substring(0, Math.Min(256, html.Length)));
-            var tcs = new TaskCompletionSource<bool>();
-            webView.Tag = tcs;
-            webView.NavigateToString(html);
-            if (await tcs.Task)
-                await PrintAsync(webView, jobName);
-            RootPanel.Children.Remove(webView);
-        }
-
-        static void OnNavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
-        {
-            if (sender is WebView2 webView && webView.Tag is TaskCompletionSource<bool> tcs)
-            {
-                tcs.TrySetResult(false);
-                //await P42.Uno.Controls.Toast.CreateAsync("Print Service Error", "WebView failed to navigate to provided string.  Please try again.\n\nWebErrorStatus: " + e.WebErrorStatus);
-                return;
-            }
-            throw new Exception("Cannot locate WebView or TaskCompletionSource for WebView.OnNavigationFailed");
-        }
-
-        static void OnNavigationComplete(WebView2 webView, WebViewNavigationCompletedEventArgs args)
-        {
-            //System.Diagnostics.Debug.WriteLine("NativePrintService.OnNavigationComplete: " + args.Uri);
-            if (webView.Tag is TaskCompletionSource<bool> tcs)
-            {
-                tcs.TrySetResult(true);
-                return;
-            }
-            throw new Exception("Cannot locate TaskCompletionSource for WebView.NavigationToString");
+            var js = $"P42UnoPrint('{html}');\n";
+            WebAssemblyRuntime.InvokeJS(js);
         }
 
         public async Task PrintAsync(Uri uri, string jobName)
         {
+            /*
             var webView = new WebView2();
             webView.Opacity = 0.01;
             webView.NavigationCompleted += OnNavigationComplete;
@@ -101,6 +69,21 @@ namespace P42.Uno.HtmlExtensions
             if (await tcs.Task)
                 await PrintAsync(webView, jobName);
             RootPanel.Children.Remove(webView);
+            */
+
+            var js = @"
+   var printWin = window.open('','','left=0,top=0,width=1,height=1,toolbar=0,scrollbars=0,status  =0');
+   printWin.location.replace('";
+            js += uri;
+            js += @"');
+   printWin.document.close();
+   printWin.focus();
+   printWin.print();
+   printWin.close();
+";
+            WebAssemblyRuntime.InvokeJS(js);
+
         }
+
     }
 }

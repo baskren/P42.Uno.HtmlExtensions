@@ -21,6 +21,6 @@ namespace P42.Uno.HtmlExtensions
 
         Task PrintAsync(Uri uri, string jobName);
 
-
+        Task PrintAsync(string html, string jobName);
     }
 }
