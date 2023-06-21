@@ -47,7 +47,15 @@
     <None Include="..\LICENSE" Pack="true" PackagePath="\" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="P42.Utils.Uno" Version="4.8.24" />
+  </ItemGroup>
+  <ItemGroup Condition="! $(Bc3Source.ToLower.Contains('nuget')) ">
+    <ProjectReference Include="..\..\P42.Uno.Controls\P42.Utils\P42.Utils.Uno\P42.Utils.Uno.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
+    <PackageReference Include="P42.Utils.Uno.Wasm" Version="4.9.17" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
+    <PackageReference Include="P42.Utils.Uno" Version="4.9.17" />
   </ItemGroup>
 
   <!-- Android -->
