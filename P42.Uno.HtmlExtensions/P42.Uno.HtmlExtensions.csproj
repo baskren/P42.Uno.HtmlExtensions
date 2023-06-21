@@ -47,6 +47,7 @@
     <None Include="..\LICENSE" Pack="true" PackagePath="\" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="P42.Utils.Uno" Version="4.8.24" />
   </ItemGroup>
 
   <!-- Android -->
