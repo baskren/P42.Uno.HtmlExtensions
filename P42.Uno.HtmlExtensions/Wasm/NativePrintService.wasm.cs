@@ -21,8 +21,8 @@ namespace P42.Uno.HtmlExtensions
             {
                 var rootFrame = Window.Current.Content as Microsoft.UI.Xaml.Controls.Frame;
                 var page = rootFrame?.Content as Microsoft.UI.Xaml.Controls.Page;
-                var panel = page?.Content as Panel;
-                var children = panel.Children.ToList();
+                //var panel = page?.Content as Panel;
+                //var children = panel.Children.ToList();
                 return page;
             }
         }
@@ -42,7 +42,7 @@ namespace P42.Uno.HtmlExtensions
         {
             //var id = webView.GetHtmlAttribute("id");
             //var result = WebAssemblyRuntime.InvokeJS($"UnoPrint_PrintElement('{id}');");
-            var result = await webView.ExecuteJavascriptAsync("window.print()");
+            await webView.ExecuteJavascriptAsync("window.print()");
             //await Task.CompletedTask;
         }
 
@@ -50,6 +50,7 @@ namespace P42.Uno.HtmlExtensions
         {
             var js = $"P42UnoPrint('{html}');\n";
             WebAssemblyRuntime.InvokeJS(js);
+            await Task.CompletedTask;
         }
 
         public async Task PrintAsync(Uri uri, string jobName)
@@ -82,6 +83,7 @@ namespace P42.Uno.HtmlExtensions
    printWin.close();
 ";
             WebAssemblyRuntime.InvokeJS(js);
+            await Task.CompletedTask;
 
         }
 
