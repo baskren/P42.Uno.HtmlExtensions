@@ -1,4 +1,4 @@
-﻿require([`${config.uno_app_base}/html2canvas`], c => window.html2canvas = c);
+﻿require([`${config.uno_app_base}/html2canvas.js`], c => window.html2canvas = c);
 
 function UnoPng_GetUrlPromise(id, width) {
     return new Promise(function (resolve, reject) {
