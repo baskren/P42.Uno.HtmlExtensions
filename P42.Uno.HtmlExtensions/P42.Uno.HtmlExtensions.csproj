@@ -119,7 +119,7 @@
 		  <LogicalName>P42.Uno.HtmlExtensions.Wasm.xml</LogicalName>
 	  </EmbeddedResource>
 
-    <EmbeddedResource Include="WasmScripts\html2canvas.min.js" />
+    <EmbeddedResource Include="WasmScripts\html2canvas.js" />
     <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
     <EmbeddedResource Include="WasmScripts\UnoPng.js" />
     <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
