@@ -5,6 +5,7 @@ using Uno;
 using Windows.Foundation;
 using Windows.UI.Core;
 
+#pragma warning disable CS0067
 namespace P42.Web.WebView2.Core
 {
     [NotImplemented]

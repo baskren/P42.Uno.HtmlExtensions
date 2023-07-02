@@ -9,7 +9,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 
 
-
+#pragma warning disable CS0067
 namespace P42.Web.WebView2.Core
 {
     public sealed class CoreWebView2 : IEquatable<CoreWebView2>
@@ -456,3 +456,4 @@ namespace P42.Web.WebView2.Core
 
     }
 }
+#pragma warning restore CS0067

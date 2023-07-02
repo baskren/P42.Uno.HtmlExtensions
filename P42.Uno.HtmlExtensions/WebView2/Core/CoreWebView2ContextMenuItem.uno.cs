@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Uno;
 
+#pragma warning disable CS0067
 namespace P42.Web.WebView2.Core
 {
     [NotImplemented]
@@ -86,3 +87,4 @@ namespace P42.Web.WebView2.Core
 
     }
 }
+#pragma warning restore CS0067
