@@ -9,7 +9,7 @@
   <!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'  AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
    
-    <Version>4.9.26</Version>
+    <Version>4.9.42</Version>
     <PackageId Condition=" $(P42_TargetOnlyThisPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
   
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -46,10 +46,10 @@
     <ProjectReference Include="..\..\P42.Uno.Controls\P42.Utils\P42.Utils.Uno\P42.Utils.Uno.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="P42.Utils.Uno.Wasm" Version="4.9.26" />
+    <PackageReference Include="P42.Utils.Uno.Wasm" Version="4.9.42" />
   </ItemGroup>
   <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="P42.Utils.Uno" Version="4.9.26" />
+    <PackageReference Include="P42.Utils.Uno" Version="4.9.42" />
   </ItemGroup>
 
   <!-- Android -->
@@ -101,9 +101,9 @@
 
   <!-- WASM -->
   <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.9.26" />
+    <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.9.42" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.9.26" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.9.42" />
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
