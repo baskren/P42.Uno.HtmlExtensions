@@ -36,9 +36,12 @@ namespace P42.Uno.HtmlExtensions
                 droidWebView.Settings.AllowFileAccessFromFileURLs = true;
                 droidWebView.Settings.AllowUniversalAccessFromFileURLs = true;
                 droidWebView.Settings.JavaScriptEnabled = true;
-#pragma warning disable CS0618 // Type or member is obsolete
-                droidWebView.DrawingCacheEnabled = true;
-#pragma warning restore CS0618 // Type or member is obsolete
+
+                if (Android.OS.Build.VERSION.SdkInt < (Android.OS.BuildVersionCodes)28)
+#pragma warning disable CA1422 // Validate platform compatibility
+                    droidWebView.DrawingCacheEnabled = true;
+#pragma warning restore CA1422 // Validate platform compatibility
+
                 droidWebView.SetLayerType(LayerType.Software, null);
                 droidWebView.Layout(0, 0, (int)System.Math.Ceiling(pageSize.Width), (int)System.Math.Ceiling(pageSize.Height));
 

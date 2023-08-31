@@ -54,7 +54,11 @@ namespace P42.Uno.HtmlExtensions
             printInfo.OutputType = UIPrintInfoOutputType.General;
 
             var printController = UIPrintInteractionController.SharedPrintController;
+
+#pragma warning disable CA1422 // Validate platform compatibility
             printController.ShowsPageRange = true;
+#pragma warning restore CA1422 // Validate platform compatibility
+
             printController.ShowsPaperSelectionForLoadedPapers = true;
             printController.PrintInfo = printInfo;
             printController.Delegate = this;

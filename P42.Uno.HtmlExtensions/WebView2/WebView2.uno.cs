@@ -69,11 +69,11 @@ namespace P42.UI.Xaml.Controls
         /// <summary>
         /// Occurs when the WebView2 has completely loaded (body.onload has been raised) or loading stopped with error.
         /// </summary>
-        public event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
+        public new event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
         /// <summary>
         /// Occurs when the main frame of the WebView2 navigates to a different URI.
         /// </summary>
-        public event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs> NavigationStarting;
+        public new event TypedEventHandler<WebView2, P42.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs> NavigationStarting;
 #else
         /// <summary>
         /// Occurs when the WebView2 has completely loaded (body.onload has been raised) or loading stopped with error.
@@ -202,7 +202,13 @@ namespace P42.UI.Xaml.Controls
                     view.LoadUrl(url);
                     return true;
             }
-            return base.ShouldOverrideUrlLoading(view, url);
+
+            if (Android.OS.Build.VERSION.SdkInt < (Android.OS.BuildVersionCodes)24)
+#pragma warning disable CA1422 // Validate platform compatibility
+                return base.ShouldOverrideUrlLoading(view, url);
+#pragma warning restore CA1422 // Validate platform compatibility
+
+            return false;
         }
 
         public override bool ShouldOverrideUrlLoading(Android.Webkit.WebView view, Android.Webkit.IWebResourceRequest request)

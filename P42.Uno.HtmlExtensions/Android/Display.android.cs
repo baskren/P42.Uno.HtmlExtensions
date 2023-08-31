@@ -15,9 +15,16 @@ namespace P42.Uno.HtmlExtensions
                 using var service = global::Uno.UI.ContextHelper.Current.GetSystemService(global::Android.App.Activity.WindowService);
                 using var windowManager = service?.JavaCast<IWindowManager>();
                 var display = windowManager?.DefaultDisplay;
-                display?.GetRealMetrics(displayMetrics);
-                var density = displayMetrics?.Density ?? 1;
-                return density;
+
+                if (Android.OS.Build.VERSION.SdkInt < (Android.OS.BuildVersionCodes)31)
+                {
+#pragma warning disable CA1422 // Validate platform compatibility
+                    display?.GetRealMetrics(displayMetrics);
+#pragma warning restore CA1422 // Validate platform compatibility
+                    return displayMetrics?.Density ?? 1;
+                }
+
+                return global::Uno.UI.ContextHelper.Current.Resources.DisplayMetrics.Density;
             }
         }
     }
