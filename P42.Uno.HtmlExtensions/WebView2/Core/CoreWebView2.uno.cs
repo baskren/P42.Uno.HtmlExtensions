@@ -36,12 +36,12 @@ namespace P42.Web.WebView2.Core
         {
             get
             {
-#if __P42WASM__ || !NET7_0 
+#if (__P42WASM__ || !NET7_0 ) && !WINDOWS
                 var task = Task.Run(async () =>
                 {
                     if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
                     {
-                        var result = await w2.InvokeScriptAsync(CancellationToken.None, "Document.fullscreenElement", new string[] { });
+                        var result = await w2.InvokeScriptAsync("Document.fullscreenElement", Array.Empty<string>());
                         return result;
                     }
                     return string.Empty;

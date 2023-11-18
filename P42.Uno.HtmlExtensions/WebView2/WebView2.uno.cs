@@ -161,8 +161,8 @@ namespace P42.UI.Xaml.Controls
 
         public async Task<string> ExecuteScriptAsync(string script)
         {
-#if !NET7_0 || __P42WASM__
-            return await InvokeScriptAsync(CancellationToken.None, script, new string[] { });
+#if (__P42WASM__ || !NET7_0 ) && !WINDOWS
+            return await InvokeScriptAsync(script, Array.Empty<string>());
 #else
             return await Task.FromResult(string.Empty);
 #endif
