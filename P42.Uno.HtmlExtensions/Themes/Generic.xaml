@@ -4,7 +4,7 @@
     xmlns:wasm="http://uno.winui/wasm"
     xmlns:local="using:P42.Uno.HtmlExtensions">
 
-    <Style TargetType="WebViewX">
+    <Style TargetType="local:WebViewX">
         <Style.Setters>
             <Setter Property="Template">
                 <Setter.Value>
