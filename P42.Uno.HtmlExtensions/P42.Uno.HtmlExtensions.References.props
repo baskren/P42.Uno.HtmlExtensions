@@ -1,0 +1,60 @@
+<Project ToolsVersion="15.0">
+
+  <!-- Android -->
+  <PropertyGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- SHARED REFERENCES -->
+  <ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.55" />
+    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.8" />
+  </ItemGroup>
+
+  <!-- PLATFORM SPECIFIC REFERENCES -->
+  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
+  </ItemGroup>
+  <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
+  </ItemGroup>
+  
+  <Choose>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
+      <ItemGroup>
+        <!--
+        <Page Include="Themes\Generic.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <EmbeddedResource Include="Themes\Generic.xaml" />
+        -->   
+        <EmbeddedResource Include="WasmScripts\html2canvas.js" />
+        <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
+        <EmbeddedResource Include="WasmScripts\UnoPng.js" />
+        <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
+
+        <!--
+        <EmbeddedResource Include="Resources\UnoWebViewBridge.js" />
+        <EmbeddedResource Include="Resources\UnoWebViewBridge.html" />
+        -->
+
+        <EmbeddedResource Include="WebViewX\POC\index.html" />
+        <EmbeddedResource Include="WebViewX\POC\ScriptEmbed.html" />
+      </ItemGroup>
+    </When>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('skia'))  OR  $(P42_TargetPlatform.ToLower().Contains('skia'))  OR  $(SolutionName.ToLower().Contains('skia')) ">
+      <ItemGroup>
+        <Page Remove="Themes\Generic.xaml" />
+        <EmbeddedResource Remove="Themes\Generic.xaml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Page Remove="Themes\Generic.xaml" />
+        <EmbeddedResource Remove="Themes\Generic.xaml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+
+
+</Project>

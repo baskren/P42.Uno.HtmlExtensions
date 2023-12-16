@@ -12,7 +12,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
 using Windows.UI.Core;
-using Uno.Logging;
 using System.IO;
 using Uno.UI;
 //using Microsoft.Web.WebView2.Core;
@@ -42,7 +41,7 @@ namespace P42.Uno.HtmlExtensions
 			{
 				var text = $"No view of type {nameof(NativeWebView)} found in children, are you missing one of these types in a template ? ";
 				if (debug) Console.WriteLine($"WebViewX[{Id}].OnApplyTemplate ERROR: {text}");
-				this.Log().Error(text);
+                P42.Serilog.QuickLog.QLog.Error(text);
 			}
 			else
             {
@@ -176,7 +175,7 @@ namespace P42.Uno.HtmlExtensions
 				{
 					var text = "This WebView control instance does not have a native web view child, a Control template may be missing.";
 					if (debug) Console.WriteLine($"WebViewX[{Id}].VerifyNativeWebViewAvailability: {text}");
-					this.Log().Warn(text);
+                    P42.Serilog.QuickLog.QLog.Warning(text);
 				}
 
 				return false;

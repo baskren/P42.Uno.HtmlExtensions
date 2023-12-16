@@ -1,132 +1,105 @@
-﻿<Project Sdk="MSbuild.Sdk.Extras/3.0.23">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
 
   <PropertyGroup>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
     <AssemblyName>P42.Uno.HtmlExtensions</AssemblyName>
-    <RootNamespace>P42.Uno.HtmlExtensions</RootNamespace>
-    <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
   </PropertyGroup>
 
-  <!-- NUGET PACKAGE GENERATION -->
-  <PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'  AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
-   
-    <Version>5.0.64</Version>
-    <PackageId Condition=" $(P42_TargetOnlyThisPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
-  
-  	<PublishRepositoryUrl>true</PublishRepositoryUrl>
-  	<EmbedUntrackedSources>true</EmbedUntrackedSources>
-  	<IncludeSymbols>true</IncludeSymbols>
-  	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
-
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>Ben Askren</Authors>
-    <Company>42nd Parallel, LLC</Company>
-    <Description>Print and create PDF extensions for HTML and Uno's Microsoft.UI.Xaml.Controls.WebView2.</Description>
-    <Copyright>2022, 42nd Parallel</Copyright>
-    <PackageProjectUrl>https://github.com/baskren/P42.Uno.HtmlExtensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/baskren/P42.Uno.HtmlExtensions</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageIcon>P42.icon.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>Uno.Platform Uno HTML print png</PackageTags>
-  </PropertyGroup>
-
-  <!-- SHARED RESOURCES -->
+<!--
   <ItemGroup>
-    <None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
-    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <UnoRuntimeProjectReference Include="P42.Uno.HtmlExtensions.Skia.csproj" />
+    <UnoRuntimeProjectReference Include="P42.Uno.HtmlExtensions.Wasm.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="! $(Bc3Source.ToLower.Contains('nuget')) ">
-    <ProjectReference Include="..\..\P42.Uno.Controls\P42.Utils\P42.Utils.Uno\P42.Utils.Uno.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="P42.Utils.Uno.Wasm" Version="5.0.64" />
-  </ItemGroup>
-  <ItemGroup Condition=" $(Bc3Source.ToLower.Contains('nuget')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="P42.Utils.Uno" Version="5.0.64" />
+-->
+
+  <ItemGroup>
+    <Content Include="buildTransitive\**">
+      <PackagePath>buildTransitive</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
 
-  <!-- Android -->
-  <PropertyGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
+
+  <Import Project="Directory.Build.TargetPlatform.props" />
+
+
+  <ItemGroup>
+    <PackageReference Include="Uno.WinUI" Version="5.0.64" />
   </ItemGroup>
 
-  <!-- iOS -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('ios')) OR $(TargetFramework.ToLower().Contains('maccatalyst'))">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
+
+  <Choose>
+
+    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+      <ItemGroup>
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+      </ItemGroup>
+      <ItemGroup>
+        <!--
+				If you encounter this error message:
+
+					error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+					Please update to a newer .NET SDK in order to reference this assembly.
+
+				This means that the two packages below must be aligned with the "build" version number of
+				the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+				must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+				-->
+        <!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
+      </ItemGroup>
+    </When>
+
+    <Otherwise>
+      <ItemGroup>
+        <Content Include="Assets\**" />
+        <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+        <Compile Update="**\*.xaml.cs">
+          <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <PriResource Include="**\*.resw" />
+      </ItemGroup>
+    </Otherwise>
+
+  </Choose>
+
+
+  <ItemGroup>
+    <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
   </ItemGroup>
 
-  <!-- MacOS -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('macos')) OR $(TargetFramework.ToLower().Contains('xamarin.mac'))">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
+
+  <!-- CUSTOMIZATION THAT DOESN'T WORK IN EXTERNAL .props -->
+  <ItemGroup>
+    <Compile Remove="**/*.nfloat.g.cs" />
   </ItemGroup>
+  <Choose>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
+      <ItemGroup>
+        <Page Include="Themes\Generic.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <EmbeddedResource Include="Themes\Generic.xaml" />
+      </ItemGroup>
+    </When>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('skia'))  OR  $(P42_TargetPlatform.ToLower().Contains('skia'))  OR  $(SolutionName.ToLower().Contains('skia')) ">
+      <ItemGroup>
+        <Page Remove="Themes\Generic.xaml" />
+        <EmbeddedResource Remove="Themes\Generic.xaml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Page Remove="Themes\Generic.xaml" />
+        <EmbeddedResource Remove="Themes\Generic.xaml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 
-  <!-- maccatalyst -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('maccatalyst')) ">
-  </ItemGroup>  
-
-  <!-- TIZEN -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
-  </ItemGroup>
-
-  <!-- WinUI Windows -->
-  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
-  </ItemGroup>
-
-  <!-- Not Windows -->
-  <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-  </ItemGroup>
-
-	<!-- .NetStandard Bait -->
-	<ItemGroup Condition=" !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
-    <Page Remove="Themes\Generic.xaml" />
-    <EmbeddedResource Remove="Themes\Generic.xaml" />
-	</ItemGroup>
-
-  <!-- WASM -->
-  <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <PackageReference Include="Uno.WinUI.WebAssembly" Version="5.0.64" />
-    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.64" />
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <EmbeddedResource Include="Themes\Generic.xaml" />
-
-	  <EmbeddedResource Include="LinkerConfig.Wasm.xml">
-		  <LogicalName>P42.Uno.HtmlExtensions.Wasm.xml</LogicalName>
-	  </EmbeddedResource>
-
-    <EmbeddedResource Include="WasmScripts\html2canvas.js" />
-    <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
-    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
-
-    <!--
-    <EmbeddedResource Include="Resources\UnoWebViewBridge.js" />
-    <EmbeddedResource Include="Resources\UnoWebViewBridge.html" />
-    -->
-
-    <EmbeddedResource Include="WebViewX\POC\index.html" />
-    <EmbeddedResource Include="WebViewX\POC\ScriptEmbed.html" />
-
-  </ItemGroup>
-
+  
 
 </Project>

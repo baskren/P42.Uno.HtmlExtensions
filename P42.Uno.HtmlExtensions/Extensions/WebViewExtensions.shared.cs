@@ -12,7 +12,7 @@ using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI.WebUI;
 
-#if __P42WASM__
+#if __WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
 #elif !HAS_UNO || NET7_0
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
@@ -27,6 +27,21 @@ namespace P42.Uno.HtmlExtensions
     public static partial class WebViewExtensions
     {
 
+        /// <summary>
+        /// Returns the WebView's current Source value as an HTML string
+        /// </summary>
+        /// <param name="unoWebView"></param>
+        /// <returns></returns>
+        public static async Task<string> GetSourceAsHtmlAsync(this BaseWebView unoWebView)
+        {
+//#if !NET7_0
+            var result = await unoWebView.ExecuteScriptAsync( "document.documentElement.outerHTML" );
+            return result;
+//#else
+//            return await Task.FromResult(string.Empty);
+//#endif
+        }
+
         public static void NavigateToResource(this BaseWebView webView, string resourceId, Assembly assembly)
         {
             using (var stream = assembly.GetManifestResourceStream(resourceId))
@@ -36,7 +51,7 @@ namespace P42.Uno.HtmlExtensions
                     var text = reader.ReadToEnd();
                     var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{Guid.NewGuid()}.html");
                     File.WriteAllText(path, text);
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
                     webView.Source = new Uri($"file://{path}");
 #endif
                 }
@@ -58,7 +73,7 @@ namespace P42.Uno.HtmlExtensions
         
         static async Task<TryResult<int>> TryExecuteIntScriptAsync(this BaseWebView webView2, string script)
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
@@ -75,7 +90,7 @@ namespace P42.Uno.HtmlExtensions
 
         static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this BaseWebView webView2, string script)
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
@@ -243,7 +258,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> GetHtml(this BaseWebView webView)
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             var html = await webView.ExecuteScriptAsync("document.documentElement.outerHTML;");
             return html;
 #else
@@ -274,7 +289,7 @@ namespace P42.Uno.HtmlExtensions
             }
             return await Task.FromResult(string.Empty);
 
-#elif __P42WASM__
+#elif __WASM__
             return await webView._nativeWebView.InvokeScriptAsync(script);
 
 #else

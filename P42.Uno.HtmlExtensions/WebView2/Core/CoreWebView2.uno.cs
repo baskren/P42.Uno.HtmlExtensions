@@ -20,13 +20,13 @@ namespace P42.Web.WebView2.Core
         #region Properties
         public ulong BrowserProcessId => _parentWebView?._instanceId ?? 0;
 
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
         public bool CanGoBack => _parentWebView?.CanGoBack ?? false;
 #else
         public bool CanGoBack => false;
 #endif
 
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
         public bool CanGoForward => _parentWebView?.CanGoForward ?? false;
 #else
         public bool CanGoForward => false;
@@ -36,7 +36,7 @@ namespace P42.Web.WebView2.Core
         {
             get
             {
-#if (__P42WASM__ || !NET7_0 ) && !WINDOWS
+#if (__WASM__ || !NET7_0 ) && !WINDOWS
                 var task = Task.Run(async () =>
                 {
                     if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
@@ -63,7 +63,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public Point DefaultDownloadDialogMargin { get; set; }
 
-#if __P42WASM__ || !NET7_0 
+#if __WASM__ || !NET7_0 
         public string DocumentTitle => _parentWebView?.DocumentTitle ?? string.Empty;
 #else
         public string DocumentTitle => string.Empty;
@@ -85,7 +85,7 @@ namespace P42.Web.WebView2.Core
 
         public CoreWebView2Settings Settings { get; private set; }
 
-#if __P42WASM__ || !NET7_0 
+#if __WASM__ || !NET7_0 
         public string Source => _parentWebView.Source.AbsoluteUri; // { get; private set; }
 #else
         public string Source => string.Empty;
@@ -177,7 +177,7 @@ namespace P42.Web.WebView2.Core
             CookieManager = new CoreWebView2CookieManager(_parentWebView);
             Environment = new CoreWebView2Environment();
             Settings = new CoreWebView2Settings();
-#if __P42WASM__
+#if __WASM__
             ((P42.Uno.HtmlExtensions.WebViewX)webView2).NavigationStarting += OnXNavStarting;
             ((P42.Uno.HtmlExtensions.WebViewX)webView2).NavigationCompleted += OnXNavCompleted;
 
@@ -188,10 +188,10 @@ namespace P42.Web.WebView2.Core
         }
 
 
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
 
 
-#if __P42WASM__
+#if __WASM__
         private void OnXNavCompleted(Uno.HtmlExtensions.WebViewX sender, Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs args)
 #else
         private void OnNavCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
@@ -205,7 +205,7 @@ namespace P42.Web.WebView2.Core
             NavigationCompleted?.Invoke(this, newArgs);
         }
 
-#if __P42WASM__
+#if __WASM__
         private void OnXNavStarting(Uno.HtmlExtensions.WebViewX sender, Uno.HtmlExtensions.WebViewXNavigationStartingEventArgs args)
 #else
         private void OnNavStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -322,7 +322,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void Navigate(string uri)
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].Navigate ENTER {uri} ");
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
                 w2.Navigate(new Uri(uri));
@@ -333,7 +333,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void NavigateToString(string htmlContent)
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             Console.WriteLine($"CoreWebView2[{this._parentWebView._id}].NavigateToString ENTER ");
             if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
             {
@@ -397,7 +397,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void GoBack()
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             _parentWebView?.GoBack();
 #endif
         }
@@ -405,7 +405,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void GoForward()
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             _parentWebView?.GoForward();
 #endif
         }
@@ -419,7 +419,7 @@ namespace P42.Web.WebView2.Core
         [NotImplemented(new string[] { "__ANDROID__", "__IOS__", "NET461", "__WASM__", "__SKIA__", "__NETSTD_REFERENCE__", "__MACOS__" })]
         public void Stop()
         {
-#if __P42WASM__ || !NET7_0
+#if __WASM__ || !NET7_0
             _parentWebView?.Stop();
 #endif
         }

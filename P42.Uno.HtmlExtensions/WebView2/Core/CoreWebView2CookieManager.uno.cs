@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Uno;
 using Windows.Foundation.Metadata;
 
-#if __P42WASM__
+#if __WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
@@ -44,7 +44,7 @@ namespace P42.Web.WebView2.Core
 
         public void AddOrUpdateCookie(P42.Web.WebView2.Core.CoreWebView2Cookie cookie)
         {
-#if !NET7_0 && !__P42WASM__
+#if !NET7_0 && !__WASM__
             Task.Run(async () =>
             {
                 var cmd = "document.cookie=" + cookie.ToString();
@@ -82,7 +82,7 @@ namespace P42.Web.WebView2.Core
 
         public void DeleteAllCookies()
         {
-#if !NET7_0 && !__P42WASM__
+#if !NET7_0 && !__WASM__
             Task.Run(async () =>
             {
                 var response = await _webView.InvokeScriptAsync("document.cookie", new string[] { });
