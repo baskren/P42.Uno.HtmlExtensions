@@ -14,7 +14,7 @@ using Windows.UI.WebUI;
 
 #if __WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif !HAS_UNO || NET7_0
+#elif WINDOWS
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;

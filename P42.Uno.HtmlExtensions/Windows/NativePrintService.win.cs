@@ -1,4 +1,4 @@
-﻿#if !HAS_UNO
+﻿#if WINDOWS
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -5,7 +5,7 @@ using Windows.Storage;
 
 #if __WASM__
 using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif !HAS_UNO || NET7_0
+#elif WINDOWS
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
 #else
 using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
@@ -18,7 +18,7 @@ namespace P42.Uno.HtmlExtensions
     /// </summary>
     public static class ToPdfService
     {
-#if __IOS__ || __ANDROID__ || !HAS_UNO
+#if __IOS__ || __ANDROID__ || WINDOWS
         static INativeToPdfService _nativeToPdfService;
         static INativeToPdfService NativeToPdfService =>
             _nativeToPdfService = _nativeToPdfService ?? new NativeToPdfService();
