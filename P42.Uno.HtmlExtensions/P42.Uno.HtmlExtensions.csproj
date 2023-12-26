@@ -8,21 +8,6 @@
   </PropertyGroup>
 
 
-<!--
-  <ItemGroup>
-    <UnoRuntimeProjectReference Include="P42.Uno.HtmlExtensions.Skia.csproj" />
-    <UnoRuntimeProjectReference Include="P42.Uno.HtmlExtensions.Wasm.csproj" />
-  </ItemGroup>
--->
-
-  <ItemGroup>
-    <Content Include="buildTransitive\**">
-      <PackagePath>buildTransitive</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
-
-
   <Import Project="Directory.Build.TargetPlatform.props" />
 
 
