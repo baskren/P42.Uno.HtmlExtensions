@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using CoreGraphics;
@@ -48,27 +48,26 @@ namespace P42.Uno.HtmlExtensions
                     {
                         UserContentController = wkUController
                     };
-                    using (var webView = new WKWebView(new CGRect(0, 0, pageSize.Width, pageSize.Height), configuration)
+                    var webView = new WKWebView(new CGRect(0, 0, pageSize.Width, pageSize.Height), configuration)
                     {
                         UserInteractionEnabled = false,
-                        BackgroundColor = UIColor.White
-                    })
+                        BackgroundColor = UIColor.White,
+                        NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync)
+                    };
+                    //webView.LoadHtmlString(html, null);
+                    if (uri.IsFile)
                     {
-                        webView.NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync);
-                        //webView.LoadHtmlString(html, null);
-                        if (uri.IsFile)
-                        {
-                            var path = uri.AbsolutePath;
-                            var dir = Directory.GetParent(path).FullName;
-                            var readAccessUri = new Uri(dir, UriKind.Absolute);
-                            webView.LoadFileUrl(uri, readAccessUri);
-                        }
-                        else
-                        {
-                            webView.LoadRequest(new NSUrlRequest(uri));
-                        }
-                        return await taskCompletionSource.Task;
+                        var path = uri.AbsolutePath;
+                        var dir = Directory.GetParent(path).FullName;
+                        var readAccessUri = new Uri(dir, UriKind.Absolute);
+                        webView.LoadFileUrl(uri, readAccessUri);
                     }
+                    else
+                    {
+                        webView.LoadRequest(new NSUrlRequest(uri));
+                    }
+                    return await taskCompletionSource.Task;
+                    
                 }
             }
             return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
