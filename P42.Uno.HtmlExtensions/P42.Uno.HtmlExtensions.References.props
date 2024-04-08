@@ -12,8 +12,8 @@
   <!-- SHARED REFERENCES -->
   <ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
-    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.8" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
+    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
   </ItemGroup>
 
   <!-- PLATFORM SPECIFIC REFERENCES -->
