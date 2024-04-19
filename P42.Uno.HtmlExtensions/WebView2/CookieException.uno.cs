@@ -17,6 +17,7 @@ namespace P42.Net
         {
         }
 
+        /*
         protected CookieException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {
@@ -31,6 +32,7 @@ namespace P42.Net
         {
             base.GetObjectData(serializationInfo, streamingContext);
         }
+        */
     }
 
 }

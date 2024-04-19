@@ -34,7 +34,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> GetSourceAsHtmlAsync(this BaseWebView unoWebView)
         {
-//#if !NET7_0
+//#if !NET7_0_OR_GREATER
             var result = await unoWebView.ExecuteScriptAsync( "document.documentElement.outerHTML" );
             return result;
 //#else
@@ -51,7 +51,7 @@ namespace P42.Uno.HtmlExtensions
                     var text = reader.ReadToEnd();
                     var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{Guid.NewGuid()}.html");
                     File.WriteAllText(path, text);
-#if __WASM__ || !NET7_0
+#if __WASM__ || !NET7_0_OR_GREATER
                     webView.Source = new Uri($"file://{path}");
 #endif
                 }
@@ -73,7 +73,7 @@ namespace P42.Uno.HtmlExtensions
         
         static async Task<TryResult<int>> TryExecuteIntScriptAsync(this BaseWebView webView2, string script)
         {
-#if __WASM__ || !NET7_0
+#if __WASM__ || !NET7_0_OR_GREATER
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
@@ -90,7 +90,7 @@ namespace P42.Uno.HtmlExtensions
 
         static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this BaseWebView webView2, string script)
         {
-#if __WASM__ || !NET7_0
+#if __WASM__ || !NET7_0_OR_GREATER
             try
             {
                 var result = await webView2.ExecuteScriptAsync(script);
@@ -258,7 +258,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> GetHtml(this BaseWebView webView)
         {
-#if __WASM__ || !NET7_0
+#if __WASM__ || !NET7_0_OR_GREATER
             var html = await webView.ExecuteScriptAsync("document.documentElement.outerHTML;");
             return html;
 #else
