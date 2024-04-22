@@ -1,3 +1,5 @@
+#pragma warning disable CS0067
+
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;

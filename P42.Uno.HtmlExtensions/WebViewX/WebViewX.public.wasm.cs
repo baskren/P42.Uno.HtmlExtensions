@@ -11,13 +11,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions;
-//using Uno.UI.Xaml;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
 
 namespace P42.Uno.HtmlExtensions
 {
-	public partial class WebViewX : Control
+	public partial class WebViewX 
 	{
         const bool debug = false;
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 
 
   <PropertyGroup>
@@ -63,29 +63,5 @@
   <ItemGroup>
     <Compile Remove="**/*.nfloat.g.cs" />
   </ItemGroup>
-  <Choose>
-    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
-      <ItemGroup>
-        <Page Include="Themes\Generic.xaml">
-          <Generator>MSBuild:Compile</Generator>
-        </Page>
-        <EmbeddedResource Include="Themes\Generic.xaml" />
-      </ItemGroup>
-    </When>
-    <When Condition="  $(MSBuildProjectName.ToLower().Contains('skia'))  OR  $(P42_TargetPlatform.ToLower().Contains('skia'))  OR  $(SolutionName.ToLower().Contains('skia')) ">
-      <ItemGroup>
-        <Page Remove="Themes\Generic.xaml" />
-        <EmbeddedResource Remove="Themes\Generic.xaml" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Page Remove="Themes\Generic.xaml" />
-        <EmbeddedResource Remove="Themes\Generic.xaml" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
-  
 
 </Project>
