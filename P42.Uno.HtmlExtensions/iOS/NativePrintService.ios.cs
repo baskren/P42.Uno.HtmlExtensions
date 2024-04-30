@@ -64,7 +64,7 @@ namespace P42.Uno.HtmlExtensions
             printController.Delegate = this;
 
             var web = new HtmlAgilityPack.HtmlWeb();
-            var doc = web.Load(uri.AbsoluteUri);
+            var doc = web.Load(uri);
             var html = doc.DocumentNode.OuterHtml;
 
             printController.PrintFormatter = new UIMarkupTextPrintFormatter(html);
