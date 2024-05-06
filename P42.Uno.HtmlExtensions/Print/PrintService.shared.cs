@@ -64,7 +64,7 @@ namespace P42.Uno.HtmlExtensions
             var uri = await html.ToTempFileUriAsync();
             await uri.PrintAsync(jobName);
             */
-            await NativePrintService?.PrintAsync(html, jobName);
+            await (NativePrintService?.PrintAsync(html, jobName) ?? Task.CompletedTask);
         }
 
         /// <summary>
