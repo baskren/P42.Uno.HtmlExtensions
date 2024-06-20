@@ -132,7 +132,7 @@ namespace P42.Uno.HtmlExtensions
             }
             finally
             {
-                webView.Dispose();
+                //webView.Dispose();
             }
 
         }
