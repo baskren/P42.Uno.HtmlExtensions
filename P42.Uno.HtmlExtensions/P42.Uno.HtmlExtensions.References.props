@@ -12,7 +12,7 @@
   <!-- SHARED REFERENCES -->
   <ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
     <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
   </ItemGroup>
 
@@ -24,7 +24,7 @@
   </ItemGroup>
   
   <Choose>
-    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
+    <When Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
       <ItemGroup>
         <Page Include="Themes\Generic.wasm_xaml">
           <Generator>MSBuild:Compile</Generator>
