@@ -43,12 +43,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="5.2.132" />
+    <PackageReference Include="P42.Uno.Xamarin.Essentials.Wasm" Version="$(UnoVersion)" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-    <PackageReference Include="Uno.WinUI.Lottie" Version="5.2.132" />
-    <PackageReference Include="Uno.WinUI.WebAssembly" Version="5.2.132" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="5.2.132" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
+    <PackageReference Include="Uno.WinUI.Lottie" Version="$(UnoVersion)" />
+    <PackageReference Include="Uno.WinUI.WebAssembly" Version="$(UnoVersion)" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="$(UnoVersion)" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
   </ItemGroup>

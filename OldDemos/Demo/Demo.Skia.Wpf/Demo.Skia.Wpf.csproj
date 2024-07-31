@@ -8,8 +8,8 @@
     <!-- Note that for WebAssembly version 1.1.1 of the console logger required -->
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-    <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="5.2.132" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="5.2.132" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="$(UnoVersion)" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="$(UnoVersion)" Condition="'$(Configuration)'=='Debug'" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\Demo.Shared\**\*.xaml" />
