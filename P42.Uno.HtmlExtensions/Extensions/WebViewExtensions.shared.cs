@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,6 +49,10 @@ namespace P42.Uno.HtmlExtensions
                 using (var reader = new StreamReader(stream))
                 {
                     var text = reader.ReadToEnd();
+                    if (string.IsNullOrEmpty(text))
+                        return;
+                    if (string.IsNullOrWhiteSpace(ApplicationData.Current.TemporaryFolder.Path))
+                        throw new Exception("NO VALUE FOUND FOR Windows.Storage.ApplicationData.Current.TemporaryFolder.Path");
                     var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{Guid.NewGuid()}.html");
                     File.WriteAllText(path, text);
 #if __WASM__ || !NET7_0_OR_GREATER

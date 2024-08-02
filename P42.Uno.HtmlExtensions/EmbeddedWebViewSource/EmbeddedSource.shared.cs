@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,25 +33,23 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static string FolderPath(Assembly assembly, string folderName = null)
         {
-            if (!Directory.Exists(ApplicationData.Current.LocalFolder.Path))
-                Directory.CreateDirectory(ApplicationData.Current.LocalFolder.Path);
+            if (string.IsNullOrWhiteSpace(ApplicationData.Current.LocalFolder.Path))
+                throw new Exception("NO VALUE FOUND FOR Window.Storage.ApplicationData.Current.LocalFolder.Path");
+            FileSystem.AssureExists(ApplicationData.Current.LocalFolder.Path);
             var root = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, LocalStorageFolderName);
-            if (!Directory.Exists(root))
-                Directory.CreateDirectory(root);
+            FileSystem.AssureExists(root);
+
             if (assembly != null)
             {
                 root = System.IO.Path.Combine(root, assembly.GetName().Name);
-                if (!Directory.Exists(root))
-                    Directory.CreateDirectory(root);
+                FileSystem.AssureExists(root);
             }
 
             if (string.IsNullOrWhiteSpace(folderName))
                 return root;
 
             var folderPath = System.IO.Path.Combine(root, folderName);
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-
+            FileSystem.AssureExists(folderPath);
             return folderPath;
         }
 
@@ -110,6 +108,9 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public static async Task<string> LocalStorageFullPathForEmbeddedResourceAsync(string resourceId, Assembly assembly, string folderName = null)
         {
+            if (string.IsNullOrEmpty(resourceId))
+                throw new ArgumentNullException(nameof(resourceId));
+
             if (await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName) is string subPath)
             {
                 var path = System.IO.Path.Combine(FolderPath(assembly, folderName), subPath);
@@ -120,6 +121,9 @@ namespace P42.Uno.HtmlExtensions
 
         public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly, string folderName = null)
         {
+            if (string.IsNullOrEmpty(resourceId))
+                throw new ArgumentNullException(nameof(resourceId));
+
             if (assembly == null)
                 return null;
 
