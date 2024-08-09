@@ -6,13 +6,6 @@ using UIKit;
 using WebKit;
 using Microsoft.UI.Xaml.Controls;
 
-#if __WASM__
-using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif WINDOWS
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
-#else
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-#endif
 
 namespace P42.Uno.HtmlExtensions
 {

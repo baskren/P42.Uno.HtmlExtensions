@@ -8,8 +8,6 @@ using UIKit;
 using WebKit;
 using Windows.Storage;
 
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-
 namespace P42.Uno.HtmlExtensions;
 
 class NativeToPdfService : UIPrintInteractionControllerDelegate, INativeToPdfService

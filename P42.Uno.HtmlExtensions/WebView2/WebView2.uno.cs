@@ -10,15 +10,6 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 
-#if __WASM__ 
-using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
-using WebViewNavigationStartingEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationStartingEventArgs;
-using WebView = P42.Uno.HtmlExtensions.WebViewX;
-#else
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-//using WebView = Microsoft.UI.Xaml.Controls.WebView2;
-#endif
 
 namespace P42.UI.Xaml.Controls
 {

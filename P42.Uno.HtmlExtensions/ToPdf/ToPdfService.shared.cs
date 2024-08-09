@@ -3,13 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
 
-#if __WASM__
-using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif WINDOWS
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
-#else
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-#endif
 
 namespace P42.Uno.HtmlExtensions
 {

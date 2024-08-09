@@ -1,4 +1,4 @@
-﻿#if __ANDROID__
+#if __ANDROID__
 using System;
 using System.Linq;
 using System.Reflection;
@@ -29,33 +29,47 @@ namespace P42.Uno.HtmlExtensions
             }
         }
 
+        public async Task PrintAsync(Microsoft.UI.Xaml.Controls.WebView2 webView2, string jobName)
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                throw new Exception("Cannot print for Android versions older than Kitkat");
+
+            if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
+                await PrintAsync(droidWebView, jobName);
+            else
+                throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
+        }
+
         public async Task PrintAsync(WebView webView2, string jobName)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 throw new Exception("Cannot print for Android versions older than Kitkat");
 
             if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
-            {
-                droidWebView.Settings.JavaScriptEnabled = true;
-                droidWebView.Settings.DomStorageEnabled = true;
-                droidWebView.SetLayerType(Android.Views.LayerType.Software, null);
-                
-                // Only valid for API 19+
-                if (string.IsNullOrWhiteSpace(jobName))
-                {
-                    var javaResult = await droidWebView.EvaluateJavaScriptAsync("document.title"); 
-                    jobName = javaResult?.ToString();
-                }
-                if (string.IsNullOrWhiteSpace(jobName))
-                    jobName = AppInfo.Name;
-
-                var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
-                printMgr.Print(jobName, droidWebView.CreatePrintDocumentAdapter(jobName), null);
-
-                await Task.CompletedTask;
-            }
+                await PrintAsync(droidWebView, jobName);
             else
                 throw new Exception("Cannot find Android.Webkit.WebView for WebView2");
+        }
+
+        async Task PrintAsync(Android.Webkit.WebView droidWebView, string jobName)
+        {
+            droidWebView.Settings.JavaScriptEnabled = true;
+            droidWebView.Settings.DomStorageEnabled = true;
+            droidWebView.SetLayerType(Android.Views.LayerType.Software, null);
+
+            // Only valid for API 19+
+            if (string.IsNullOrWhiteSpace(jobName))
+            {
+                var javaResult = await droidWebView.EvaluateJavaScriptAsync("document.title");
+                jobName = javaResult?.ToString();
+            }
+            if (string.IsNullOrWhiteSpace(jobName))
+                jobName = AppInfo.Name;
+
+            var printMgr = (PrintManager)Activity.GetSystemService(Context.PrintService);
+            printMgr.Print(jobName, droidWebView.CreatePrintDocumentAdapter(jobName), null);
+
+            await Task.CompletedTask;
         }
 
         public async Task PrintAsync(string html, string jobName)

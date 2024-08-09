@@ -5,14 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-//using Microsoft.UI.Xaml.Controls;
-#if __WASM__ 
-using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#elif WINDOWS
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView2;
-#else
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-#endif
+
 
 namespace P42.Uno.HtmlExtensions
 {

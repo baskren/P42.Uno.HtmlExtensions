@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+<Project Sdk="Uno.Sdk">
 
 
   <PropertyGroup>
@@ -53,5 +53,9 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Compile Include="GlobalUsings.cs" />
+  </ItemGroup>
   
 </Project>

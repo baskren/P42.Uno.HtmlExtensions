@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +7,6 @@ using Uno.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
-using WebViewNavigationCompletedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationCompletedEventArgs;
-using WebViewNavigationFailedEventArgs = P42.Uno.HtmlExtensions.WebViewXNavigationFailedEventArgs;
 using static Uno.UI.FeatureConfiguration;
 
 namespace P42.Uno.HtmlExtensions

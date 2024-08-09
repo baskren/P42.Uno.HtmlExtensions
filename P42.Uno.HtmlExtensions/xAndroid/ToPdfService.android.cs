@@ -1,4 +1,4 @@
-﻿#if __ANDROID__
+#if __ANDROID__
 using System.IO;
 using Android.Graphics;
 using Android.Views;
@@ -87,23 +87,40 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="pageSize"></param>
         /// <param name="margin"></param>
         /// <returns></returns>
-        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView webView2, string fileName, PageSize pageSize, PageMargin margin)
+        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView2 webView2, string fileName, PageSize pageSize, PageMargin margin)
         {
             if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
-            {
-                droidWebView.SetLayerType(LayerType.Software, null);
-                var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-                using (var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished))
-                {
-                    droidWebView.SetWebViewClient(callback);
-                    droidWebView.Reload();
-                    return await taskCompletionSource.Task;
-                }
-            }
+                return await ToPdfAsync(droidWebView, fileName, pageSize, margin);
 
             return await Task.FromResult(new ToFileResult("Could not get NativeWebView for Uno WebView"));
         }
 
+
+        /// <summary>
+        /// Convert current content of WebView to PDF
+        /// </summary>
+        /// <param name="webView2"></param>
+        /// <param name="fileName"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
+        public async Task<ToFileResult> ToPdfAsync(Microsoft.UI.Xaml.Controls.WebView webView2, string fileName, PageSize pageSize, PageMargin margin)
+        {
+            if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
+                return await ToPdfAsync(droidWebView, fileName, pageSize, margin);
+
+            return await Task.FromResult(new ToFileResult("Could not get NativeWebView for Uno WebView"));
+        }
+
+        private async Task<ToFileResult> ToPdfAsync(Android.Webkit.WebView droidWebView, string fileName, PageSize pageSize, PageMargin margin)
+        {
+            droidWebView.SetLayerType(LayerType.Software, null);
+            var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
+            using var callback = new WebViewCallBack(taskCompletionSource, fileName, pageSize, margin, OnPageFinished);
+            droidWebView.SetWebViewClient(callback);
+            droidWebView.Reload();
+            return await taskCompletionSource.Task;
+        }
 
         static async Task OnPageFinished(Android.Webkit.WebView droidWebView, string fileName, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource)
         {

@@ -36,7 +36,18 @@ namespace P42.Web.WebView2.Core
         {
             get
             {
-#if (__WASM__ || !NET7_0 ) && !WINDOWS
+#if IOS || ANDROID || MACCATALYST || DESKTOP
+                var task = Task.Run(async () =>
+                {
+                    if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)
+                    {
+                        var result = await w2.ExecuteScriptAsync("Document.fullscreenElement");
+                        return result;
+                    }
+                    return string.Empty;
+                });
+                return !string.IsNullOrWhiteSpace(task.Result);
+#elif BROWSERWASM
                 var task = Task.Run(async () =>
                 {
                     if (_parentWebView is P42.UI.Xaml.Controls.WebView2 w2)

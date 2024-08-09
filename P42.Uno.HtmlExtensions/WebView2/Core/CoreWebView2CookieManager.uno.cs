@@ -4,11 +4,6 @@ using System.Threading.Tasks;
 using Uno;
 using Windows.Foundation.Metadata;
 
-#if __WASM__
-using BaseWebView = P42.Uno.HtmlExtensions.WebViewX;
-#else
-using BaseWebView = Microsoft.UI.Xaml.Controls.WebView;
-#endif
 
 namespace P42.Web.WebView2.Core
 {
