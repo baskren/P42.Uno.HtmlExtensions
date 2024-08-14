@@ -1,249 +1,274 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using P42.Uno.HtmlExtensions;
 using Windows.UI;
-using Windows.Storage;
-using System.Threading.Tasks;
-using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
-
+using Microsoft.Web.WebView2.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace Demo
+namespace Demo;
+
+/// <summary>
+/// An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class MainPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Page
+
+    #region Constants
+    private const string HtmlText = "<html><body><p>This is <i>some</i> <b>HTML</b> text!</p></body></html>";
+    private const string AssetPath = "Assets/Html/cbracco.html";
+    private readonly Uri _assetUri = new Uri($"http://{AssetPath}");
+    private readonly Uri _appAssetUri = new Uri($"ms-appx:///{AssetPath}");
+    private const string ExternalUrl = "https://platform.uno";
+    private readonly Uri _externalUri = new Uri(ExternalUrl);
+    private const string ResourceId = ".Resources.form.html";
+    #endregion
+
+    
+    #region Properties
+    private string Source => (SourceRadioButtons.SelectedItem as string) ?? string.Empty;
+
+    private bool IsAsset => Source.Contains("asset", StringComparison.CurrentCultureIgnoreCase);
+
+    private bool IsExternalUrl => Source.Contains("url", StringComparison.CurrentCultureIgnoreCase);
+
+    private bool IsEmbeddedResource => Source.Contains("resource", StringComparison.CurrentCultureIgnoreCase);
+
+    private bool IsText => Source.Contains("text", StringComparison.CurrentCultureIgnoreCase);
+    #endregion
+
+    
+    #region VisualElements
+    private readonly Grid _spinner = new Grid
+    {
+        RowDefinitions =
+        {
+            new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+            new RowDefinition { Height = new GridLength(50) },
+            new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+        },
+        ColumnDefinitions =
+        {
+            new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+            new ColumnDefinition { Width = new GridLength(50) },
+            new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+        },
+        Background = new SolidColorBrush(Color.FromArgb(64, 128, 128, 128))
+    };
+    private readonly ProgressRing _ring = new ProgressRing
+    {
+        BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Red),
+        Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue),
+        HorizontalAlignment = HorizontalAlignment.Stretch,
+        VerticalAlignment = VerticalAlignment.Stretch
+    };
+    #endregion
+
+    
+    #region Fields
+    private int _printJobCount;
+    #endregion
+
+    
+    #region Construction / Initialization
+    public MainPage()
     {
 
-        //Microsoft.Web.WebView2.Core.CoreWebView2DownloadState;
-
-        P42.UI.Xaml.Controls.WebView2 _webView = new P42.UI.Xaml.Controls.WebView2
-        {
-        };
-
-        public MainPage()
-        {
-
-            this.InitializeComponent();
-
-            //_toPngButton.IsEnabled = false;
-            //_toPdfButton.IsEnabled = false;
-            _printButton.IsEnabled = P42.Uno.HtmlExtensions.PrintService.IsAvailable;
-
-            Grid.SetRow(_webView, 3);
-            _grid.Children.Add(_webView);
-
-
-            _webView.SizeChanged += _webView_SizeChanged;
-
-
-            System.Diagnostics.Debug.WriteLine("MainPage. ASSEMBLY: " + GetType().Assembly.GetName().Name);
-
-        }
-
-        private void _webView_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _messageTextBlock.Text = e.NewSize.ToString();
-        }
-
-        Button _currentResourceButton;
-        StorageFile _currentFile;
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            _currentResourceButton = _loadHtmlFormButton;
-            await LoadResource(_currentResourceButton);
-        }
-
-        async void OnLoadTextClicked(object sender, RoutedEventArgs e)
-        {
-            await LoadResource(sender);
-        }
-
-        async Task LoadResource(object sender)
-        {
-            var resourceId = ".HtmlForm.html";
-            if (sender is Button button && button.Content is string label)
-            {
-                if (label.ToLower().Contains("html form"))
-                    resourceId = "HtmlForm.html";
-                else if (label.ToLower().Contains("uno html"))
-                {
-                    _currentFile = null;
-                    _webView.Source = new Uri("https://platform.uno");
-                }
-                else if (label.ToLower().Contains("cbracco"))
-                    resourceId = ".cbracco.html";
-            }
-            if (await P42.Uno.HtmlExtensions.EmbeddedResourceExtensions.ResourceAsStorageFile(resourceId) is StorageFile file)
-            {
-                _currentFile = file;
-                _webView.Source = new Uri(file.Path); ;
-            }
-        }
-
-        async void OnToPdfClicked(object sender, RoutedEventArgs e)
-        {
-            if (!P42.Uno.HtmlExtensions.ToPdfService.IsAvailable)
-            {
-                _messageTextBlock.Text = "PDF NOT AVAILABLE";
-                return;
-            }
-
-            await ShowSpinner();
-
-            ToFileResult fileResult = null;
-            if (_fromWebViewToggleSwitch.IsOn)
-            {
-                if (await _webView.ToPdfAsync("WebView.pdf") is ToFileResult fileResult1)
-                    fileResult = fileResult1;
-            }
-            else if (_currentFile != null &&  await _currentFile.ToPdfAsync("WebView.pdf") is ToFileResult fileResult2)
-                fileResult = fileResult2;
-
-            if (fileResult != null)
-            {
-                if (!fileResult.IsError)
-                {
-                    _messageTextBlock.Text = "Success: " + fileResult.StorageFile.Path;
-                    var shareFile = new Xamarin.Essentials.ShareFile(fileResult.StorageFile.Path) { FileName = "WebView.pdf" };
-                    var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PDF", shareFile);
-                    try
-                    {
-                        await Xamarin.Essentials.Share.RequestAsync(shareRequest);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"MainPage. : ");
-                        _messageTextBlock.Text = $"Exception: {ex.Message} ";
-                    }
-                }
-                else
-                {
-                    _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
-                }
-            }
-            else
-            {
-                _messageTextBlock.Text = "Error: Failed to generate PDF";
-            }
-
-            await HideSpinner();
+        this.InitializeComponent();
             
+        _printButton.IsEnabled = PrintService.IsAvailable;
+        _toPdfButton.IsEnabled = ToPdfService.IsAvailable;
+        _webView.SizeChanged += _webView_SizeChanged;
+        _fromWebViewToggleSwitch.RegisterPropertyChangedCallback(ToggleSwitch.IsOnProperty, (sender, dp) =>
+        {
+            if (Source.Contains("url", StringComparison.OrdinalIgnoreCase))
+                _fromWebViewToggleSwitch.IsOn = true;
+        });
+            
+        Grid.SetRow(_ring, 1);
+        Grid.SetColumn(_ring, 1);
+
+        Grid.SetRowSpan(_spinner, _grid.RowDefinitions.Count);
+        Grid.SetColumnSpan(_spinner, _grid.ColumnDefinitions.Count);
+        _spinner.Children.Add(_ring);
+    }
+    
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        await _webView.EnsureCoreWebView2Async();
+        _webView.NavigateToString("<html><body><h2>WebView2 and HTML [PDF] and [PRINT] tester</h2><p>How to test:</p><ol><li>Select Source</li><li>Select where output will be generated from</li><li>Select output type: [PDF] or [PRINT]</li></ol></body></html>");
+        _webView.CoreWebView2.SetVirtualHostNameToFolderMapping("Assets","Assets", CoreWebView2HostResourceAccessKind.Allow);
+    }
+    #endregion
+
+
+    #region Event Handlers
+    private void _webView_SizeChanged(object sender, SizeChangedEventArgs e)
+        =>  _messageTextBlock.Text = $"SIZE: {e.NewSize}";
+    
+    private async void OnSourceRadioButtons_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (IsAsset)
+            _webView.Source = _assetUri;
+            //_webView.Source = _appAssetUri;
+        else if (IsExternalUrl)
+        {
+            _fromWebViewToggleSwitch.IsOn = true;
+            _webView.Source = _externalUri;
+        }
+        else if (IsEmbeddedResource)
+        {
+            if (await _webView.NavigateToResourceAsync(ResourceId) is not null)
+                _messageTextBlock.Text = $"Could not find EmbeddedResource with ResourceId:[{ResourceId}]";
+        }
+        else if (IsText)
+            _webView.NavigateToString(HtmlText);
+    }
+
+    private async void OnToPdfClicked(object sender, RoutedEventArgs e)
+    {
+        await ShowSpinner();
+        await OnToPdfClickedInner();
+        await HideSpinner();
+    }
+
+    private async void OnPrintClicked(object sender, RoutedEventArgs e)
+    {
+        await ShowSpinner();
+        await OnPrintClickedInner();
+        await HideSpinner();
+    }
+    #endregion
+
+
+    #region  Helpers
+    private async Task ShowSpinner()
+    {
+#if __IOS__ || __MACCATALYST__
+        if (Xamarin.Essentials.DeviceInfo.DeviceType == Xamarin.Essentials.DeviceType.Virtual)
+            return;
+#endif
+            
+        _ring.IsActive = true;
+        _grid.Children.Add(_spinner);
+        await Task.Delay(50);
+    }
+
+    private async Task HideSpinner()
+    {
+#if __IOS__ || __MACCATALYST__
+        if (Xamarin.Essentials.DeviceInfo.DeviceType == Xamarin.Essentials.DeviceType.Virtual)
+            return;
+#endif
+
+        _grid.Children.Remove(_spinner);
+        _ring.IsActive = false;
+        await Task.Delay(50);
+    }
+
+    private async Task OnPrintClickedInner()
+    {
+        if (!PrintService.IsAvailable)
+        {
+            _messageTextBlock.Text = "PRINTING NOT AVAILABLE";
+            return;
         }
 
-        int count = 0;
-        async void OnPrintClicked(object sender, RoutedEventArgs e)
+
+        if (_fromWebViewToggleSwitch.IsOn)
         {
-            if (!P42.Uno.HtmlExtensions.PrintService.IsAvailable)
+            try
             {
-                _messageTextBlock.Text = "PRINTING NOT AVAILABLE";
+                await _webView.PrintAsync($"WebView Print Job {_printJobCount++}");
+                _messageTextBlock.Text = $"Printed WebView w/ {Source} Source";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+                _messageTextBlock.Text = $"Exception: {ex.Message} ";
+            }
+
+            return;
+        }
+            
+        var sourcePrintJobTitle = $"{Source} Source Print Job {_printJobCount++}";
+        if (IsAsset)
+            await _appAssetUri.PrintAsync(sourcePrintJobTitle);
+        else if (IsExternalUrl)
+            await _externalUri.PrintAsync(sourcePrintJobTitle);
+        else if (IsEmbeddedResource)
+        {
+            if (await EmbeddedResourceExtensions.ResourceAsStorageFileAsync(ResourceId) is not StorageFile file)
+            {
+                _messageTextBlock.Text = $"Could not find EmbeddedResource with ResourceId:[{ResourceId}]";
                 return;
             }
 
-            await ShowSpinner();
-
-            if (_fromWebViewToggleSwitch.IsOn)
-            {
-                try
-                {
-                    await _webView.PrintAsync("WebView PrintJob" + count++);
-                    _messageTextBlock.Text = "PRINTING DONE";
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"MainPage. : ");
-                    _messageTextBlock.Text = $"Exception: {ex.Message} ";
-                }
-            }
-            else if (_currentFile != null)
-            {
-                try
-                {
-                    await _currentFile.PrintAsync("WebView PrintJob" + count++);
-                    _messageTextBlock.Text = "PRINTING DONE";
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"MainPage. : ");
-                    _messageTextBlock.Text = $"Exception: {ex.Message} ";
-                }
-            }
-
-            await HideSpinner();
+            await file.PrintAsync(sourcePrintJobTitle);
         }
-
-        Grid _spinner;
-        Microsoft.UI.Xaml.Controls.ProgressRing _ring;
-        async Task ShowSpinner()
-        {
-            if (_spinner is null)
-            {
-                _ring = new ProgressRing
-                {
-                    BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Red),
-                    Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue),
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Stretch
-                };
-                Grid.SetRow(_ring, 1);
-                Grid.SetColumn(_ring, 1);
-
-                _spinner = new Grid
-                {
-                    RowDefinitions =
-                {
-                    new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
-                    new RowDefinition { Height = new GridLength(50) },
-                    new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
-                },
-                    ColumnDefinitions =
-                {
-                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                    new ColumnDefinition { Width = new GridLength(50) },
-                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                },
-                    Children =
-                {
-                    _ring,
-                },
-                    Background = new SolidColorBrush(Color.FromArgb(64, 128, 128, 128))
-                };
-            }
-            Grid.SetRowSpan(_spinner, _grid.RowDefinitions.Count);
-            Grid.SetColumnSpan(_spinner, _grid.ColumnDefinitions.Count);
-            _grid.Children.Add(_spinner);
-            _ring.IsActive = true;
-            await Task.Delay(50);
-
-        }
-
-        async Task HideSpinner()
-        {
-            _grid.Children.Remove(_spinner);
-            _ring.IsActive = false;
-            await Task.Delay(50);
-        }
-
-
-
-
+        else if (IsText)
+            await HtmlText.PrintAsync(sourcePrintJobTitle);
+            
+        _messageTextBlock.Text = $"Printed {Source} Source";
     }
+
+    private async Task OnToPdfClickedInner()
+    {
+        if (!ToPdfService.IsAvailable)
+        {
+            _messageTextBlock.Text = "PDF NOT AVAILABLE";
+            return;
+        }
+
+        var pdfFileName = $"{Source}.pdf";
+        ToFileResult? fileResult = null;
+        if (_fromWebViewToggleSwitch.IsOn)
+        {
+            pdfFileName = $"{Source}_via_WebView.pdf";
+            fileResult = await _webView.ToPdfAsync(pdfFileName);
+        }
+        else if (IsAsset)
+            fileResult = await _appAssetUri.ToPdfAsync(pdfFileName);
+        else if (IsExternalUrl)
+            fileResult = await _externalUri.ToPdfAsync(pdfFileName);
+        else if (IsEmbeddedResource)
+        {
+            if (await EmbeddedResourceExtensions.ResourceAsStorageFileAsync(ResourceId) is not StorageFile file)
+            {
+                _messageTextBlock.Text = $"Could not find EmbeddedResource with ResourceId:[{ResourceId}]";
+                return;
+            }
+
+            fileResult = await file.ToPdfAsync(pdfFileName);
+        }
+        else if (IsText)
+            fileResult = await HtmlText.ToPdfAsync(pdfFileName);
+
+        if (fileResult is null)
+        {
+            _messageTextBlock.Text = "Error: Failed to generate PDF";
+            return;
+        }
+
+        if (fileResult.IsError)
+        {
+            _messageTextBlock.Text = "Error: " + fileResult.ErrorMessage;
+            return;
+        }
+
+        _messageTextBlock.Text = "Success: " + fileResult.StorageFile.Path;
+        var shareFile = new Xamarin.Essentials.ShareFile(fileResult.StorageFile.Path)
+            { FileName = pdfFileName };
+        var shareRequest = new Xamarin.Essentials.ShareFileRequest("P42.Uno.HtmlExtensions PDF", shareFile);
+        try
+        {
+            await Xamarin.Essentials.Share.RequestAsync(shareRequest);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MainPage. : ");
+            _messageTextBlock.Text = $"Exception: {ex.Message} ";
+        }
+            
+    }
+#endregion
 }

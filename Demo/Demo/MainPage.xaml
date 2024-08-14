@@ -5,13 +5,12 @@
     xmlns:local="using:Demo"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"    
+    mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Content>
         <Grid  x:Name="_grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
@@ -21,27 +20,36 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.Children>
-                <TextBlock Text="WebView and Html Print Tester!" Margin="20" FontSize="30" Grid.ColumnSpan="2" />
-                
+                <TextBlock Text="Html Print Tester!" Margin="20" FontSize="30" Grid.ColumnSpan="2" />
+
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Padding="5" Spacing="5">
                     <StackPanel.Children>
-                        <Button x:Name="_loadHtmlFormButton" Content="Form" Click="OnLoadTextClicked" />
-                        <Button x:Name="_loadUnoHtmlButton" Content="Uno" Click="OnLoadTextClicked" />
-                        <Button x:Name="_loadCbraccoHtmlButton" Content="CBracco" Click="OnLoadTextClicked" />
+                      <RadioButtons
+                        x:Name="SourceRadioButtons"
+                        SelectionChanged="OnSourceRadioButtons_OnSelectionChanged"
+                        Header="Source:">
+                        <x:String>Application Asset</x:String>
+                        <x:String>External Url</x:String>
+                        <x:String>Embedded Resource</x:String>
+                        <x:String>Text</x:String>
+                      </RadioButtons>
+
+                      <StackPanel Orientation="Vertical" Padding="5" Spacing="5">
+                        <StackPanel.Children>
+                          <ToggleSwitch x:Name="_fromWebViewToggleSwitch" Header="Generate From:" OnContent="WebView" OffContent="Source" />
+
+                          <Button x:Name="_toPdfButton" Content="To PDF" Click="OnToPdfClicked" />
+                          <Button x:Name="_printButton" Content="Print" Click="OnPrintClicked" />
+                        </StackPanel.Children>
+                      </StackPanel>
                     </StackPanel.Children>
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Padding="5" Spacing="5">
-                    <StackPanel.Children>
-                        <ToggleSwitch x:Name="_fromWebViewToggleSwitch" OnContent="WebView" OffContent="File" />
-                        <Button x:Name="_toPdfButton" Content="To PDF" Click="OnToPdfClicked" />
-                        <Button x:Name="_printButton" Content="Print" Click="OnPrintClicked" />
-                    </StackPanel.Children>
-                </StackPanel>
+                <WebView2
+                  x:Name="_webView"
+                  Grid.Row="2"></WebView2>
 
-                <TextBlock Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" HorizontalTextAlignment="Center" Text="LOADING ..." />
-                
-                <TextBlock x:Name="_messageTextBlock" Grid.Row="4" />
+                <TextBlock x:Name="_messageTextBlock" Grid.Row="3" />
             </Grid.Children>
 
         </Grid>

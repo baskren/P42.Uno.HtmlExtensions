@@ -200,3 +200,4 @@ FakesAssemblies/
 #VisualStudio Code
 .vscode/
 
+.idea

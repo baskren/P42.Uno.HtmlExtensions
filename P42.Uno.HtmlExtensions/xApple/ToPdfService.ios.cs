@@ -35,63 +35,63 @@ class NativeToPdfService : UIPrintInteractionControllerDelegate, INativeToPdfSer
 
     public async Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin)
     {
-        if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
+        if (!NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
+            return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
+
+        var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
+        const string jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
+        var wkUScript = new WKUserScript((NSString)jScript, WKUserScriptInjectionTime.AtDocumentEnd, true);
+        using var wkUController = new WKUserContentController();
+        wkUController.AddUserScript(wkUScript);
+        var configuration = new WKWebViewConfiguration
         {
-            var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-            const string jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
-            var wkUScript = new WKUserScript((NSString)jScript, WKUserScriptInjectionTime.AtDocumentEnd, true);
-            using (var wkUController = new WKUserContentController())
-            {
-                wkUController.AddUserScript(wkUScript);
-                var configuration = new WKWebViewConfiguration
-                {
-                    UserContentController = wkUController
-                };
-                var webView = new WKWebView(new CGRect(0, 0, pageSize.Width, pageSize.Height), configuration)
-                {
-                    UserInteractionEnabled = false,
-                    BackgroundColor = UIColor.White,
-                    NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync)
-                };
-                //webView.LoadHtmlString(html, null);
-                if (uri.IsFile)
-                {
-                    var path = uri.AbsolutePath;
-                    var dir = Directory.GetParent(path).FullName;
-                    var readAccessUri = new Uri(dir, UriKind.Absolute);
-                    webView.LoadFileUrl(uri, readAccessUri);
-                }
-                else
-                {
-                    webView.LoadRequest(new NSUrlRequest(uri));
-                }
-                return await taskCompletionSource.Task;
-                
-            }
+            UserContentController = wkUController
+        };
+        var webView = new WKWebView(new CGRect(0, 0, pageSize.Width, pageSize.Height), configuration)
+        {
+            UserInteractionEnabled = false,
+            BackgroundColor = UIColor.White,
+            NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync)
+        };
+        //webView.LoadHtmlString(html, null);
+        if (uri.IsFile)
+        {
+            var path = uri.AbsolutePath;
+            var dir = Directory.GetParent(path).FullName;
+            var readAccessUri = new Uri(dir, UriKind.Absolute);
+            webView.LoadFileUrl(uri, readAccessUri);
         }
-        return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
+        else
+        {
+            webView.LoadRequest(new NSUrlRequest(uri));
+        }
+        return await taskCompletionSource.Task;
     }
 
-    public async Task<ToFileResult> ToPdfAsync(BaseWebView unoWebView, string fileName, PageSize pageSize, PageMargin margin)
+    public async Task<ToFileResult> ToPdfAsync(WebView2 unoWebView, string fileName, PageSize pageSize, PageMargin margin)
     {
-        if (NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
-        {
-            if (unoWebView.GetNativeWebView() is Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
-            {
-                var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
-                wkWebView.BackgroundColor = UIColor.White;
-                wkWebView.UserInteractionEnabled = false;
-                wkWebView.NavigationDelegate = new WKNavigationCompleteCallback(fileName, pageSize, margin, taskCompletionSource, NavigationCompleteAsync);
-                return await taskCompletionSource.Task;
-            }
+        if (!NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
+            return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
+
+        if (unoWebView.GetNativeWebView() is not Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
             return await Task.FromResult(new ToFileResult("Could not get NativeWebView for Uno WebView"));
-        }
-        return await Task.FromResult(new ToFileResult("PDF output not available prior to iOS 11"));
+        
+        var taskCompletionSource = new TaskCompletionSource<ToFileResult>();
+        var webViewState = new WebViewState(wkWebView);
+        wkWebView.BackgroundColor = UIColor.White;
+        wkWebView.UserInteractionEnabled = false;
+        await GenPdfAsync(wkWebView, fileName, pageSize, margin, taskCompletionSource, webViewState);
+        return await taskCompletionSource.Task;
     }
 
-
-    static async Task NavigationCompleteAsync(WKWebView webView, string filename, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource)
+    static async Task NavigationCompleteAsync(WKWebView webView, string filename, PageSize pageSize, PageMargin margin,
+        TaskCompletionSource<ToFileResult> taskCompletionSource)
+        => GenPdfAsync(webView, filename, pageSize, margin, taskCompletionSource);
+    
+    
+    static async Task GenPdfAsync(WKWebView webView, string filename, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource, WebViewState webViewState = null)
     {
+        
         try
         {
             var widthString = await webView.EvaluateJavaScriptAsync("document.documentElement.offsetWidth");
@@ -131,13 +131,41 @@ class NativeToPdfService : UIPrintInteractionControllerDelegate, INativeToPdfSer
         }
         finally
         {
-            //webView.Dispose();
+            webViewState?.Reset();
         }
 
     }
 
 }
 
+class WebViewState
+{
+    private UIColor backgroundColor;
+    private bool userInteractionEnabled;
+    private bool clipsToBounds;
+    private bool scrollViewClipsToBounds;
+    private CGRect bounds;
+    private WKWebView wkWebView;
+    
+    public WebViewState(WKWebView webView)
+    {
+        wkWebView = webView;
+        backgroundColor = webView.BackgroundColor;
+        userInteractionEnabled = webView.UserInteractionEnabled;
+        clipsToBounds = webView.ClipsToBounds;
+        scrollViewClipsToBounds = webView.ScrollView.ClipsToBounds;
+        bounds = webView.Bounds;
+    }
+
+    public void Reset()
+    {
+        wkWebView.BackgroundColor = backgroundColor;
+        wkWebView.UserInteractionEnabled = userInteractionEnabled;
+        wkWebView.ClipsToBounds = clipsToBounds;
+        wkWebView.ScrollView.ClipsToBounds = scrollViewClipsToBounds;
+        wkWebView.Bounds = bounds;
+    }
+}
 class PdfRenderer : UIPrintPageRenderer
 {
     public NSMutableData PrintToPdf()
@@ -146,7 +174,7 @@ class PdfRenderer : UIPrintPageRenderer
         UIGraphics.BeginPDFContext(pdfData, PaperRect, null);
         PrepareForDrawingPages(new NSRange(0, NumberOfPages));
         var rect = UIGraphics.PDFContextBounds;
-        for (int i = 0; i < NumberOfPages; i++)
+        for (var i = 0; i < NumberOfPages; i++)
         {
             UIGraphics.BeginPDFPage();
             DrawPage(i, rect);
@@ -160,25 +188,18 @@ static class WKWebViewExtensions
 {
     public static NSMutableData CreatePdfFile(this WKWebView webView, UIViewPrintFormatter printFormatter, PageSize pageSize, PageMargin margin)
     {
-        var bounds = webView.Bounds;
-
         webView.Bounds = new CoreGraphics.CGRect(0, 0, (nfloat)pageSize.Width, (nfloat)pageSize.Height);
         margin = margin ?? new PageMargin();
         var pdfPageFrame = new CoreGraphics.CGRect((nfloat)margin.Left, (nfloat)margin.Top, webView.Bounds.Width - margin.HorizontalThickness, webView.Bounds.Height - margin.VerticalThickness);
-        using (var renderer = new PdfRenderer())
-        {
-            renderer.AddPrintFormatter(printFormatter, 0);
-            using (var k1 = new NSString("paperRect"))
-            {
-                renderer.SetValueForKey(NSValue.FromCGRect(webView.Bounds), k1);
-                using (var k2 = new NSString("printableRect"))
-                {
-                    renderer.SetValueForKey(NSValue.FromCGRect(pdfPageFrame), k2);
-                    webView.Bounds = bounds;
-                    return renderer.PrintToPdf();
-                }
-            }
-        }
+        using var renderer = new PdfRenderer();
+        renderer.AddPrintFormatter(printFormatter, 0);
+        using var k1 = new NSString("paperRect");
+        renderer.SetValueForKey(NSValue.FromCGRect(webView.Bounds), k1);
+        using var k2 = new NSString("printableRect");
+        renderer.SetValueForKey(NSValue.FromCGRect(pdfPageFrame), k2);
+        var result = renderer.PrintToPdf();
+        renderer.Dispose();
+        return result;
     }
 
 }

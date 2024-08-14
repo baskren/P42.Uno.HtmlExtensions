@@ -14,7 +14,7 @@ namespace P42.Uno.HtmlExtensions
 
         Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin);
 
-        Task<ToFileResult> ToPdfAsync(BaseWebView webView, string fileName, PageSize pageSize, PageMargin margin);
+        Task<ToFileResult> ToPdfAsync(WebView2 webView, string fileName, PageSize pageSize, PageMargin margin);
     }
 
 }

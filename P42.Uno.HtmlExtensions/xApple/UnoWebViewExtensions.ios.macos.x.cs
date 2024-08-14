@@ -17,7 +17,7 @@ namespace P42.Uno.HtmlExtensions
 {
     static class UnoWebViewExtensions
     {
-        public static Microsoft.UI.Xaml.Controls.UnoWKWebView GetNativeWebView(this BaseWebView unoWebView)
+        public static Microsoft.UI.Xaml.Controls.UnoWKWebView GetNativeWebView(this WebView2 unoWebView)
         {
             if (unoWebView.FindSubviewsOfType<WKWebView>().FirstOrDefault() is Microsoft.UI.Xaml.Controls.UnoWKWebView nativeWebView)
                 return nativeWebView;

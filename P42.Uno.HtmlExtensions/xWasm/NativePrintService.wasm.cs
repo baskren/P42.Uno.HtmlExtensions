@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Uno.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WebView2 = P42.Uno.HtmlExtensions.WebViewX;
 using static Uno.UI.FeatureConfiguration;
 
 namespace P42.Uno.HtmlExtensions
@@ -24,6 +23,11 @@ namespace P42.Uno.HtmlExtensions
                 return page;
             }
         }
+
+        public void AllowFileAccess(WebView2 webView, bool access) { }
+    
+        public void AllowNetworkLoads(WebView2 webView, bool access) { }
+
 
         internal static Microsoft.UI.Xaml.Controls.Panel RootPanel => RootPage?.Content as Panel;
 

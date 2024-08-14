@@ -11,46 +11,39 @@ namespace P42.Uno.HtmlExtensions
 {
     public static class EmbeddedResourceExtensions
     {
-        public static async Task<StorageFile> ResourceAsStorageFile(string resourceId, Assembly asm = null)
+        private static readonly Dictionary<Assembly, string[]> EmbeddedResourceNames = new();
+
+        /// <summary>
+        /// Cache an EmbeddedResource as a StorageFile
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="asm"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static async Task<StorageFile> ResourceAsStorageFileAsync(string resourceId, Assembly asm = null)
         {
             if (string.IsNullOrWhiteSpace(resourceId))
                 throw new ArgumentException(nameof(resourceId));
 
             asm = asm ??  FindAssemblyForResource(resourceId);
 
-            if (asm.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is String resourceName)
-            {
-                using (var inStream = asm.GetManifestResourceStream(resourceName))
-                {
-                    /*
-                    using (var fileStream = File.Create(Path.Combine(Windows.Storage.ApplicationData.Current.TemporaryFolder.Path, Path.GetRandomFileName() + ".html")))
-                    {
-                        inStream.Seek(0, SeekOrigin.Begin);
-                        inStream.CopyTo(fileStream);
-                    }
+            if (asm?.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is not String
+                resourceName)
+                return null;
 
-                    var x = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.CreateFileAsync("test.txt");
-                    */
+            await using var inStream = asm.GetManifestResourceStream(resourceName);
 
-                    var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-                    var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+            var cacheFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
 
-                    var folder = await localFolder.CreateFolderAsync("P42.Uno.WebViewResource", CreationCollisionOption.OpenIfExists);
-
-                    var file = await folder.CreateFileAsync(Path.GetRandomFileName() + ".html");
-                    using (var outStream = File.OpenWrite(file.Path))
-                    {
-                        inStream.CopyTo(outStream);
-                    }
-                    return file;
-                }
-            }
-
-            return null;
+            var folder = await cacheFolder.CreateFolderAsync("P42.Uno.WebViewResource", CreationCollisionOption.OpenIfExists);
+            var file = await folder.CreateFileAsync(Path.GetRandomFileName() + ".html");
+            await using var outStream = File.OpenWrite(file.Path);
+            await inStream.CopyToAsync(outStream);
+            return file;
         }
 
-
-        static readonly Dictionary<Assembly, string[]> _embeddedResourceNames = new Dictionary<Assembly, string[]>();
 
         /// <summary>
         /// Finds the assembly that contains an embedded resource matching the resourceId
@@ -58,7 +51,7 @@ namespace P42.Uno.HtmlExtensions
         /// <param name="resourceId"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        static Assembly FindAssemblyForResource(string resourceId, Assembly assembly = null)
+        private static Assembly FindAssemblyForResource(string resourceId, Assembly assembly = null)
         {
             if (string.IsNullOrWhiteSpace(resourceId))
                 return null;
@@ -86,34 +79,34 @@ namespace P42.Uno.HtmlExtensions
             }
             else if (resourceId[0] == '.')
             {
-                if (_embeddedResourceNames.TryGetValue(assembly, out string[] names))
+                if (EmbeddedResourceNames.TryGetValue(assembly, out string[] names))
                     return names.Any(n=>n.EndsWith(resourceId))  ? assembly : null;
                 names = assembly.GetManifestResourceNames();
                 if (names != null)
                 {
-                    _embeddedResourceNames[assembly] = names;
+                    EmbeddedResourceNames[assembly] = names;
                     return names.Any(n => n.EndsWith(resourceId)) ? assembly : null;
                 }
             }
             else
             {
 
-                if (_embeddedResourceNames.TryGetValue(assembly, out string[] names))
+                if (EmbeddedResourceNames.TryGetValue(assembly, out string[] names))
                     return names.Contains(resourceId) ? assembly : null;
                 names = assembly.GetManifestResourceNames();
                 if (names != null)
                 {
-                    _embeddedResourceNames[assembly] = names;
+                    EmbeddedResourceNames[assembly] = names;
                     return names.Contains(resourceId) ? assembly : null;
                 }
             }
             return null;
         }
 
-        static Assembly GetApplicationAssembly()
+        private static Assembly GetApplicationAssembly()
         => Assembly.GetEntryAssembly();
 
-        static List<Assembly> GetAssemblies()
+        private static List<Assembly> GetAssemblies()
         {
             var currentDomain = System.AppDomain.CurrentDomain;
             var assemblies = currentDomain.GetAssemblies();
@@ -121,7 +114,7 @@ namespace P42.Uno.HtmlExtensions
             return result;
         }
 
-        static Assembly GetAssemblyByName(string name)
+        private static Assembly GetAssemblyByName(string name)
         {
             var asms = GetAssemblies();
             foreach (var asm in asms)

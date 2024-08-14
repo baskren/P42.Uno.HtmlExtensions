@@ -17,7 +17,7 @@ namespace P42.Uno.HtmlExtensions
     {
         public bool IsAvailable => false;
 
-        public async Task PrintAsync(BaseWebView webView, string jobName)
+        public async Task PrintAsync(WebView2 webView, string jobName)
         {
             await webView.ExecuteScriptAsync("window.print();");
         }

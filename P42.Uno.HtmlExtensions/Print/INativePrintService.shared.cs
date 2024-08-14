@@ -10,10 +10,14 @@ namespace P42.Uno.HtmlExtensions
     {
         bool IsAvailable { get; }
 
-        Task PrintAsync(BaseWebView webView, string jobName);
+        Task PrintAsync(WebView2 webView, string jobName);
 
         Task PrintAsync(Uri uri, string jobName);
 
         Task PrintAsync(string html, string jobName);
+
+        void AllowFileAccess(WebView2 webView, bool allow);
+        
+        void AllowNetworkLoads(WebView2 webView, bool allow);
     }
 }
