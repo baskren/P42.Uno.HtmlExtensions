@@ -5,8 +5,10 @@
     xmlns:local="using:Demo"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    >
 
     <Page.Content>
         <Grid  x:Name="_grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -28,10 +30,10 @@
                         x:Name="SourceRadioButtons"
                         SelectionChanged="OnSourceRadioButtons_OnSelectionChanged"
                         Header="Source:">
-                        <x:String>Application Asset</x:String>
-                        <x:String>External Url</x:String>
-                        <x:String>Embedded Resource</x:String>
-                        <x:String>Text</x:String>
+                        <system:String>Application Asset</system:String>
+                        <system:String>External Url</system:String>
+                        <system:String>Embedded Resource</system:String>
+                        <system:String>Text</system:String>
                       </RadioButtons>
 
                       <StackPanel Orientation="Vertical" Padding="5" Spacing="5">
@@ -45,9 +47,11 @@
                     </StackPanel.Children>
                 </StackPanel>
 
+                <!-- MOVE TO CODE TO ALLOW TEST OF P42.UI.Xaml.Controls.WebView2
                 <WebView2
                   x:Name="_webView"
                   Grid.Row="2"></WebView2>
+                  -->
 
                 <TextBlock x:Name="_messageTextBlock" Grid.Row="3" />
             </Grid.Children>

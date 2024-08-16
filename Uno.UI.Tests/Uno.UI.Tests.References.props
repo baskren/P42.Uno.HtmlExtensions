@@ -1,0 +1,29 @@
+<Project ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
+  </PropertyGroup>
+  
+  <!-- SHARED REFERENCES -->
+  <ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
+  </ItemGroup>
+
+
+  <!-- PLATFORM SPECIFIC REFERENCES -->
+  <!-- 
+      Error NETSDK1022 : 
+          Duplicate 'EmbeddedResource' items were included. 
+          The .NET SDK includes 'EmbeddedResource' items from your project directory by default. 
+          You can either remove these items from your project file, or set the 'EnableDefaultEmbeddedResourceItems' property to 'false' if you want to explicitly include them in your project file. For more information, see https://aka.ms/sdkimplicititems. 
+          The duplicate items were: 'Resources/UnoWebViewBridge.html'; 'Resources/UnoWebViewBridge.js'
+
+  <ItemGroup Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.js" />
+    <EmbeddedResource Include="Resources\UnoWebViewBridge.html" />
+  </ItemGroup>
+  -->
+
+
+</Project>

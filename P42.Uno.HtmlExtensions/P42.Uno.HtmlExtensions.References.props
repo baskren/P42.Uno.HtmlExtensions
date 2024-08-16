@@ -14,25 +14,16 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.62" />
     <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
+    <ProjectReference Include="..\Uno.UI.Tests\Uno.UI.Tests.csproj" />
   </ItemGroup>
 
 
-  <!-- PLATFORM SPECIFIC REFERENCES -->
-  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
+
+  <!-- PLATFORM SPECIFIC REFERENCES -->  
+  <ItemGroup  Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
+    <EmbeddedResource Include="WasmScripts\UnoPng.js" />
+    <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
   </ItemGroup>
-  <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-  </ItemGroup>
-  
-  <Choose>
-    <When Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
-      <ItemGroup>
-        <EmbeddedResource Include="WasmScripts\html2canvas.js" />
-        <EmbeddedResource Include="WasmScripts\UnoWebView.js" />
-        <EmbeddedResource Include="WasmScripts\UnoPng.js" />
-        <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
-      </ItemGroup>
-    </When>
-  </Choose>
 
 
 

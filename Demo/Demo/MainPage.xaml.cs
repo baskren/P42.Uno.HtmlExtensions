@@ -65,6 +65,13 @@ public sealed partial class MainPage : Page
     
     #region Fields
     private int _printJobCount;
+    
+    #if __WASM__
+    private readonly P42.UI.Xaml.Controls.WebView2 _webView = new();
+    #else
+    private readonly WebView2 _webView = new();
+    #endif
+    
     #endregion
 
     
@@ -73,6 +80,9 @@ public sealed partial class MainPage : Page
     {
 
         this.InitializeComponent();
+
+        Grid.SetRow(_webView, 2);
+        _grid.Children.Add(_webView);
             
         _printButton.IsEnabled = PrintService.IsAvailable;
         _toPdfButton.IsEnabled = ToPdfService.IsAvailable;
