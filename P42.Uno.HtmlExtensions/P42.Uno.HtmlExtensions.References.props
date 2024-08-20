@@ -14,7 +14,6 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.62" />
     <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
-    <ProjectReference Include="..\Uno.UI.Tests\Uno.UI.Tests.csproj" />
   </ItemGroup>
 
 
@@ -23,6 +22,7 @@
   <ItemGroup  Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
     <EmbeddedResource Include="WasmScripts\UnoPng.js" />
     <EmbeddedResource Include="WasmScripts\UnoPrint.js" />
+    <ProjectReference Include="..\Uno.UI.Tests\Uno.UI.Tests.csproj" />
   </ItemGroup>
 
 

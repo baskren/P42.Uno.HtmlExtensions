@@ -1,4 +1,4 @@
-<Page
+﻿<Page
     x:Class="Demo.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -30,10 +30,10 @@
                         x:Name="SourceRadioButtons"
                         SelectionChanged="OnSourceRadioButtons_OnSelectionChanged"
                         Header="Source:">
-                        <system:String>Application Asset</system:String>
-                        <system:String>External Url</system:String>
-                        <system:String>Embedded Resource</system:String>
-                        <system:String>Text</system:String>
+                        <x:String>Application Asset</x:String>
+                        <x:String>External Url</x:String>
+                        <x:String>Embedded Resource</x:String>
+                        <x:String>Text</x:String>
                       </RadioButtons>
 
                       <StackPanel Orientation="Vertical" Padding="5" Spacing="5">

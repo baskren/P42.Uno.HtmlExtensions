@@ -2,7 +2,7 @@ using System;
 
 
 
-namespace P42.Uno.Xaml.Controls;
+namespace Uno.UI.Tests;
 
 public class WasmWebViewBridgeNotConnectedException(string? message = null) : Exception(message ?? DefaultMessage)
 {

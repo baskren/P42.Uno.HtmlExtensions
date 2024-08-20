@@ -1,10 +1,13 @@
 <Project Sdk="Uno.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>
-          net8.0;
-          net8.0-browserwasm;
-        </TargetFrameworks>
-        <UnoSingleProject>true</UnoSingleProject>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
+        $(TargetFrameworks);
+        net8.0-windows10.0.19041
+      </TargetFrameworks>
+      <TargetFrameworks>
+        net8.0-browserwasm;
+      </TargetFrameworks>
+      <UnoSingleProject>true</UnoSingleProject>
         <OutputType>Library</OutputType>
         <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
         <GenerateLibraryLayout>true</GenerateLibraryLayout>
@@ -18,6 +21,8 @@
         <!--
         <UnoFeatures></UnoFeatures>
         -->
+
+      <BuildInParallel>false</BuildInParallel>
     </PropertyGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
@@ -36,4 +41,11 @@
     </ItemGroup>
 
 
+  <ItemGroup Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
+    <Page Include="Themes\GenericWasm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  
 </Project>

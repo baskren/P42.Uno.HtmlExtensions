@@ -67,7 +67,7 @@ public sealed partial class MainPage : Page
     private int _printJobCount;
     
     #if __WASM__
-    private readonly P42.UI.Xaml.Controls.WebView2 _webView = new();
+    private readonly Uno.UI.Tests.WebView2 _webView = new();
     #else
     private readonly WebView2 _webView = new();
     #endif
@@ -103,10 +103,14 @@ public sealed partial class MainPage : Page
     
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
+
+
         base.OnNavigatedTo(e);
         await _webView.EnsureCoreWebView2Async();
         _webView.NavigateToString("<html><body><h2>WebView2 and HTML [PDF] and [PRINT] tester</h2><p>How to test:</p><ol><li>Select Source</li><li>Select where output will be generated from</li><li>Select output type: [PDF] or [PRINT]</li></ol></body></html>");
         _webView.CoreWebView2.SetVirtualHostNameToFolderMapping("Assets","Assets", CoreWebView2HostResourceAccessKind.Allow);
+
+
     }
     #endregion
 
@@ -117,6 +121,10 @@ public sealed partial class MainPage : Page
     
     private async void OnSourceRadioButtons_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+#if __WASM__
+        _webView.CheckConnection();
+#endif
+
         if (IsAsset)
             _webView.Source = _assetUri;
             //_webView.Source = _appAssetUri;

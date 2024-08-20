@@ -5,7 +5,6 @@ using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using P42.Serilog.QuickLog;
-using P42.Uno.Xaml.Controls;
 using Uno.Extensions;
 using Uno.Foundation;
 using Uno.UI.Runtime.WebAssembly;
@@ -22,7 +21,7 @@ public partial class NativeWebView : FrameworkElement, Uno.UI.Xaml.Controls.INat
     #region Static Implementation
 
     #region Constants
-    private const bool DebugMode = false;
+    private const bool DebugMode = true;
 
     private static readonly Guid SessionGuid = Guid.NewGuid();
 
@@ -94,9 +93,10 @@ public partial class NativeWebView : FrameworkElement, Uno.UI.Xaml.Controls.INat
     private static void DebugWriteLine(params object[] args)
     {
         if (DebugMode)
+        {
             Console.WriteLine(args);
-        else
             Debug.WriteLine(args);
+        }
     }
 
     /*
@@ -254,13 +254,13 @@ public partial class NativeWebView : FrameworkElement, Uno.UI.Xaml.Controls.INat
     private readonly Guid _instanceGuid;
     private bool _bridgeConnected;
     //internal bool Activated;
-    private readonly CoreWebView2 _coreWebView;
+    //private readonly CoreWebView2 _coreWebView;
     #endregion
 
     #region Construction / Initialization
-    public NativeWebView(CoreWebView2 coreWebView)
+    public NativeWebView()
     {
-        _coreWebView = coreWebView;
+        //_coreWebView = coreWebView;
         _instanceGuid = Guid.NewGuid();
         _id = this.GetHtmlAttribute("id");
         

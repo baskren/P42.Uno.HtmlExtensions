@@ -1,4 +1,4 @@
-﻿#if WINDOWS
+#if WINDOWS
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -98,6 +98,11 @@ namespace P42.Uno.HtmlExtensions
             }
 			throw new Exception("Cannot locate TaskCompletionSource for WebView.NavigationToString");
         }
+
+        public void AllowFileAccess(WebView2 webView, bool access) { }
+
+        public void AllowNetworkLoads(WebView2 webView, bool access) { }
+
     }
 }
 #endif

@@ -1,4 +1,4 @@
-﻿let UnoWebViewBridge_Debug = false;
+let UnoWebViewBridge_Debug = true;
 
 if (window.parent !== window) {
 
