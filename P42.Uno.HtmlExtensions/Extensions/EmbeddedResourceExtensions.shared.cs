@@ -18,11 +18,11 @@ namespace P42.Uno.HtmlExtensions
 
             asm = asm ??  FindAssemblyForResource(resourceId);
 
-            if (asm.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is String resourceName)
-            {
-                using (var inStream = asm.GetManifestResourceStream(resourceName))
-                {
-                    /*
+            if (asm.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith(resourceId)) is not String resourceName)
+                return null;
+
+            await using var inStream = asm.GetManifestResourceStream(resourceName);
+            /*
                     using (var fileStream = File.Create(Path.Combine(Windows.Storage.ApplicationData.Current.TemporaryFolder.Path, Path.GetRandomFileName() + ".html")))
                     {
                         inStream.Seek(0, SeekOrigin.Begin);
@@ -32,21 +32,15 @@ namespace P42.Uno.HtmlExtensions
                     var x = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.CreateFileAsync("test.txt");
                     */
 
-                    var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-                    var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            //var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
 
-                    var folder = await localFolder.CreateFolderAsync("P42.Uno.WebViewResource", CreationCollisionOption.OpenIfExists);
+            var folder = await localFolder.CreateFolderAsync("P42.Uno.WebViewResource", CreationCollisionOption.OpenIfExists);
 
-                    var file = await folder.CreateFileAsync(Path.GetRandomFileName() + ".html");
-                    using (var outStream = File.OpenWrite(file.Path))
-                    {
-                        inStream.CopyTo(outStream);
-                    }
-                    return file;
-                }
-            }
-
-            return null;
+            var file = await folder.CreateFileAsync(Path.GetRandomFileName() + ".html");
+            await using var outStream = File.OpenWrite(file.Path);
+            await inStream.CopyToAsync(outStream);
+            return file;
         }
 
 
@@ -109,9 +103,6 @@ namespace P42.Uno.HtmlExtensions
             }
             return null;
         }
-
-        static Assembly GetApplicationAssembly()
-        => Assembly.GetEntryAssembly();
 
         static List<Assembly> GetAssemblies()
         {
