@@ -32,8 +32,6 @@ namespace Demo
     public sealed partial class MainPage : Page
     {
 
-        //Microsoft.Web.WebView2.Core.CoreWebView2DownloadState;
-
         P42.UI.Xaml.Controls.WebView2 _webView = new P42.UI.Xaml.Controls.WebView2
         {
         };

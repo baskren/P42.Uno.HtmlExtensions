@@ -2,11 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-//using Uno.UI;
 using Uno.Extensions;
-//using Uno.UI.Extensions;
 using Microsoft.UI.Xaml;
-//using Uno.UI.Web;
 using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,7 +11,6 @@ using System.Threading;
 using Windows.UI.Core;
 using System.IO;
 using Uno.UI;
-//using Microsoft.Web.WebView2.Core;
 
 namespace P42.Uno.HtmlExtensions
 {
