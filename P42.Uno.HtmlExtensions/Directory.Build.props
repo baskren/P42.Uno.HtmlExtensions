@@ -48,12 +48,13 @@
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
   	<Message Text="  DotNetVersion:[net8.0]" Importance="high" />
+  	<Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
+  	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>
     <Message Text="  TargetFrameworks:[$(TargetFrameworks)] " Importance="high"/>
     <Message Text="  TargetFramework:[$(TargetFramework)]" Importance="high"/>
-  	<Message Text="  P42_TargetPlatform:[$(P42_TargetPlatform)] " Importance="high" />
     <Message Text="  Configuration:[$(Configuration)] " Importance="high"/>
     <Message Text="  SaveNuget:[$(GeneratePackageOnBuild)] " Importance="high"/>
     <Message Text="  PackageVersion:[$(Version)] " Importance="high"/>
@@ -78,8 +79,12 @@
     <Message Text="      @(AndroidResource, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  NuGetPackageRoot:[$(NuGetPackageRoot)]" Importance="high" />
+    <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
     <Message Text="  DebugSymbols:[$(DebugSymbols)]" Importance="high" />
     <Message Text="  Optimize:[$(Optimize)]" Importance="high" />
+    <Message Text="  WindowsSdkPackageVersion:[$(WindowsSdkPackageVersion)]" Importance="high" />
+    <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]" />
+    <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]" />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
