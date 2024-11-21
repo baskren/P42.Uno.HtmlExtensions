@@ -46,6 +46,9 @@ namespace P42.Uno.HtmlExtensions
 
         public async Task PrintAsync(string html, string jobName)
         {
+            html = html.Replace("'", "’");
+            html = html.Replace("\n", "");
+            html = html.Replace("\r", "");
             var js = $"P42UnoPrint('{html}');\n";
             WebAssemblyRuntime.InvokeJS(js);
             await Task.CompletedTask;
