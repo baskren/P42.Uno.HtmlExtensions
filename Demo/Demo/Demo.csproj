@@ -1,16 +1,16 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>
-      net8.0-ios;
-      net8.0-maccatalyst;
-      net8.0-android;
-      net8.0-browserwasm;
-      net8.0-desktop;
-      net8.0;
+      net9.0-ios;
+      net9.0-maccatalyst;
+      net9.0-android;
+      net9.0-browserwasm;
+      net9.0-desktop;
+      net9.0;
     </TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
       $(TargetFrameworks);
-      net8.0-windows10.0.19041
+      net9.0-windows10.0.19041
     </TargetFrameworks>
 
     <OutputType>Exe</OutputType>

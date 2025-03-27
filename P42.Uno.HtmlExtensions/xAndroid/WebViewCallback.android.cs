@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace P42.Uno.HtmlExtensions.Droid;
 
-class WebViewCallBack : Android.Webkit.WebViewClient
+internal class WebViewCallBack : Android.Webkit.WebViewClient
 {
-    bool _complete;
-    readonly string _jobName;
-    readonly PageSize _pageSize;
-    readonly PageMargin _margin;
-    readonly TaskCompletionSource<ToFileResult> _taskCompletionSource;
-    readonly Func<Android.Webkit.WebView, string, PageSize, PageMargin, TaskCompletionSource<ToFileResult>, Task> _onPageFinished;
+    private bool _complete;
+    private readonly string _jobName;
+    private readonly PageSize _pageSize;
+    private readonly PageMargin _margin;
+    private readonly TaskCompletionSource<ToFileResult> _taskCompletionSource;
+    private readonly Func<Android.Webkit.WebView, string, PageSize, PageMargin, TaskCompletionSource<ToFileResult>, Task> _onPageFinished;
 
     public WebViewCallBack(TaskCompletionSource<ToFileResult> taskCompletionSource, string jobName, PageSize pageSize, PageMargin margin, Func<Android.Webkit.WebView, string, PageSize, PageMargin, TaskCompletionSource<ToFileResult>, Task> onPageFinished)
     {
@@ -25,14 +25,14 @@ class WebViewCallBack : Android.Webkit.WebViewClient
 
     public override void OnPageStarted(Android.Webkit.WebView view, string url, Bitmap favicon)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnPageStarted: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnPageStarted: ");
         base.OnPageStarted(view, url, favicon);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Potential Code Quality Issues", "RECS0165:Asynchronous methods should return a Task instead of void", Justification = "Needed to invoke async code on main thread.")]
     public override void OnPageFinished(Android.Webkit.WebView view, string url)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack)  + "OnPageFinished: SUCCESS!");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnPageFinished: SUCCESS!");
         if (_complete)
             return;
 
@@ -76,13 +76,13 @@ class WebViewCallBack : Android.Webkit.WebViewClient
 
     public override bool OnRenderProcessGone(Android.Webkit.WebView view, Android.Webkit.RenderProcessGoneDetail detail)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnRenderProcessGone: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnRenderProcessGone: ");
         return base.OnRenderProcessGone(view, detail);
     }
 
     public override void OnLoadResource(Android.Webkit.WebView view, string url)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnLoadResource: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnLoadResource: ");
         base.OnLoadResource(view, url);
         Timer.StartTimer(TimeSpan.FromSeconds(10), () =>
         {
@@ -94,19 +94,19 @@ class WebViewCallBack : Android.Webkit.WebViewClient
 
     public override void OnPageCommitVisible(Android.Webkit.WebView view, string url)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnPageCommitVisible: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnPageCommitVisible: ");
         base.OnPageCommitVisible(view, url);
     }
 
     public override void OnUnhandledKeyEvent(Android.Webkit.WebView view, KeyEvent e)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnUnhandledKeyEvent: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnUnhandledKeyEvent: ");
         base.OnUnhandledKeyEvent(view, e);
     }
 
     public override void OnUnhandledInputEvent(Android.Webkit.WebView view, InputEvent e)
     {
-        System.Diagnostics.Debug.WriteLine(nameof(WebViewCallBack) + "OnUnhandledInputEvent: ");
+        System.Diagnostics.Debug.WriteLine($"{nameof(WebViewCallBack)}OnUnhandledInputEvent: ");
         base.OnUnhandledInputEvent(view, e);
     }
 }

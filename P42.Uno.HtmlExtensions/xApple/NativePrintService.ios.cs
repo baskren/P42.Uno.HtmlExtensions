@@ -22,7 +22,7 @@ internal class NativePrintService : UIPrintInteractionControllerDelegate, INativ
         if (!NSProcessInfo.ProcessInfo.IsOperatingSystemAtLeastVersion(new NSOperatingSystemVersion(11, 0, 0)))
             throw new Exception("PDF output not available prior to iOS 11");
 
-        if (unoWebView.GetNativeWebView() is not Microsoft.UI.Xaml.Controls.NativeWebView wkWebView)
+        if (unoWebView.GetNativeWebView() is not NativeWebView wkWebView)
             throw new Exception("Could not get NativeWebView for Uno WebView");
 
         var formatter = wkWebView.ViewPrintFormatter;

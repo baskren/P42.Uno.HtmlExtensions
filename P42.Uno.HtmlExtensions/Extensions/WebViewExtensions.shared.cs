@@ -43,7 +43,7 @@ public static partial class WebViewExtensions
     /// <returns></returns>
     public static async Task<StorageFile> NavigateToResourceAsync(this WebView2 webView, string resourceId, Assembly assembly = null)
     {
-        if (await EmbeddedResourceExtensions.ResourceAsStorageFileAsync(resourceId, assembly) is not StorageFile file)
+        if (await EmbeddedResourceExtensions.ResourceAsStorageFileAsync(resourceId, assembly) is not { } file)
             return null;
             
         webView.AllowLocalFileAccess();
@@ -70,7 +70,7 @@ public static partial class WebViewExtensions
     }
 
 
-    struct TryResult<T>
+    private struct TryResult<T>
     {
         public bool IsSuccess { get; set; }
 
@@ -82,43 +82,43 @@ public static partial class WebViewExtensions
             Value = value;
         }
     }
-        
-    static async Task<TryResult<int>> TryExecuteIntScriptAsync(this WebView2 webView2, string script)
+
+    private static async Task<TryResult<int>> TryExecuteIntScriptAsync(this WebView2 webView2, string script)
     {
 #if __WASM__ 
         try
         {
             var result = await webView2.ExecuteScriptAsync(script);
-            if (int.TryParse(result, out int v))
+            if (int.TryParse(result, out var v))
                 return new TryResult<int>(true, v);
         }
         catch (Exception ex) 
         {
-            System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteIntScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
+            Debug.WriteLine($"WebViewExtensions.TryExecuteIntScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
         }
 #endif
         return await Task.FromResult(new TryResult<int>(false));
     }
 
-    static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this WebView2 webView2, string script)
+    private static async Task<TryResult<double>> TryExecuteDoubleScriptAsync(this WebView2 webView2, string script)
     {
 #if __WASM__ 
         try
         {
             var result = await webView2.ExecuteScriptAsync(script);
-            System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync : [{script}] : [{result}]");
+            Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync : [{script}] : [{result}]");
             if (double.TryParse(result, out var v))
                 return new TryResult<double>(true, v);
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
+            Debug.WriteLine($"WebViewExtensions.TryExecuteDoubleScriptAsync {ex.GetType()} : {ex.Message} \n{ex.StackTrace} ");
         }
 #endif
         return await Task.FromResult(new TryResult<double>(false));
     }
 
-    static async Task<double> TryUpdateIfLarger(this WebView2 webView2, string script, double source)
+    private static async Task<double> TryUpdateIfLarger(this WebView2 webView2, string script, double source)
     {
         if (await webView2.TryExecuteDoubleScriptAsync(script) is TryResult<double> r1 && r1.IsSuccess && r1.Value > source)
             return r1.Value;
@@ -255,8 +255,8 @@ public static partial class WebViewExtensions
         catch (Exception e)
         {
             //await Forms9Patch.Debug.RequestUserHelp(e, "line = " + line + ", callerName=["+callerName+"]");
-            System.Diagnostics.Debug.WriteLine("WebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
-            Console.WriteLine("WebViewExtensions.WebViewContentSizeAsync FAIL: " + e.Message);
+            Debug.WriteLine($"WebViewExtensions.WebViewContentSizeAsync FAIL: {e.Message}");
+            Console.WriteLine($"WebViewExtensions.WebViewContentSizeAsync FAIL: {e.Message}");
             return await WebViewContentSizeAsync(webView, depth + 1, callerName);
         }
         return new Windows.Foundation.Size(contentWidth, contentHeight);

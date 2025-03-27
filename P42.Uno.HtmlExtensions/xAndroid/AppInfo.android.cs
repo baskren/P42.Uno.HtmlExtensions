@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace P42.Uno.HtmlExtensions
+namespace P42.Uno.HtmlExtensions;
+
+internal static class AppInfo
 {
-    static class AppInfo
+    public static string Name
     {
-        public static string Name
+        get
         {
-            get
-            {
-                var applicationInfo = global::Uno.UI.ContextHelper.Current.ApplicationInfo;
-                var packageManager = global::Uno.UI.ContextHelper.Current.PackageManager;
-                return applicationInfo.LoadLabel(packageManager);
-            }
+            var applicationInfo = global::Uno.UI.ContextHelper.Current.ApplicationInfo;
+            var packageManager = global::Uno.UI.ContextHelper.Current.PackageManager;
+            return applicationInfo.LoadLabel(packageManager);
         }
     }
 }

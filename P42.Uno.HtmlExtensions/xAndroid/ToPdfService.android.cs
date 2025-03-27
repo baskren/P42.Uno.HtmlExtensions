@@ -19,13 +19,12 @@ using Android.Text;
 
 namespace P42.Uno.HtmlExtensions
 {
-
-    class NativeToPdfService : Java.Lang.Object, INativeToPdfService
+    internal class NativeToPdfService : Java.Lang.Object, INativeToPdfService
     {
         /// <summary>
         /// Is to PDF conversion available?
         /// </summary>
-        public bool IsAvailable => Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Kitkat;
+        public bool IsAvailable => Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat;
 
 
         public async Task<ToFileResult> ToPdfAsync(Uri uri, string fileName, PageSize pageSize, PageMargin margin)
@@ -38,7 +37,7 @@ namespace P42.Uno.HtmlExtensions
             droidWebView.Settings.JavaScriptEnabled = true;
             droidWebView.Settings.DomStorageEnabled = true;
 
-            if (Android.OS.Build.VERSION.SdkInt < (Android.OS.BuildVersionCodes)28)
+            if (Build.VERSION.SdkInt < (BuildVersionCodes)28)
 #pragma warning disable CA1422 // Validate platform compatibility
                 droidWebView.DrawingCacheEnabled = true;
 #pragma warning restore CA1422 // Validate platform compatibility
@@ -91,7 +90,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(WebView2 webView2, string fileName, PageSize pageSize, PageMargin margin)
         {
-            if (webView2.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
+            if (webView2.GetAndroidWebView() is { } droidWebView)
                 return await ToPdfAsync(droidWebView, fileName, pageSize, margin);
 
             return await Task.FromResult(new ToFileResult("Could not get NativeWebView for Uno WebView"));
@@ -108,7 +107,7 @@ namespace P42.Uno.HtmlExtensions
         /// <returns></returns>
         public async Task<ToFileResult> ToPdfAsync(WebView webView, string fileName, PageSize pageSize, PageMargin margin)
         {
-            if (webView.GetAndroidWebView() is Android.Webkit.WebView droidWebView)
+            if (webView.GetAndroidWebView() is { } droidWebView)
                 return await ToPdfAsync(droidWebView, fileName, pageSize, margin);
 
             return await Task.FromResult(new ToFileResult("Could not get NativeWebView for Uno WebView"));
@@ -124,9 +123,9 @@ namespace P42.Uno.HtmlExtensions
             return await taskCompletionSource.Task;
         }
 
-        static async Task OnPageFinishedAsync(Android.Webkit.WebView webView, string fileName, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource)
+        private static async Task OnPageFinishedAsync(Android.Webkit.WebView webView, string fileName, PageSize pageSize, PageMargin margin, TaskCompletionSource<ToFileResult> taskCompletionSource)
         {
-            if (Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Kitkat)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 return;
             
             await Task.Delay(5);
@@ -205,16 +204,15 @@ namespace Android.Print
 
         public override void OnLayoutFinished(PrintDocumentInfo info, bool changed)
         {
-            var dir = Android.App.Application.Context.CacheDir;
+            var dir = App.Application.Context.CacheDir;
             if (!dir.Exists())
                 dir.Mkdir();
 
             var suffix = System.IO.Path.GetExtension(FileName);
             FileName = System.IO.Path.GetFileNameWithoutExtension(FileName);
-            var file = Java.IO.File.CreateTempFile(FileName+".", suffix, dir);
+            var file = Java.IO.File.CreateTempFile($"{FileName}.", suffix, dir);
             var fileDescriptor = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadWrite);
-            Adapter.OnWrite(new Android.Print.PageRange[] 
-                { PageRange.AllPages }, 
+            Adapter.OnWrite([PageRange.AllPages], 
                 fileDescriptor, new CancellationSignal(), 
                 new PdfWriteResultCallback(TaskCompletionSource, file)
                 );
@@ -228,7 +226,7 @@ namespace Android.Print
     [Register("android/print/PdfWriteResult")]
     public class PdfWriteResultCallback : PrintDocumentAdapter.WriteResultCallback
     {
-        readonly TaskCompletionSource<ToFileResult> _taskCompletionSource;
+        private readonly TaskCompletionSource<ToFileResult> _taskCompletionSource;
         //readonly string _path;
         private readonly Java.IO.File _file;
 

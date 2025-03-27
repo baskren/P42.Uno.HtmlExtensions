@@ -13,15 +13,14 @@ using Microsoft.UI.Xaml.Media;
 
 
 
-namespace P42.Uno.HtmlExtensions
+namespace P42.Uno.HtmlExtensions;
+
+internal static class UnoWebViewExtensions
 {
-    static class UnoWebViewExtensions
+    public static UnoWKWebView GetNativeWebView(this WebView2 unoWebView)
     {
-        public static Microsoft.UI.Xaml.Controls.UnoWKWebView GetNativeWebView(this WebView2 unoWebView)
-        {
-            if (unoWebView.FindSubviewsOfType<WKWebView>().FirstOrDefault() is Microsoft.UI.Xaml.Controls.UnoWKWebView nativeWebView)
-                return nativeWebView;
-            return null;
-        }
+        if (unoWebView.FindSubviewsOfType<WKWebView>().FirstOrDefault() is UnoWKWebView nativeWebView)
+            return nativeWebView;
+        return null;
     }
 }

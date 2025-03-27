@@ -15,9 +15,9 @@ namespace P42.Uno.HtmlExtensions;
 public static class PrintService
 {
 #if __IOS__ || __ANDROID__ || WINDOWS || __WASM__
-    static INativePrintService _nativePrintService;
+    private static INativePrintService _nativePrintService;
     internal static INativePrintService NativePrintService =>
-        _nativePrintService = _nativePrintService ?? new NativePrintService();
+        _nativePrintService ??= new NativePrintService();
 #else
         internal static INativePrintService NativePrintService =>
             null;

@@ -4,94 +4,93 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
 
 
-namespace P42.Uno.HtmlExtensions
+namespace P42.Uno.HtmlExtensions;
+
+/// <summary>
+/// Html string extensions.
+/// </summary>
+public static class ToPdfService
 {
-    /// <summary>
-    /// Html string extensions.
-    /// </summary>
-    public static class ToPdfService
-    {
 #if __IOS__ || __ANDROID__ || WINDOWS
-        static INativeToPdfService _nativeToPdfService;
-        static INativeToPdfService NativeToPdfService =>
-            _nativeToPdfService = _nativeToPdfService ?? new NativeToPdfService();
+    private static INativeToPdfService _nativeToPdfService;
+    private static INativeToPdfService NativeToPdfService =>
+            _nativeToPdfService ??= new NativeToPdfService();
 #else
-        static INativeToPdfService NativeToPdfService =>
-            null;
+    private static INativeToPdfService NativeToPdfService =>
+        null;
 #endif
 
-        /// <summary>
-        /// Returns true if PDF generation is available on this device
-        /// </summary>
-        public static bool IsAvailable => NativeToPdfService?.IsAvailable ?? false;
+    /// <summary>
+    /// Returns true if PDF generation is available on this device
+    /// </summary>
+    public static bool IsAvailable => NativeToPdfService?.IsAvailable ?? false;
 
-        public static async Task<ToFileResult> ToPdfAsync(this StorageFile file, string fileName, PageSize pageSize = default, PageMargin margin = default)
-        {
-            if (file is null)
-                return new ToFileResult("Null StorageFile provided to ToPdfAsync.");
+    public static async Task<ToFileResult> ToPdfAsync(this StorageFile file, string fileName, PageSize pageSize = default, PageMargin margin = default)
+    {
+        if (file is null)
+            return new ToFileResult("Null StorageFile provided to ToPdfAsync.");
             
-            var uri = new Uri(file.Path);
-            return await ToPdfAsync(uri, fileName, pageSize, margin);
-        }
+        var uri = new Uri(file.Path);
+        return await ToPdfAsync(uri, fileName, pageSize, margin);
+    }
 
-        public static async Task<ToFileResult> ToPdfAsync(this Uri uri, string fileName, PageSize pageSize = default, PageMargin margin = default)
+    public static async Task<ToFileResult> ToPdfAsync(this Uri uri, string fileName, PageSize pageSize = default, PageMargin margin = default)
+    {
+        if (uri is null)
+            return new ToFileResult("Null Uri provided to ToPdfAsync.");
+
+        if (uri.Scheme == "ms-appx")
         {
-            if (uri is null)
-                return new ToFileResult("Null Uri provided to ToPdfAsync.");
-
-            if (uri.Scheme == "ms-appx")
-            {
-                var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-                return await ToPdfAsync(file, fileName, pageSize, margin);
-            }
+            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            return await ToPdfAsync(file, fileName, pageSize, margin);
+        }
             
-            if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
-                pageSize = PageSize.Default;
+        if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
+            pageSize = PageSize.Default;
 
-            margin = margin ?? new PageMargin();
-            if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
-                return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
+        margin ??= new PageMargin();
+        if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
+            return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
 
-            return await (NativeToPdfService?.ToPdfAsync(uri, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
-        }
+        return await (NativeToPdfService?.ToPdfAsync(uri, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
+    }
 
-        /// <summary>
-        /// Converts HTML text to PNG
-        /// </summary>
-        /// <param name="html">HTML string to be converted to PDF</param>
-        /// <param name="fileName">Name (not path), excluding suffix, of PDF file</param>
-        /// <param name="pageSize">PDF page size, in points. (default based upon user's region)</param>
-        /// <param name="margin">PDF page's margin, in points. (default is zero)</param>
-        /// <returns></returns>
-        public static async Task<ToFileResult> ToPdfAsync(this string html, string fileName, PageSize pageSize = default, PageMargin margin = default)
-        {
-            html ??= string.Empty;
-            var uri = await html.ToTempFileUriAsync();
-            return await ToPdfAsync(uri, fileName, pageSize, margin);
-        }
+    /// <summary>
+    /// Converts HTML text to PNG
+    /// </summary>
+    /// <param name="html">HTML string to be converted to PDF</param>
+    /// <param name="fileName">Name (not path), excluding suffix, of PDF file</param>
+    /// <param name="pageSize">PDF page size, in points. (default based upon user's region)</param>
+    /// <param name="margin">PDF page's margin, in points. (default is zero)</param>
+    /// <returns></returns>
+    public static async Task<ToFileResult> ToPdfAsync(this string html, string fileName, PageSize pageSize = default, PageMargin margin = default)
+    {
+        html ??= string.Empty;
+        var uri = await html.ToTempFileUriAsync();
+        return await ToPdfAsync(uri, fileName, pageSize, margin);
+    }
 
-        /// <summary>
-        /// Creates a PNG from the contents of an Uno WebView
-        /// </summary>
-        /// <param name="webView">Uno WebView</param>
-        /// <param name="fileName">Name (not path), excluding suffix, of PDF file</param>
-        /// <param name="pageSize">PDF page size, in points. (default based upon user's region)</param>
-        /// <param name="margin">PDF page's margin, in points. (default is zero)</param>
-        /// <returns>Forms9Patch.ToFileResult</returns>
-        public static async Task<ToFileResult> ToPdfAsync(this WebView2 webView, string fileName, PageSize pageSize = default, PageMargin margin = default)
-        {
-            if (webView is null)
-                return new ToFileResult("Null WebView2 provided to ToPdfAsync.");
+    /// <summary>
+    /// Creates a PNG from the contents of an Uno WebView
+    /// </summary>
+    /// <param name="webView">Uno WebView</param>
+    /// <param name="fileName">Name (not path), excluding suffix, of PDF file</param>
+    /// <param name="pageSize">PDF page size, in points. (default based upon user's region)</param>
+    /// <param name="margin">PDF page's margin, in points. (default is zero)</param>
+    /// <returns>Forms9Patch.ToFileResult</returns>
+    public static async Task<ToFileResult> ToPdfAsync(this WebView2 webView, string fileName, PageSize pageSize = default, PageMargin margin = default)
+    {
+        if (webView is null)
+            return new ToFileResult("Null WebView2 provided to ToPdfAsync.");
             
-            if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
-                pageSize = PageSize.Default;
+        if (pageSize is null || pageSize.Width <= 0 || pageSize.Height <= 0)
+            pageSize = PageSize.Default;
 
-            margin = margin ?? new PageMargin();
-            if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
-                return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
+        margin ??= new PageMargin();
+        if (pageSize.Width - margin.HorizontalThickness < 1 || pageSize.Height - margin.VerticalThickness < 1)
+            return new ToFileResult("Page printable area (page size - margins) has zero width or height.");
 
-            await webView.EnsureCoreWebView2Async();
-            return  await (NativeToPdfService?.ToPdfAsync(webView, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
-        }
+        await webView.EnsureCoreWebView2Async();
+        return  await (NativeToPdfService?.ToPdfAsync(webView, fileName, pageSize, margin) ?? Task.FromResult(new ToFileResult("PDF Service is not implemented on this platform.")));
     }
 }

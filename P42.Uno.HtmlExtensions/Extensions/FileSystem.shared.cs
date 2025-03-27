@@ -16,7 +16,7 @@ internal static class FileSystem
             ? info = new DirectoryInfo(fullPath)
             : info = Directory.CreateDirectory(fullPath);
         if (!info.Exists)
-            throw new Exception("Could not assure existence of directory [" + info + "]");
+            throw new Exception($"Could not assure existence of directory [{info}]");
         return info;
     }
 
