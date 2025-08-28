@@ -1,0 +1,29 @@
+using Uno.UI.Hosting;
+
+namespace Demo;
+
+internal class Program
+{
+    [STAThread]
+    public static void Main(string[] args)
+    {
+        App.InitializeLogging();
+
+        var host = UnoPlatformHostBuilder.Create()
+            .App(() => new App())
+            .UseX11()
+            .UseLinuxFrameBuffer()
+            .UseMacOS()
+            .UseWin32()
+            .Build();
+
+        try
+        {
+            host.Run();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+}

@@ -1,0 +1,155 @@
+using P42.Uno;
+
+namespace Demo;
+
+public sealed partial class MainPage : Page
+{
+    private readonly WebView2 _webView;
+
+    public MainPage()
+    {
+        this
+            .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+            .VerticalAlignment(VerticalAlignment.Stretch)
+            .HorizontalAlignment(HorizontalAlignment.Stretch)
+            .Content(
+                new Grid()
+                    .VerticalAlignment(VerticalAlignment.Stretch)
+                    .HorizontalAlignment(HorizontalAlignment.Stretch)
+                    .RowDefinitions("*,50")
+                    .Children
+                    (
+                        new TextBlock()
+                            .Text("Hello World!")
+                            .HorizontalAlignment(HorizontalAlignment.Center)
+                            .VerticalAlignment(VerticalAlignment.Center),
+                        new WebView2()
+                            .Name(out _webView)
+                            .DefaultBackgroundColor(Colors.Pink)
+                            .HorizontalAlignment(HorizontalAlignment.Stretch)
+                            .VerticalAlignment(VerticalAlignment.Stretch),
+                        new StackPanel()
+                            .Grid(row: 1)
+                            .Orientation(Orientation.Horizontal)
+                            .HorizontalAlignment(HorizontalAlignment.Stretch)
+                            .VerticalAlignment(VerticalAlignment.Center)
+                            .Children(
+                                new Button()
+                                    .Name(out var htmlPdfButton)
+                                    .Content("HTML PDF")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center),
+                                new Button()
+                                    .Name(out var webViewPdfButton)
+                                    .Content("WV2 PDF")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center),
+                                new Button()
+                                    .Name(out var htmlPrintButton)
+                                    .Content("HTML PRINT")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center)
+                                    .IsEnabled(HtmlExtensions.CanPrint()),
+                                new Button()
+                                    .Name(out var webViewPrintButton)
+                                    .Content("WV2 PRINT")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center)
+                                    .IsEnabled(WebView2Extensions.CanPrint())
+                            )
+
+
+
+                    )
+            );
+
+        htmlPdfButton.Click += OnHtmlPdfButtonClick;
+        webViewPdfButton.Click += OnWebViewPdfButtonClick;
+        htmlPrintButton.Click += OnHtmlPrintButtonClick;
+        webViewPrintButton.Click += OnWebViewPrintButtonClick;
+
+
+        //_webView.Source = new Uri("https://platform.uno");
+
+        Loaded += OnLoaded;
+    }
+    
+    private async void OnWebViewPrintButtonClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await _webView.EnsureCoreWebView2Async();
+            await _webView.PrintAsync();
+        }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView Print", ex);
+        }
+    }
+
+    private async void OnHtmlPrintButtonClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var html = await WebView2Extensions.ReadResourceAsTextAsync("WebViewUtils.Resources.Html5TestPage.html");
+            await HtmlExtensions.PrintAsync(this, html);
+        }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html Print", ex);
+        }
+    }
+
+    private async void OnWebViewPdfButtonClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var options = new PdfOptions([30, 30, 30, 30],
+                Html2canvas: new Html2CanvasOptions(Scale: 2),
+                JsPDF: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
+            await _webView.SavePdfAsync(options);
+        }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView PDF", ex);
+        }
+        // options is broken in WASM
+    }
+
+    private async void OnHtmlPdfButtonClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var html = await WebView2Extensions.ReadResourceAsTextAsync("WebViewUtils.Resources.Html5TestPage.html");
+            await HtmlExtensions.SavePdfAsync(this, html);
+        }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html PDF", ex);
+        }
+    }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await _webView.EnsureCoreWebView2Async();
+    
+                _webView.EnableMarkdownSupport();
+                
+                _webView.EnableProjectContentFolder("WebContent");
+                _webView.EnableProjectContentFolder("AltWebContent");
+                
+                //_webView.NavigateToProjectContentFile("/WebContent/Limits.html");
+                //_webView.NavigateToProjectContentFile("/UnoLib1/WebContent/MarkdownPage3.html");
+                _webView.NavigateToProjectContentFile("/WebContent/document.md");
+                
+            }
+            catch (Exception ex)
+            {
+                await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView", ex);
+            }
+        }
+
+    
+}

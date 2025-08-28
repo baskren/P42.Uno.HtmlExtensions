@@ -14,11 +14,16 @@
     -->
 
     <UnoFeatures>
+      Lottie;
+      Toolkit;
+      ThemeService;
       SkiaRenderer;
+      WebView;
     </UnoFeatures>
 
     <!-- CUSTOMIZATION -->
-    <RootNamespace>P42.Uno.HtmlExt</RootNamespace>
+    <RootNamespace>P42.Uno.Wv2Ext</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
   </PropertyGroup>
 
@@ -38,6 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <PackageReference Include="MimeMapping"  />
+    <None Remove="WebAssembly\WasmScripts\P42_JavaScript.js" />
+    <EmbeddedResource Include="WebAssembly\WasmScripts\P42_JavaScript.js" />
   </ItemGroup>
+
+
 </Project>
