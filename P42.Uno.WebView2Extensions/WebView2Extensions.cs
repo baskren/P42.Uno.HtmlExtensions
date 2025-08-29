@@ -93,9 +93,9 @@ public static class WebView2Extensions
     }
 
     /// <summary>
-    /// Try printing WebView page : presents errors in a dialog
+    /// Try printing WebView content : presents errors in a dialog
     /// </summary>
-    /// <param name="webView2">unknown result if not on current page</param>
+    /// <param name="webView2">unknown result if not on the current page</param>
     /// <param name="token"></param>
     /// <returns></returns>
     public static async Task<bool> TryPrintAsync(this WebView2 webView2, CancellationToken token = default)
@@ -512,8 +512,19 @@ public static class WebView2Extensions
             throw new ArgumentException("Only folders in project root are allowed", nameof(projectFolder));
         
         var fullFolderPath = Path.Combine(VirtualHost.ContentRoot, projectFolder);
+        
+#if __ANDROID__
+        var files = VirtualHost.Assets.List(fullFolderPath);
+        if (files.Length == 0)
+            throw new DirectoryNotFoundException(fullFolderPath);
+        
+        foreach (var file in files)
+            System.Diagnostics.Debug.WriteLine($"AndroidAsset: [{fullFolderPath}]/[{file}]");
+        
+#else
         if (!Directory.Exists(fullFolderPath))
             throw new DirectoryNotFoundException(fullFolderPath);
+#endif
         
         webView2.HostMap().AddDistinct(projectFolder);
         VirtualHost.LocalFolders.AddDistinct(projectFolder);
@@ -539,8 +550,13 @@ public static class WebView2Extensions
             projectContentFilePath += "index.html";
         
         var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);
+        #if __ANDROID__
+        using var stream = VirtualHost.Assets.Open(fullFilePath);
+        stream.Close();
+        #else
         if (!File.Exists(fullFilePath))
             throw new FileNotFoundException(fullFilePath);
+        #endif
         
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))

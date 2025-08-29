@@ -140,9 +140,9 @@ public sealed partial class MainPage : Page
                 _webView.EnableProjectContentFolder("WebContentX");
                 _webView.EnableProjectContentFolder("AltWebContent");
                 
-                //_webView.NavigateToProjectContentFile("/WebContent/Limits.html");
+                _webView.NavigateToProjectContentFile("/WebContentX/Limits.html");
                 //_webView.NavigateToProjectContentFile("/UnoLib1/WebContent/MarkdownPage3.html");
-                _webView.NavigateToProjectContentFile("/WebContentX/document.md");
+                //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
             }
             catch (Exception ex)

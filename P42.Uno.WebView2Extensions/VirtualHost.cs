@@ -6,19 +6,26 @@ namespace P42.Uno;
 
 internal class VirtualHost
 {
-    private static VirtualHost Current = new();
-
     //TODO: replace collection initiation with new();
     internal static readonly List<string> LocalFolders = ["UnoLib1"];
 
+#if __ANDROID__
+    
+    internal static Android.App.Activity Activity => ContextHelper.Current as Android.App.Activity ?? throw new Exception("Cannot get Android Activity");
+    
+    internal static Android.Content.Res.AssetManager Assets => Activity.Assets as Android.Content.Res.AssetManager  ?? throw new Exception("Cannot get Android AssetManager");
+    
+    internal static string ContentRoot => "WebView2ProjectContentFolders";
+#else
     internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders");
+#endif
 
     public static string HostUrl { get; private set; }
     
     // TODO: Can we add to listener.Prefixes after we call listener.Start()?
     // If so, we can use the port # as a way to apply local folder filtering to each web view?
     
-    private VirtualHost()
+    static VirtualHost()
     {
         Console.WriteLine($"ContentRoot: {ContentRoot}");
         
@@ -88,12 +95,20 @@ internal class VirtualHost
         if (!LocalFolders.Contains(rootFolder))
             return 403;
 
+        #if __ANDROID__
+        using var stream = Assets.Open(filePath);
+        #else
         if (!File.Exists(filePath))
             return 404;
+        #endif
 
         try
         {
+#if __ANDROID__
+            var buffer = stream.ReadAllBytesFromStream();
+#else
             var buffer = File.ReadAllBytes(filePath);
+#endif
             ctx.Response.ContentType = MimeMapping.MimeUtility.GetMimeMapping(filePath);
             ctx.Response.ContentLength64 = buffer.Length;
             ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
@@ -101,7 +116,10 @@ internal class VirtualHost
         }
         catch (Exception ex)
         {
-            var error = Encoding.UTF8.GetBytes("Server error: " + ex.Message);
+            var msg = "Server error: " + ex.Message;
+            Console.WriteLine(msg);
+            System.Diagnostics.Debug.WriteLine(msg);
+            var error = Encoding.UTF8.GetBytes(msg);
             ctx.Response.OutputStream.Write(error, 0, error.Length);
             return 500;
         }
