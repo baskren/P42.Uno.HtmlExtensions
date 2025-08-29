@@ -14,6 +14,7 @@ public sealed partial class MainPage : Page
             .HorizontalAlignment(HorizontalAlignment.Stretch)
             .Content(
                 new Grid()
+                    .SafeArea(SafeArea.InsetMask.All)
                     .VerticalAlignment(VerticalAlignment.Stretch)
                     .HorizontalAlignment(HorizontalAlignment.Stretch)
                     .RowDefinitions("*,50")
