@@ -47,13 +47,22 @@
 
 
   <!-- CUSTOMIZATION START -->
+  <!--
+  -->
   <Import Project="../P42.Uno.WebView2Extensions/build/WebView2Extensions.props" />
   <Import Project="../P42.Uno.MarkdownExtensions/build/MarkdownExtensions.props" />
 
 
   <ItemGroup>
-    <WebView2ProjectContentFolder Include="WebContent" />
+    <!--
+    <BundleResource Include="AltWebContent/Limits.html" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/AltWebContent/Limits.html" />
+    <BundleResource Include="AltWebContent/Limits.html" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/AltWebContent/Limits.html"  />
+    <BundleResource Include="WebContentX/**/*.*" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/WebContentX/%(RecursiveDir)%(Filename)%(Extension)"  />
+    -->
+    <WebView2ProjectContentFolder Include="WebContentX" />
     <WebView2ProjectContentFolder Include="AltWebContent" />
+
+
   </ItemGroup>
 
 
@@ -64,6 +73,28 @@
     <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
     <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
   </ItemGroup>
+
+
+
+
+
+  <Target Name="P42_Demo" BeforeTargets="BeforeBuild">
+
+    <Message
+      Condition=" $(TargetFramework.Contains('android')) "
+      Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]"
+      Importance="High" />
+    <Message
+      Condition=" $(TargetFramework.Contains('ios'))"
+      Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]"
+      Importance="High" />
+    <Message
+      Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
+      Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]"
+      Importance="High" />
+
+  </Target>
+
 
 
 </Project>

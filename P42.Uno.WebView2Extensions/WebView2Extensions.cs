@@ -511,7 +511,7 @@ public static class WebView2Extensions
         if (SplitPathSegments(projectFolder) is { Length: > 1 })
             throw new ArgumentException("Only folders in project root are allowed", nameof(projectFolder));
         
-        var fullFolderPath = Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders", projectFolder);
+        var fullFolderPath = Path.Combine(VirtualHost.ContentRoot, projectFolder);
         if (!Directory.Exists(fullFolderPath))
             throw new DirectoryNotFoundException(fullFolderPath);
         
@@ -538,7 +538,7 @@ public static class WebView2Extensions
         if (projectContentFilePath.EndsWith('/'))
             projectContentFilePath += "index.html";
         
-        var fullFilePath = Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders", projectContentFilePath);
+        var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);
         if (!File.Exists(fullFilePath))
             throw new FileNotFoundException(fullFilePath);
         

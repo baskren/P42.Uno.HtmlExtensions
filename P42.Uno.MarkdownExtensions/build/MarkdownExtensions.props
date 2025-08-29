@@ -1,57 +1,68 @@
 <Project>
 
-  <Target Name="P42_AddMarkdownContent" AfterTargets="P42_TransformWebView2ProjectContentFolders">
+  <ItemGroup>
 
-    <ItemGroup>
-      <_p42_markdown_file Include="$(MSBuildThisFileFullPath)/../../WebContent/**/*.*">
-        <Folder>%(WebView2ProjectContentFolder.Identity)</Folder>
-      </_p42_markdown_file>
-    </ItemGroup>
+    <AndroidAsset
+      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Link="Platforms/Android/Assets/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+    />
+    <BundleResource
+      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+    />
+    <Content
+      Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) OR $(TargetFramework.Contains('wasm')) "
+      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest" />
 
 
-    <ItemGroup>
+  </ItemGroup>
 
-      <AndroidAsset
-        Condition=" $(TargetFramework.Contains('android'))"
-        Include="@(_p42_markdown_file)"
-        Link="Platforms/Android/Assets/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
-        />
-
-      <BundleResource
-        Condition=" $(TargetFramework.Contains('ios'))"
-        Include="@(_p42_markdown_file)"
-        Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
-      />
-
-      <Content
-        Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) "
-        Include="@(_p42_markdown_file)"
-        Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
-        CopyToOutputDirectory="PreserveNewest" />
+    <Target Name="P42_AddMarkdownContent" AfterTargets="P42_TransformWebView2ProjectContentFolders">
 
       <!--
-      <Content
-        Condition=" $(TargetFramework.Contains('wasm')) "
-        Include="@(_p42_markdown_file)"
-        Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
-        CopyToOutputDirectory="PreserveNewest" />
-        -->
+      <ItemGroup>
+        <_p42_markdown_file Include="$(MSBuildThisFileFullPath)/../../WebContentX/**/*.*">
+          <Folder>%(WebView2ProjectContentFolder.Identity)</Folder>
+        </_p42_markdown_file>
+      </ItemGroup>
+-->
 
-      <Content
-        Condition=" $(TargetFramework.Contains('wasm')) "
-        Include="$(MSBuildThisFileFullPath)/../../WebContent/MarkdownPage3.html"
-        Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/MarkdownPage3.html"
-        CopyToOutputDirectory="PreserveNewest" />
+      <ItemGroup>
 
-      <Content
-        Condition=" $(TargetFramework.Contains('wasm')) "
-        Include="$(MSBuildThisFileFullPath)/../../WebContent/document.md"
-        Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/document.md"
-        CopyToOutputDirectory="PreserveNewest" />
+
+        <!--
+        <Content
+          Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) "
+          Include="@(_p42_markdown_file)"
+          Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+
+        <Content
+          Condition=" $(TargetFramework.Contains('wasm')) "
+          Include="@(_p42_markdown_file)"
+          Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+        <Content
+          Condition=" $(TargetFramework.Contains('wasm')) "
+          Include="$(MSBuildThisFileFullPath)/../../WebContent/MarkdownPage3.html"
+          Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/MarkdownPage3.html"
+          CopyToOutputDirectory="PreserveNewest" />
+
+        <Content
+          Condition=" $(TargetFramework.Contains('wasm')) "
+          Include="$(MSBuildThisFileFullPath)/../../WebContent/document.md"
+          Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/document.md"
+          CopyToOutputDirectory="PreserveNewest" />
+          -->
+
+
 
 
     </ItemGroup>
 
+      <!--
     <Message
       Condition=" $(TargetFramework.Contains('android')) "
       Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]"
@@ -64,7 +75,7 @@
       Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
       Text="M Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]"
       Importance="High" />
-
+-->
 
   </Target>
 

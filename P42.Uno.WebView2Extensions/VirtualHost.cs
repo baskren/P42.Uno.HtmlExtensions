@@ -11,7 +11,7 @@ internal class VirtualHost
     //TODO: replace collection initiation with new();
     internal static readonly List<string> LocalFolders = ["UnoLib1"];
 
-    private static string ContentRoot => Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders");
+    internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders");
 
     public static string HostUrl { get; private set; }
     
