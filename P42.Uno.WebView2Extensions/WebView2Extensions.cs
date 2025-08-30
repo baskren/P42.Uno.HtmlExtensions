@@ -4,6 +4,12 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 
+#if BROWSERWASM
+using Log = System.Console;
+#else
+using Log = System.Diagnostics.Debug;
+#endif
+
 namespace P42.Uno;
 
 public static class WebView2Extensions
@@ -181,8 +187,7 @@ public static class WebView2Extensions
             while (string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error))
             {
                 error = await webView2.CoreWebView2.ExecuteScriptAsync("window.p42_makeP42_error").AsTask(token) ?? "";
-                //Debug.WriteLine($"error:[{error}]");
-                //Console.WriteLine($"error:[{error}]");
+                //Log.WriteLine($"error:[{error}]");
                 error = error.Trim('"').Trim('"');
                 if (error == "null")
                     error = string.Empty;
@@ -191,11 +196,11 @@ public static class WebView2Extensions
 
                 result = await webView2.CoreWebView2.ExecuteScriptAsync("window.p42_makePdf_result").AsTask(token) ?? "";
                 result = result.Trim('"').Trim('"');
-                //Console.WriteLine($"result: [{result}]");
+                //Log.WriteLine($"result: [{result}]");
                 if (result == "null")
                     result = string.Empty;
                 else if (!string.IsNullOrEmpty(result))
-                    Debug.WriteLine("bingo");
+                    Log.WriteLine("bingo");
 
                 await Task.Delay(500, token);
             }
@@ -205,7 +210,7 @@ public static class WebView2Extensions
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
+            Log.WriteLine(ex.ToString());
             return (null, ex.ToString());
         }
     }
@@ -289,8 +294,7 @@ public static class WebView2Extensions
         catch (Exception e)
         {
             var message = $"WebViewExtensions.WebViewContentSizeAsync FAIL: {e.Message}";
-            Debug.WriteLine(message);
-            Console.WriteLine(message);
+            Log.WriteLine(message);
             return await WebViewContentSizeAsync(webView, depth + 1, callerName);
         }
         return new Windows.Foundation.Size(contentWidth, contentHeight);
@@ -302,8 +306,8 @@ public static class WebView2Extensions
         if (element.XamlRoot is null)
             throw new ArgumentNullException($"{nameof(element)}.{nameof(element.XamlRoot)}");
 
-        var fileTask = DialogExtensions.RequestStorageFileAsync( element.XamlRoot, "PDF", fileName, "pdf");
 
+        var fileTask = DialogExtensions.RequestStorageFileAsync( element.XamlRoot, "PDF", fileName, "pdf");
         await Task.WhenAll(fileTask, pdfTask);
         var saveFile = fileTask.Result;
 
@@ -312,8 +316,9 @@ public static class WebView2Extensions
 
         if (pdfTask.Result.pdf is null || pdfTask.Result.pdf.Length == 0)
         {
-            await DialogExtensions.ShowErrorDialogAsync(element.XamlRoot, "PDF Generation Error", pdfTask.Result.error);
-            return;
+            throw new Exception($"PDF Generation Error : {pdfTask.Result.error}");
+            //await DialogExtensions.ShowErrorDialogAsync(element.XamlRoot, "PDF Generation Error", pdfTask.Result.error);
+            //return;
         }
 
         if (token.IsCancellationRequested)
@@ -379,8 +384,8 @@ public static class WebView2Extensions
     /// <param name="token"></param>
     private static async Task AssurePdfScriptsAsync(this WebView2 webView2, CancellationToken token = default)
     {
-        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "WebViewUtils.Resources.html2pdf.bundle.js", token);
-        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "WebViewUtils.Resources.p42_makePdf.js", token);
+        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "P42.Uno.Wv2Ext.Resources.html2pdf.bundle.js", token);
+        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "P42.Uno.Wv2Ext.Resources.p42_makePdf.js", token);
     }
 
     /// <summary>
@@ -396,7 +401,7 @@ public static class WebView2Extensions
         if (await webView2.IsFunctionLoadedAsync(functionName, token))
             return;
 
-        var script = await ReadResourceAsTextAsync(resourceId).WaitAsync(token);
+        var script = await ReadResourceAsTextAsync(resourceId, typeof(WebView2Extensions).Assembly).WaitAsync(token);
         await webView2.ExecuteScriptAsync(script).AsTask(token);
 
         if (await webView2.IsFunctionLoadedAsync(functionName, token))
@@ -420,11 +425,22 @@ public static class WebView2Extensions
     }
 
     // gets text from embedded resource
-    public static async Task<string> ReadResourceAsTextAsync(string resourceId)
+    public static async Task<string> ReadResourceAsTextAsync(string resourceId, Assembly asm)
     {
-        await using var stream = typeof(WebView2Extensions).Assembly.GetManifestResourceStream(resourceId) ?? throw new InvalidOperationException("Resource not found");
-        using var reader = new StreamReader(stream);
-        return await reader.ReadToEndAsync();
+        try
+        {
+            await using var stream = asm.GetManifestResourceStream(resourceId);
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine($"[{asm.GetName().Name}] Resources: ");
+            foreach (var file in asm.GetManifestResourceNames())
+                Log.WriteLine($"\t [{file}]");
+
+            throw new InvalidOperationException($"Resource ({resourceId}) not found in Assembly ({asm.GetName().Name})", ex);
+        }
     }
     
     
@@ -482,7 +498,7 @@ public static class WebView2Extensions
 #if BROWSERWASM
     private static string? _packageUrl;
     private static string PackageUrl =>
-        _packageUrl ?? $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
+        _packageUrl ??= $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
 #endif
 
     
@@ -515,7 +531,7 @@ public static class WebView2Extensions
         
 #if __ANDROID__
         var files = VirtualHost.Assets.List(fullFolderPath);
-        if (files.Length == 0)
+        if (files is null || files.Length == 0)
             throw new DirectoryNotFoundException(fullFolderPath);
         
         foreach (var file in files)
@@ -571,7 +587,7 @@ public static class WebView2Extensions
         
 #if BROWSERWASM
         var url = $"{PackageUrl}/{projectContentFilePath}";
-        Console.WriteLine($"VirtualHost url: [{url}]");
+        Log.WriteLine($"VirtualHost url: [{url}]");
 #else
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
 #endif

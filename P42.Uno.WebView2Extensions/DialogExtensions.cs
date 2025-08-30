@@ -1,5 +1,10 @@
 using Windows.Storage.Pickers;
 using Microsoft.UI.Xaml.Shapes;
+#if BROWSERWASM
+using Log = System.Console;
+#else
+using Log = System.Diagnostics.Debug;
+#endif
 
 namespace P42.Uno;
 
@@ -47,7 +52,7 @@ public static class DialogExtensions
 #elif BROWSERWASM
         // TODO: Switch to LocalFolderCache path?
         var path = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
-        Console.WriteLine($"LocalCacheFolder.Path = {path}");
+        Log.WriteLine($"LocalCacheFolder.Path = {path}");
         
         if (!Directory.Exists("/cache"))
             Directory.CreateDirectory("/cache");
@@ -75,7 +80,9 @@ public static class DialogExtensions
                             Text = error,
                             TextWrapping = TextWrapping.WrapWholeWords,
                             MaxLines = 1000
-                        }
+                        },
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Visible,
+                        VerticalScrollBarVisibility = ScrollBarVisibility.Visible
                     },
             PrimaryButtonText = "OK"
         };
@@ -220,6 +227,31 @@ public static class DialogExtensions
             }
 
         }
+
+        public static async Task<T> Create(
+            XamlRoot xamlRoot,
+            Func<WebView2, Task> beforeContentSetTask,
+            string html,
+            Func<WebView2, CancellationToken, Task<T>> onContentLoadedTask,
+            bool showWebContent = false,
+            bool hasCancelButton = true,
+            bool hideAfterOnContentLoadedTaskComplete = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(html))
+                throw new ArgumentNullException(nameof(html));
+
+            var processor = new AuxiliaryWebViewAsyncProcessor<T>(xamlRoot, LoadHtml, onContentLoadedTask, showWebContent, hasCancelButton, hideAfterOnContentLoadedTaskComplete, cancellationToken);
+            return await processor.ProcessAsync();
+
+            async Task LoadHtml(WebView2 webView, CancellationToken localToken)
+            {
+                await beforeContentSetTask(webView);
+                webView.CoreWebView2.NavigateToString(html);
+            }
+
+        }
+
 
         private AuxiliaryWebViewAsyncProcessor(
             XamlRoot xamlRoot, 

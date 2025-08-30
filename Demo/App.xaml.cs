@@ -31,6 +31,8 @@ public partial class App : Application
         MainWindow.UseStudio();
 #endif
 
+        // Alternatively, you can use P42.Uno.HtmlExtensions.Init or P42.Uno.WebViewExtensions.Init.
+        P42.Uno.MarkdownExtensions.Init(this, MainWindow);
 
         // Do not repeat app initialization when the Window already has content,
         // just ensure that the window is active

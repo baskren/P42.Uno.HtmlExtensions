@@ -43,7 +43,7 @@
         Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
 
       <Content
-        Condition="  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
+        Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
         Include="@(_p42_webview2_file)"
         Link="WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
         CopyToOutputDirectory="PreserveNewest" />

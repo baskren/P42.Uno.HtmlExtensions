@@ -17,13 +17,6 @@ internal class Program
             .UseWin32()
             .Build();
 
-        try
-        {
-            host.Run();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
+        host.Run();
     }
 }

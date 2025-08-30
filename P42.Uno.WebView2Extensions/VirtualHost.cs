@@ -2,12 +2,19 @@ using System.Net;
 using System.Text;
 using Path = System.IO.Path;
 
+#if BROWSERWASM
+using Log = System.Console;
+#else
+using Log = System.Diagnostics.Debug;
+#endif
+
 namespace P42.Uno;
 
 internal class VirtualHost
 {
-    //TODO: replace collection initiation with new();
-    internal static readonly List<string> LocalFolders = ["UnoLib1"];
+    const string RootFolder = "WebView2ProjectContentFolders";
+
+    internal static readonly List<string> LocalFolders = [];
 
 #if __ANDROID__
     
@@ -15,9 +22,13 @@ internal class VirtualHost
     
     internal static Android.Content.Res.AssetManager Assets => Activity.Assets as Android.Content.Res.AssetManager  ?? throw new Exception("Cannot get Android AssetManager");
     
-    internal static string ContentRoot => "WebView2ProjectContentFolders";
+    internal static string ContentRoot => RootFolder;
+#elif WINDOWS
+    internal static string ContentRoot => Package.Current is null 
+        ? Path.Combine(AppContext.BaseDirectory, RootFolder)
+        : Path.Combine(Package.Current.InstalledLocation.Path, RootFolder);
 #else
-    internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, "WebView2ProjectContentFolders");
+    internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, RootFolder);
 #endif
 
     public static string HostUrl { get; private set; }
@@ -27,7 +38,7 @@ internal class VirtualHost
     
     static VirtualHost()
     {
-        Console.WriteLine($"ContentRoot: {ContentRoot}");
+        Log.WriteLine($"ContentRoot: {ContentRoot}");
         
         var random = new Random();
         var port = random.Next(49152, 65536);
@@ -61,7 +72,7 @@ internal class VirtualHost
         if (ctx.Request.Url is not { } uri || string.IsNullOrWhiteSpace(uri.LocalPath))
             return 403;
         
-        Console.WriteLine($"VirtualHost HandleRequest uri:[{uri.AbsoluteUri}]  [{uri.LocalPath}]");
+        Log.WriteLine($"VirtualHost HandleRequest uri:[{uri.AbsoluteUri}]  [{uri.LocalPath}]");
 
         var folder = Path.GetDirectoryName(uri.LocalPath);
         if (string.IsNullOrWhiteSpace(folder))
@@ -71,17 +82,17 @@ internal class VirtualHost
         if (string.IsNullOrWhiteSpace(extension) || extension is ".dll" or ".exe" or ".pdb" or ".uprimarker" or ".aar")
             return 403;
 
-        #if __ANDROID__
+#if __ANDROID__
         if (extension is ".aar" or ".apk" or ".idsig")
             return 403;
-        #elif __DESKTOP__
-        #elif __IOS__
+#elif __DESKTOP__
+#elif __IOS__
         if (extension is ".dylib" or ".a")
             return 403;
-        #elif __WASM__
-        #elif WINDOWS
-        #else
-        #endif
+#elif __WASM__
+#elif WINDOWS
+#else
+#endif
         
 
         var relativePath = ctx.Request.Url.AbsolutePath.TrimStart('/');
@@ -95,12 +106,12 @@ internal class VirtualHost
         if (!LocalFolders.Contains(rootFolder))
             return 403;
 
-        #if __ANDROID__
+#if __ANDROID__
         using var stream = Assets.Open(filePath);
-        #else
+#else
         if (!File.Exists(filePath))
             return 404;
-        #endif
+#endif
 
         try
         {
@@ -117,7 +128,7 @@ internal class VirtualHost
         catch (Exception ex)
         {
             var msg = "Server error: " + ex.Message;
-            Console.WriteLine(msg);
+            Log.WriteLine(msg);
             System.Diagnostics.Debug.WriteLine(msg);
             var error = Encoding.UTF8.GetBytes(msg);
             ctx.Response.OutputStream.Write(error, 0, error.Length);

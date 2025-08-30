@@ -92,12 +92,12 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            var html = await WebView2Extensions.ReadResourceAsTextAsync("WebViewUtils.Resources.Html5TestPage.html");
+            var html = await WebView2Extensions.ReadResourceAsTextAsync("Demo.Resources.Html5TestPage.html", GetType().Assembly);
             await HtmlExtensions.PrintAsync(this, html);
         }
         catch (Exception ex)
         {
-            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html Print", ex);
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html Print : Demo.Resources.Html5TestPage.html", ex);
         }
     }
 
@@ -106,6 +106,7 @@ public sealed partial class MainPage : Page
         try
         {
             var options = new PdfOptions([30, 30, 30, 30],
+                Filename: "Document_WebViewPdf",
                 Html2canvas: new Html2CanvasOptions(Scale: 2),
                 JsPDF: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
             await _webView.SavePdfAsync(options);
@@ -114,43 +115,46 @@ public sealed partial class MainPage : Page
         {
             await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView PDF", ex);
         }
-        // options is broken in WASM
+
     }
 
     private async void OnHtmlPdfButtonClick(object sender, RoutedEventArgs e)
     {
         try
         {
-            var html = await WebView2Extensions.ReadResourceAsTextAsync("WebViewUtils.Resources.Html5TestPage.html");
-            await HtmlExtensions.SavePdfAsync(this, html);
+            var options = new PdfOptions([30, 30, 30, 30],
+                Filename: "Document_HtmlPdf",
+                Html2canvas: new Html2CanvasOptions(Scale: 2),
+                JsPDF: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
+            var html = await WebView2Extensions.ReadResourceAsTextAsync("Demo.Resources.Html5TestPage.html", GetType().Assembly);
+            await HtmlExtensions.SavePdfAsync(this, html, options);
         }
         catch (Exception ex)
         {
-            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html PDF", ex);
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html PDF : Demo.Resources.Html5TestPage.html", ex);
         }
     }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+    private async void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        try
         {
-            try
-            {
-                await _webView.EnsureCoreWebView2Async();
+            await _webView.EnsureCoreWebView2Async();
     
-                _webView.EnableMarkdownSupport();
+            _webView.EnableMarkdownSupport();
                 
-                _webView.EnableProjectContentFolder("WebContentX");
-                _webView.EnableProjectContentFolder("AltWebContent");
+            _webView.EnableProjectContentFolder("WebContentX");
+            _webView.EnableProjectContentFolder("AltWebContent");
                 
-                _webView.NavigateToProjectContentFile("/WebContentX/Limits.html");
-                //_webView.NavigateToProjectContentFile("/UnoLib1/WebContent/MarkdownPage3.html");
-                //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
+            //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
-            }
-            catch (Exception ex)
-            {
-                await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView", ex);
-            }
         }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView", ex);
+        }
+    }
 
     
 }

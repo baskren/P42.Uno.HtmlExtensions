@@ -31,7 +31,8 @@ public static class HtmlExtensions
             throw new ArgumentNullException($"{nameof(element)}.{nameof(element.XamlRoot)}");
         
         await DialogExtensions.AuxiliaryWebViewAsyncProcessor<bool>.Create(
-            element.XamlRoot, html, 
+            element.XamlRoot, 
+            html, 
             PrintFunction, 
             showWebContent: OperatingSystem.IsWindows(), 
             hideAfterOnContentLoadedTaskComplete: true, 
@@ -85,7 +86,8 @@ public static class HtmlExtensions
             : options.Filename;
 
         await DialogExtensions.AuxiliaryWebViewAsyncProcessor<bool>.Create(
-            element.XamlRoot, html, 
+            element.XamlRoot, 
+            html, 
             MakePdfFunction,
             cancellationToken: token);
         return;

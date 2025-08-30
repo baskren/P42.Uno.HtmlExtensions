@@ -43,6 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MimeMapping"  />
     <None Remove="WebAssembly\WasmScripts\P42_JavaScript.js" />
     <EmbeddedResource Include="WebAssembly\WasmScripts\P42_JavaScript.js" />
