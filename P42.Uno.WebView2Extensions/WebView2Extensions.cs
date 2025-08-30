@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 
+
 #if BROWSERWASM
 using Log = System.Console;
 #else
@@ -12,7 +13,7 @@ using Log = System.Diagnostics.Debug;
 
 namespace P42.Uno;
 
-public static class WebView2Extensions
+public static partial class WebView2Extensions
 {
 
     private static Application? _winUiApplication;
@@ -21,6 +22,7 @@ public static class WebView2Extensions
     private static Window? _winUiMainWindow;
     internal static Window WinUiMainWindow => _winUiMainWindow ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
     
+
     /// <summary>
     /// Required initialization method
     /// </summary>
@@ -30,7 +32,10 @@ public static class WebView2Extensions
     {
         _winUiApplication = application;
         _winUiMainWindow = window;
+        if (application is IWebView2ProjectContent app)
+            app.RegisterProjectProvidedItems();
     }
+
 
     /// <summary>
     /// Is printing available on this platform
@@ -494,32 +499,14 @@ public static class WebView2Extensions
             ? [] 
             : path.Split( DirectorySeparators, StringSplitOptions.RemoveEmptyEntries);
     }
-    
+
 #if BROWSERWASM
     private static string? _packageUrl;
     private static string PackageUrl =>
         _packageUrl ??= $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
 #endif
 
-    
-    private static readonly DependencyProperty HostMapProperty = DependencyProperty.RegisterAttached(
-        nameof(HostMapProperty), // Name of the attached property
-        typeof(List<string>),     // Type of the attached property
-        typeof(WebView2Extensions), // Owner type (the static class)
-        new PropertyMetadata(null)); // Optional: default value and property changed callback
-
-    private static List<string> HostMap(this WebView2 webView)
-    {
-        if (webView.GetValue(HostMapProperty) is List<string> map)
-            return map;
-        
-        map = [];
-        webView.SetValue(HostMapProperty, map);
-        return map;
-    }
-    
-    
-    public static void EnableProjectContentFolder(this WebView2 webView2, string projectFolder)
+    public static void EnableProjectContentFolder(string projectFolder)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectFolder);
         projectFolder = projectFolder.Trim(DirectorySeparators).Replace('\\', '/');
@@ -542,7 +529,6 @@ public static class WebView2Extensions
             throw new DirectoryNotFoundException(fullFolderPath);
 #endif
         
-        webView2.HostMap().AddDistinct(projectFolder);
         VirtualHost.LocalFolders.AddDistinct(projectFolder);
     }
 
@@ -579,7 +565,6 @@ public static class WebView2Extensions
             throw new ArgumentException("Root project folder is not allowed.");
         
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
-        //webView2.HostMap().AddDistinct(rootProjectFolder);
         VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
         
         if (!string.IsNullOrWhiteSpace(query))

@@ -13,6 +13,19 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
+
+        AppDomain.CurrentDomain.UnhandledException += UncaughtExceptionHandler;
+        AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+    }
+
+    private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"FirstChance: [{e.Exception}]");
+    }
+
+    private void UncaughtExceptionHandler(object sender, System.UnhandledExceptionEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"UncaughtException: [{(e.IsTerminating ? "FATAL" : "NON-FATAL")}] [{e.ExceptionObject}]");
     }
 
     protected Window? MainWindow { get; private set; }

@@ -1,12 +1,8 @@
 ---
-__Advertisement :)__
 
-- __[pica](https://nodeca.github.io/pica/demo/)__ - high quality and fast image
-  resize in browser.
-- __[babelfish](https://github.com/nodeca/babelfish/)__ - developer friendly
-  i18n with plurals support and easy syntax.
+## SAMPLE MARKDOWN FILE
 
-You will like those projects!
+The purpose of this file is to demonstrate using Markdown in a WebView2, printing Markdown, or generating a PDF from Markdown.
 
 ---
 
@@ -82,7 +78,16 @@ _You **can** combine them_
 
 ## Links
 
+### EXTERNAL
+
 You may be using [Markdown Live Preview](https://markdownlivepreview.com/).
+
+### PROJECT CONTENT
+
+- [WebContentX/CltInstall.html](/WebContentX/CltInstall.html)
+- [WebContentX/ReducedBody/index.html](/WebContentX/ReducedBody/index.html)
+- [AltWebContent/Limits.html](/AltWebContent/Limits.html)
+
 
 ## Blockquotes
 

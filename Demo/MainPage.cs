@@ -30,33 +30,40 @@ public sealed partial class MainPage : Page
                             .HorizontalAlignment(HorizontalAlignment.Stretch)
                             .VerticalAlignment(VerticalAlignment.Stretch),
                         new StackPanel()
+                            .Grid(row:0)
+                            .Orientation(Orientation.Horizontal)
+                            .HorizontalAlignment(HorizontalAlignment.Right)
+                            .VerticalAlignment(VerticalAlignment.Top)
+                            .Children(
+                                new Button()
+                                    .Name(out var webViewPrintButton)
+                                    .Content("WV2 PRINT")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center)
+                                    .IsEnabled(WebView2Extensions.CanPrint()),
+                                new Button()
+                                    .Name(out var webViewPdfButton)
+                                    .Content("WV2 PDF")
+                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .VerticalAlignment(VerticalAlignment.Center)
+                            ),
+                        new StackPanel()
                             .Grid(row: 1)
                             .Orientation(Orientation.Horizontal)
                             .HorizontalAlignment(HorizontalAlignment.Stretch)
                             .VerticalAlignment(VerticalAlignment.Center)
                             .Children(
                                 new Button()
-                                    .Name(out var htmlPdfButton)
-                                    .Content("HTML PDF")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
-                                    .VerticalAlignment(VerticalAlignment.Center),
-                                new Button()
-                                    .Name(out var webViewPdfButton)
-                                    .Content("WV2 PDF")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
-                                    .VerticalAlignment(VerticalAlignment.Center),
-                                new Button()
                                     .Name(out var htmlPrintButton)
                                     .Content("HTML PRINT")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                    .HorizontalAlignment(HorizontalAlignment.Right)
                                     .VerticalAlignment(VerticalAlignment.Center)
                                     .IsEnabled(HtmlExtensions.CanPrint()),
                                 new Button()
-                                    .Name(out var webViewPrintButton)
-                                    .Content("WV2 PRINT")
+                                    .Name(out var htmlPdfButton)
+                                    .Content("HTML PDF")
                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                     .VerticalAlignment(VerticalAlignment.Center)
-                                    .IsEnabled(WebView2Extensions.CanPrint())
                             )
 
 
@@ -143,8 +150,9 @@ public sealed partial class MainPage : Page
     
             _webView.EnableMarkdownSupport();
                 
-            _webView.EnableProjectContentFolder("WebContentX");
-            _webView.EnableProjectContentFolder("AltWebContent");
+            //WebView2Extensions.EnableProjectContentFolder("WebContentX");
+            //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
+            //WebView2Extensions.EnableProjectContentFolder("image");
                 
             _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
             //_webView.NavigateToProjectContentFile("/WebContentX/document.md");

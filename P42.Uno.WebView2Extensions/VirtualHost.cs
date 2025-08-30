@@ -46,7 +46,9 @@ internal class VirtualHost
         HostUrl = $"http://localhost:{port}";
         listener1.Prefixes.Add(HostUrl+'/');
         //listener.Prefixes.Add($"https://localhost:{port}"+'/');
+        listener1.IgnoreWriteExceptions = true;
         listener1.Start();
+        Log.WriteLine($"listener1.DefaultServiceNames = [{string.Join(',', listener1.DefaultServiceNames)}]");
 
         Task.Run(async () =>
         {
@@ -55,8 +57,16 @@ internal class VirtualHost
                 var ctx = await listener1.GetContextAsync();
                 _ = Task.Run(() =>
                 {
-                    ctx.Response.StatusCode = HandleRequest(ctx);
-                    ctx.Response.Close();
+                    try
+                    {
+                        ctx.Response.StatusCode = HandleRequest(ctx);
+                        Log.WriteLine($"VirtualHost: [{ctx.Response.StatusCode}] [{ctx.Request.Url.LocalPath}]");
+                        ctx.Response.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine($"Virtual Host: CATASTROPHIC SERVER ERROR: [{ex}]");
+                    }
                 });
             }
         });
@@ -66,21 +76,23 @@ internal class VirtualHost
     
     private static int HandleRequest(HttpListenerContext ctx)
     {
-        if (ctx.Request.HttpMethod != "GET")
-            return 403;
+        try
+        {
+            if (ctx.Request.HttpMethod != "GET")
+                return 403;
 
-        if (ctx.Request.Url is not { } uri || string.IsNullOrWhiteSpace(uri.LocalPath))
-            return 403;
-        
-        Log.WriteLine($"VirtualHost HandleRequest uri:[{uri.AbsoluteUri}]  [{uri.LocalPath}]");
+            if (ctx.Request.Url is not { } uri || string.IsNullOrWhiteSpace(uri.LocalPath))
+                return 403;
 
-        var folder = Path.GetDirectoryName(uri.LocalPath);
-        if (string.IsNullOrWhiteSpace(folder))
-            return 403;
-        
-        var extension = Path.GetExtension(uri.LocalPath).ToLower();
-        if (string.IsNullOrWhiteSpace(extension) || extension is ".dll" or ".exe" or ".pdb" or ".uprimarker" or ".aar")
-            return 403;
+            Log.WriteLine($"VirtualHost HandleRequest uri:[{uri.AbsoluteUri}]  [{uri.LocalPath}]");
+
+            var folder = Path.GetDirectoryName(uri.LocalPath);
+            if (string.IsNullOrWhiteSpace(folder))
+                return 403;
+
+            var extension = Path.GetExtension(uri.LocalPath).ToLower();
+            if (string.IsNullOrWhiteSpace(extension) || extension is ".dll" or ".exe" or ".pdb" or ".uprimarker" or ".aar")
+                return 403;
 
 #if __ANDROID__
         if (extension is ".aar" or ".apk" or ".idsig")
@@ -93,43 +105,65 @@ internal class VirtualHost
 #elif WINDOWS
 #else
 #endif
-        
 
-        var relativePath = ctx.Request.Url.AbsolutePath.TrimStart('/');
-        var filePath = Path.Combine(ContentRoot, relativePath);
 
-        // prevent directory traversal ("../")
-        if (!filePath.StartsWith(ContentRoot, StringComparison.OrdinalIgnoreCase))
-            return 403;
+            var relativePath = ctx.Request.Url.AbsolutePath.TrimStart('/');
+            var filePath = Path.Combine(ContentRoot, relativePath);
 
-        var rootFolder = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)[0];
-        if (!LocalFolders.Contains(rootFolder))
-            return 403;
+            // prevent directory traversal ("../")
+            if (!filePath.StartsWith(ContentRoot, StringComparison.OrdinalIgnoreCase))
+                return 403;
+
+            var rootFolder = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)[0];
+            if (!LocalFolders.Contains(rootFolder))
+                return 403;
+
+            if (filePath.EndsWith("favicon.ico"))
+                Log.WriteLine("$!?!");
 
 #if __ANDROID__
         using var stream = Assets.Open(filePath);
 #else
-        if (!File.Exists(filePath))
-            return 404;
+            if (!File.Exists(filePath))
+                return 404;
 #endif
 
-        try
-        {
+            try
+            {
+                Log.WriteLine($"VirtualHost: filePath = [{filePath}]");
+
 #if __ANDROID__
             var buffer = stream.ReadAllBytesFromStream();
 #else
-            var buffer = File.ReadAllBytes(filePath);
+                var buffer = File.ReadAllBytes(filePath);
 #endif
-            ctx.Response.ContentType = MimeMapping.MimeUtility.GetMimeMapping(filePath);
-            ctx.Response.ContentLength64 = buffer.Length;
-            ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
-            return 200;
+
+                var text = Encoding.UTF8.GetString(buffer);
+                if (text.Contains("favicon.ico"))
+                    Log.WriteLine("!!!!");
+
+                ctx.Response.ContentType = MimeMapping.MimeUtility.GetMimeMapping(filePath);
+                ctx.Response.ContentLength64 = buffer.Length;
+                ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                return 200;
+            }
+            catch (HttpListenerException)
+            {
+                return 418;
+            }
+            catch (Exception ex)
+            {
+                var msg = "Server File Read Error: " + ex;
+                Log.WriteLine(msg);
+                var error = Encoding.UTF8.GetBytes(msg);
+                ctx.Response.OutputStream.Write(error, 0, error.Length);
+                return 500;
+            }
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            var msg = "Server error: " + ex.Message;
+            var msg = "Server Response Prep Error : " + e;
             Log.WriteLine(msg);
-            System.Diagnostics.Debug.WriteLine(msg);
             var error = Encoding.UTF8.GetBytes(msg);
             ctx.Response.OutputStream.Write(error, 0, error.Length);
             return 500;

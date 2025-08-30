@@ -29,7 +29,7 @@ public static class MarkdownExtensions
     {
         //TODO: Add VirtualHost.LocalFolders.AddDistinct("UnoLib1"); here
         //webView.IsMarkdownVirtualHostMapped(true);
-        webView.EnableProjectContentFolder("P42.Uno.MarkdownExtensions");
+        WebView2Extensions.EnableProjectContentFolder("P42.Uno.MarkdownExtensions");
         webView.NavigationStarting += OnNavStart;
     }
 
@@ -185,78 +185,77 @@ public static class MarkdownExtensions
 
 
 
-    /*
-    public static readonly DependencyProperty IsMarkdownVirtualHostMappedProperty =
-        DependencyProperty.RegisterAttached(
-            "IsMarkdownVirtualHostMappedProperty", // Name of the attached property
-            typeof(bool),     // Type of the attached property
-            typeof(WebViewMarkdownExtensions), // Owner type (the static class)
-            new PropertyMetadata(false)); // Optional: default value and property changed callback
-
-    */
-    //public static bool IsMarkdownVirtualHostMapped(this WebView2 webView) => (bool)webView.GetValue(IsMarkdownVirtualHostMappedProperty);
-
-    //public static void IsMarkdownVirtualHostMapped(this WebView2 webView, bool value)  => webView.SetValue(IsMarkdownVirtualHostMappedProperty, value);
+    private const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
 
     private static void OnNavStart(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
     {
-
-        Log.WriteLine($"args.Cancel [{args.Cancel}]");
-        Log.WriteLine($"args.IsRedirected [{args.IsRedirected}]");
-        Log.WriteLine($"args.IsUserInitiated [{args.IsUserInitiated}]");
-        Log.WriteLine($"args.NavigationId [{args.NavigationId}]");
-        Log.WriteLine($"args.Uri [{args.Uri}]");
-        
-        if (string.IsNullOrWhiteSpace(args.Uri))
-            return;
-
-        var uriString = args.Uri;
-        
-        if (args.Uri.StartsWith("data:text/html;charset=utf-8;base64,", StringComparison.OrdinalIgnoreCase))
+        try
         {
-            var base64 = args.Uri[36..];
-            Log.WriteLine($"base64: [{base64}]");
-            var bytes = Convert.FromBase64String(base64);
-            uriString = System.Text.Encoding.UTF8.GetString(bytes);
-            Log.WriteLine($"uri: [{uriString}]");
+
+
+            Log.WriteLine($"args.Cancel [{args.Cancel}]");
+            Log.WriteLine($"args.IsRedirected [{args.IsRedirected}]");
+            Log.WriteLine($"args.IsUserInitiated [{args.IsUserInitiated}]");
+            Log.WriteLine($"args.NavigationId [{args.NavigationId}]");
+            Log.WriteLine($"args.Uri [{args.Uri}]");
+
+            if (string.IsNullOrWhiteSpace(args.Uri))
+                return;
+
+            var uriString = args.Uri;
+
+            if (args.Uri.StartsWith("data:text/html;charset=utf-8;base64,", StringComparison.OrdinalIgnoreCase))
+            {
+                var base64 = args.Uri[36..];
+                Log.WriteLine($"base64: [{base64}]");
+                var bytes = Convert.FromBase64String(base64);
+                uriString = System.Text.Encoding.UTF8.GetString(bytes);
+                Log.WriteLine($"uri: [{uriString}]");
+            }
+
+            var uri = new Uri(uriString);
+            Log.WriteLine($"uri = [{uri}]");
+            Log.WriteLine($"\t.AbsolutePath = [{uri.AbsolutePath}]");
+            Log.WriteLine($"\t.LocalPath = [{uri.LocalPath}]");
+            Log.WriteLine($"\t.PathAndQuery = [{uri.PathAndQuery}]");
+
+            if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if (uri.Query is string query && !string.IsNullOrWhiteSpace(query))
+            {
+                var queryParams = HttpUtility.ParseQueryString(query);
+                foreach (var key in queryParams.AllKeys)
+                    Log.WriteLine($"QUERY {key}: {queryParams[key]}");
+            }
+
+
+            args.Cancel = true;
+
+
+            //var requestedSource = sender.Source;
+            var requestedSource = uri.PathAndQuery;
+            Log.WriteLine($"requestedSource [{requestedSource}]");
+
+            var safePath = System.Web.HttpUtility.UrlEncode(requestedSource);
+            Log.WriteLine($"safeRelativePath [{safePath}]");
+            var newRequest = $"{MarkdownConverterPagePath}?requestUrl={safePath}";
+            Log.WriteLine($"newRequest [{newRequest}]");
+            Log.WriteLine(" ");
+            Log.WriteLine(" ");
+
+            WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(() =>
+
+            //Task.Run(() =>
+            {
+                // TODO: Add error handling
+                //await Task.Delay(500);
+                sender.NavigateToProjectContentFile(newRequest);
+            });
         }
-        
-        var uri = new Uri(uriString);
-        
-        if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-            return;
-
-        if (uri.Query is string query && !string.IsNullOrWhiteSpace(query))
+        catch (Exception ex)
         {
-            var queryParams = HttpUtility.ParseQueryString(query);
-            foreach (var key in queryParams.AllKeys)
-                Log.WriteLine($"QUERY {key}: {queryParams[key]}");
+            Log.WriteLine($"MarkdownExtensions.OnNavStart : [{ex}]");
         }
-        
-        
-        args.Cancel = true;
-        
-        var requestedSource = sender.Source;
-        Log.WriteLine($"requestedSource [{requestedSource}]");
-        
-        
-        
-        var newSource = WebView2Extensions.ProjectContentFileUri($"P42.Uno.MarkdownExtensions/MarkdownPage3.html");
-        Log.WriteLine($"newSource [{newSource}]");
-        var relativePath = Path.GetRelativePath(newSource.AbsolutePath, requestedSource.AbsolutePath);
-        Log.WriteLine($"relativePath [{relativePath}]");
-        var safeRelativePath = System.Web.HttpUtility.UrlEncode(relativePath);
-        Log.WriteLine($"safeRelativePath [{safeRelativePath}]");
-        var newRequest = $"P42.Uno.MarkdownExtensions/MarkdownPage3.html?requestUrl={safeRelativePath}";
-        Log.WriteLine($"newRequest [{newRequest}]");
-        Log.WriteLine(" ");
-        Log.WriteLine(" ");
-
-        Task.Run(() =>
-        {
-            // TODO: Add error handling
-            //await Task.Delay(500);
-            sender.NavigateToProjectContentFile(newRequest);
-        });
     }
 }

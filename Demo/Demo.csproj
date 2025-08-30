@@ -57,16 +57,9 @@
 
 
   <ItemGroup>
-    <!--
-    <BundleResource Include="AltWebContent/Limits.html" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/AltWebContent/Limits.html" />
-    <BundleResource Include="AltWebContent/Limits.html" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/AltWebContent/Limits.html"  />
-    <BundleResource Include="WebContentX/**/*.*" Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/WebContentX/%(RecursiveDir)%(Filename)%(Extension)"  />
-    -->
     <WebView2ProjectContentFolder Include="WebContentX" />
     <WebView2ProjectContentFolder Include="AltWebContent" />
     <WebView2ProjectContentFolder Include="image" />
-
-
   </ItemGroup>
 
 
