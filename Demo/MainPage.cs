@@ -17,38 +17,37 @@ public sealed partial class MainPage : Page
                     .SafeArea(SafeArea.InsetMask.All)
                     .VerticalAlignment(VerticalAlignment.Stretch)
                     .HorizontalAlignment(HorizontalAlignment.Stretch)
-                    .RowDefinitions("*,50")
+                    .RowDefinitions("50,*,50")
                     .Children
                     (
                         new TextBlock()
                             .Text("Hello World!")
                             .HorizontalAlignment(HorizontalAlignment.Center)
                             .VerticalAlignment(VerticalAlignment.Center),
-                        new WebView2()
-                            .Name(out _webView)
-                            .DefaultBackgroundColor(Colors.Pink)
-                            .HorizontalAlignment(HorizontalAlignment.Stretch)
-                            .VerticalAlignment(VerticalAlignment.Stretch),
                         new StackPanel()
                             .Grid(row:0)
                             .Orientation(Orientation.Horizontal)
-                            .HorizontalAlignment(HorizontalAlignment.Right)
+                            .HorizontalAlignment(HorizontalAlignment.Left)
                             .VerticalAlignment(VerticalAlignment.Top)
                             .Children(
                                 new Button()
                                     .Name(out var webViewPrintButton)
                                     .Content("WV2 PRINT")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
                                     .VerticalAlignment(VerticalAlignment.Center)
                                     .IsEnabled(WebView2Extensions.CanPrint()),
                                 new Button()
                                     .Name(out var webViewPdfButton)
                                     .Content("WV2 PDF")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
                                     .VerticalAlignment(VerticalAlignment.Center)
                             ),
+                        new WebView2()
+                            .Name(out _webView)
+                            .Grid(row:1)
+                            .DefaultBackgroundColor(Colors.White)
+                            .HorizontalAlignment(HorizontalAlignment.Stretch)
+                            .VerticalAlignment(VerticalAlignment.Stretch),
                         new StackPanel()
-                            .Grid(row: 1)
+                            .Grid(row: 2)
                             .Orientation(Orientation.Horizontal)
                             .HorizontalAlignment(HorizontalAlignment.Stretch)
                             .VerticalAlignment(VerticalAlignment.Center)
@@ -56,14 +55,13 @@ public sealed partial class MainPage : Page
                                 new Button()
                                     .Name(out var htmlPrintButton)
                                     .Content("HTML PRINT")
-                                    .HorizontalAlignment(HorizontalAlignment.Right)
                                     .VerticalAlignment(VerticalAlignment.Center)
                                     .IsEnabled(HtmlExtensions.CanPrint()),
                                 new Button()
                                     .Name(out var htmlPdfButton)
                                     .Content("HTML PDF")
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
                                     .VerticalAlignment(VerticalAlignment.Center)
+
                             )
 
 
@@ -71,13 +69,11 @@ public sealed partial class MainPage : Page
                     )
             );
 
-        htmlPdfButton.Click += OnHtmlPdfButtonClick;
-        webViewPdfButton.Click += OnWebViewPdfButtonClick;
-        htmlPrintButton.Click += OnHtmlPrintButtonClick;
         webViewPrintButton.Click += OnWebViewPrintButtonClick;
+        webViewPdfButton.Click += OnWebViewPdfButtonClick;
 
-
-        //_webView.Source = new Uri("https://platform.uno");
+        htmlPrintButton.Click += OnHtmlPrintButtonClick;
+        htmlPdfButton.Click += OnHtmlPdfButtonClick;
 
         Loaded += OnLoaded;
     }
@@ -92,19 +88,6 @@ public sealed partial class MainPage : Page
         catch (Exception ex)
         {
             await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView Print", ex);
-        }
-    }
-
-    private async void OnHtmlPrintButtonClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var html = await WebView2Extensions.ReadResourceAsTextAsync("Demo.Resources.Html5TestPage.html", GetType().Assembly);
-            await HtmlExtensions.PrintAsync(this, html);
-        }
-        catch (Exception ex)
-        {
-            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html Print : Demo.Resources.Html5TestPage.html", ex);
         }
     }
 
@@ -123,6 +106,19 @@ public sealed partial class MainPage : Page
             await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "WebView PDF", ex);
         }
 
+    }
+
+    private async void OnHtmlPrintButtonClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var html = await WebView2Extensions.ReadResourceAsTextAsync("Demo.Resources.Html5TestPage.html", GetType().Assembly);
+            await HtmlExtensions.PrintAsync(this, html);
+        }
+        catch (Exception ex)
+        {
+            await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html Print : Demo.Resources.Html5TestPage.html", ex);
+        }
     }
 
     private async void OnHtmlPdfButtonClick(object sender, RoutedEventArgs e)
@@ -154,8 +150,8 @@ public sealed partial class MainPage : Page
             //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
             //WebView2Extensions.EnableProjectContentFolder("image");
                 
-            _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
-            //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            //_webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
+            _webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
         }
         catch (Exception ex)

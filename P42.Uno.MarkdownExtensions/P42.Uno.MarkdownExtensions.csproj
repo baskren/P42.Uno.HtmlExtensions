@@ -46,7 +46,6 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
       <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
     </ItemGroup>
 

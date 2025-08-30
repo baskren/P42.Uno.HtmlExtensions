@@ -2,7 +2,7 @@
 
 ## SAMPLE MARKDOWN FILE
 
-The purpose of this file is to demonstrate using Markdown in a WebView2, printing Markdown, or generating a PDF from Markdown.
+The purpose of this file is to demonstrate using a project Content markdown file as a WebView2.Source and being able to print or convert to PDF that WebView2's content.
 
 ---
 
