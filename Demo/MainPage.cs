@@ -34,7 +34,7 @@ public sealed partial class MainPage : Page
                                     .Name(out var webViewPrintButton)
                                     .Content("WV2 PRINT")
                                     .VerticalAlignment(VerticalAlignment.Center)
-                                    .IsEnabled(WebView2Extensions.CanPrint()),
+                                    .IsEnabled(WebView2Extensions.CanPrint),
                                 new Button()
                                     .Name(out var webViewPdfButton)
                                     .Content("WV2 PDF")
@@ -56,7 +56,7 @@ public sealed partial class MainPage : Page
                                     .Name(out var htmlPrintButton)
                                     .Content("HTML PRINT")
                                     .VerticalAlignment(VerticalAlignment.Center)
-                                    .IsEnabled(HtmlExtensions.CanPrint()),
+                                    .IsEnabled(HtmlExtensions.CanPrint),
                                 new Button()
                                     .Name(out var htmlPdfButton)
                                     .Content("HTML PDF")
@@ -150,8 +150,8 @@ public sealed partial class MainPage : Page
             //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
             //WebView2Extensions.EnableProjectContentFolder("image");
                 
-            //_webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
-            _webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
+            //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
         }
         catch (Exception ex)
