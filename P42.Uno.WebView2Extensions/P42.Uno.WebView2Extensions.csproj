@@ -59,5 +59,13 @@
     </AndroidResource>
   </ItemGroup>
 
+  <!-- NO EFFECT, but will try this approach to add PERMISSIONS when modernizing Bc3 
+    <AndroidManifestOverlay Include="Platforms\Android\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidManifestOverlay>
+  </ItemGroup>
+  -->
+
 
 </Project>

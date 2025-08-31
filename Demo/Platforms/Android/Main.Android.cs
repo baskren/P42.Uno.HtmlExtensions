@@ -17,9 +17,8 @@ namespace Demo.Droid;
     Icon = "@mipmap/icon",
     LargeHeap = true,
     HardwareAccelerated = true,
-    Theme = "@style/Theme.App.Starting"
-    , NetworkSecurityConfig = "@xml/p42_uno_webview2_network_security_config"
-    
+    Theme = "@style/Theme.App.Starting",
+    NetworkSecurityConfig = "@xml/p42_uno_webview2_network_security_config"
 )]
 public class Application : Microsoft.UI.Xaml.NativeApplication
 {
