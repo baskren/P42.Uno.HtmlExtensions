@@ -149,6 +149,7 @@ internal class VirtualHost
                 ctx.Response.ContentType = MimeMapping.MimeUtility.GetMimeMapping(filePath);
                 ctx.Response.ContentLength64 = buffer.Length;
                 ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                Log.WriteLine($"VirtualHost: SUCCESS [{buffer.Length}]bytes [{filePath}] ");
                 return 200;
             }
             catch (HttpListenerException)

@@ -150,8 +150,8 @@ public sealed partial class MainPage : Page
             //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
             //WebView2Extensions.EnableProjectContentFolder("image");
                 
-            _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
-            //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            //_webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
+            _webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
         }
         catch (Exception ex)
