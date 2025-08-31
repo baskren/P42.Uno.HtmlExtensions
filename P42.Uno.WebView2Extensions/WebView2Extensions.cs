@@ -650,7 +650,9 @@ public static partial class WebView2Extensions
         var folderPath = Path.GetDirectoryName(fullFilePath);
         try
         {
-            // using var stream = VirtualHost.Assets.Open(fullFilePath);
+            using var stream = VirtualHost.Assets.Open(fullFilePath);
+            return stream != null;
+            /*
             var files = VirtualHost.Assets.List(folderPath ?? "");
             if (files is null || files.Length == 0)
                 return false;
@@ -659,6 +661,8 @@ public static partial class WebView2Extensions
                 if (file == fileName)
                     return true;
             return false;
+            */
+            
         }
         catch
         {
