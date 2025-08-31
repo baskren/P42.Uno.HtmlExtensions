@@ -52,5 +52,12 @@
     <EmbeddedResource Include="WebAssembly\WasmScripts\P42_JavaScript.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AndroidResource Include="Platforms\Android\Resources\xml\p42_uno_webview2_network_security_config.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+
 
 </Project>

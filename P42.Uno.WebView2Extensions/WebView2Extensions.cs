@@ -615,7 +615,7 @@ public static partial class WebView2Extensions
 
         if (!ProjectFileExists(path))
         {
-            var files = Directory.GetFiles(folderPath);
+            var files = Directory.GetFiles(folderPath ?? "");
             foreach (var file in files) 
                 Log.WriteLine($"\t\t{folderPath}/{file}");
 

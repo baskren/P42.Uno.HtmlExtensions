@@ -70,6 +70,9 @@
     <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
     <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Platforms\Android\Resources\xml\" />
+  </ItemGroup>
 
 
 
