@@ -60,7 +60,7 @@ internal class VirtualHost
                     try
                     {
                         ctx.Response.StatusCode = HandleRequest(ctx);
-                        Log.WriteLine($"VirtualHost: [{ctx.Response.StatusCode}] [{ctx.Request.Url.LocalPath}]");
+                        Log.WriteLine($"VirtualHost: [{ctx.Response.StatusCode}] [{ctx.Request.Url?.LocalPath}]");
                         ctx.Response.Close();
                     }
                     catch (Exception ex)
@@ -91,7 +91,7 @@ internal class VirtualHost
                 return 403;
 
             var extension = Path.GetExtension(uri.LocalPath).ToLower();
-            if (string.IsNullOrWhiteSpace(extension) || extension is ".dll" or ".exe" or ".pdb" or ".uprimarker" or ".aar")
+            if (extension is ".dll" or ".exe" or ".pdb" or ".uprimarker" or ".aar")
                 return 403;
 
 #if __ANDROID__
@@ -121,19 +121,23 @@ internal class VirtualHost
             if (filePath.EndsWith("favicon.ico"))
                 Log.WriteLine("$!?!");
 
-#if __ANDROID__
-        using var stream = Assets.Open(filePath);
-#else
-            if (!File.Exists(filePath))
+            if (!WebView2Extensions.ProjectFileExists(filePath) && WebView2Extensions.ProjectFolderExists(filePath))
+                filePath += "/index.html";
+
+            if (!WebView2Extensions.ProjectFileExists(filePath))
+            {
+                WebView2Extensions.CheckForProjectFileRecursively(filePath, out var result);
+                Log.WriteLine($"VirtualHost: [{filePath}] [{result}]");
                 return 404;
-#endif
+            }    
 
             try
             {
                 Log.WriteLine($"VirtualHost: filePath = [{filePath}]");
 
 #if __ANDROID__
-            var buffer = stream.ReadAllBytesFromStream();
+                using var stream = Assets.Open(filePath);
+                var buffer = stream.ReadAllBytesFromStream();
 #else
                 var buffer = File.ReadAllBytes(filePath);
 #endif
@@ -170,4 +174,6 @@ internal class VirtualHost
         }
     }
     
+
+
 }

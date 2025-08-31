@@ -16,7 +16,7 @@ public static class HtmlExtensions
     /// Is HTML printing available on this platform?
     /// </summary>
     /// <returns></returns>
-    public static bool CanPrint() => WebView2Extensions.CanPrint();
+    public static bool CanPrint => WebView2Extensions.CanPrint;
     
     /// <summary>
     /// Print html : may throw printing exceptions
@@ -94,7 +94,7 @@ public static class HtmlExtensions
 
         async Task<bool> MakePdfFunction(WebView2 webView, CancellationToken localToken)
         {
-            var pdfTask =  webView.GeneratePdfAsync(options, localToken);
+            var pdfTask =  webView.TryGeneratePdfAsync(options, localToken);
             await WebView2Extensions.InternalSavePdfAsync(element, pdfTask, fileName, localToken);
             return true;
         }
@@ -124,20 +124,37 @@ public static class HtmlExtensions
     /// <param name="token"></param>
     /// <returns>pdf, error</returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static async Task<(byte[]? pdf, string error)> GeneratePdfAsync(this UIElement element, string html, PdfOptions? options = null, CancellationToken token = default)
+    public static async Task<(byte[]? pdf, string error)> TryGeneratePdfAsync(
+        this UIElement element, 
+        string html, 
+        PdfOptions? options = null, 
+        CancellationToken token = default)
     {
-        if (element.XamlRoot == null)
-            throw new ArgumentNullException($"{nameof(element)}.{nameof(element.XamlRoot)}");
-        
-        return await DialogExtensions.AuxiliaryWebViewAsyncProcessor<(byte[]? pdf, string error)>.Create(
-            element.XamlRoot, 
-            html,
-            MakePdfFunction, 
-            cancellationToken: token);
+        try
+        {
+            if (element.XamlRoot == null)
+                throw new ArgumentNullException($"{nameof(element)}.{nameof(element.XamlRoot)}");
+
+            var result = await DialogExtensions.AuxiliaryWebViewAsyncProcessor<(byte[]? pdf, string error)>.Create(
+                element.XamlRoot,
+                html,
+                MakePdfFunction,
+                cancellationToken: token);
+
+            if (result.pdf is null || result.pdf.Length == 0)
+                result.error ??= "Empty pdf, unknown failure";
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return (null, ex.ToString());
+        }
 
         async Task<(byte[]?, string)> MakePdfFunction(WebView2 webView, CancellationToken localToken)
-            => await webView.GeneratePdfAsync(options, localToken);
+            => await webView.TryGeneratePdfAsync(options, localToken);
         
     }
+
 
 }

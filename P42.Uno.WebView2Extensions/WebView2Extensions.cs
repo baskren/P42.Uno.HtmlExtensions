@@ -20,7 +20,7 @@ public static partial class WebView2Extensions
     internal static Application WinUiApplication => _winUiApplication ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
 
     private static Window? _winUiMainWindow;
-    internal static Window WinUiMainWindow => _winUiMainWindow ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
+    public static Window WinUiMainWindow => _winUiMainWindow ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
     
 
     /// <summary>
@@ -32,8 +32,15 @@ public static partial class WebView2Extensions
     {
         _winUiApplication = application;
         _winUiMainWindow = window;
-        if (application is IWebView2ProjectContent app)
-            app.RegisterProjectProvidedItems();
+        try
+        {
+            if (application is IWebView2ProjectContent app)
+                app.RegisterProjectProvidedItems();
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine($"P42.Uno.WebView2Extensions.Init RegisterProvidedItems Exception [{ex}]");
+        }
     }
 
 
@@ -41,20 +48,13 @@ public static partial class WebView2Extensions
     /// Is printing available on this platform
     /// </summary>
     /// <returns></returns>
-    public static bool CanPrint() =>
+    public static bool CanPrint =>
 #if __DESKTOP__
         System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 #else
         true;
 #endif
 
-    /// <summary>
-    /// Can this WebView2 print?
-    /// </summary>
-    /// <param name="_"></param>
-    /// <returns></returns>
-    public static bool CanPrint(this WebView2 _) => CanPrint();
-    
     /// <summary>
     /// Get content of a WebView as HTML
     /// </summary>
@@ -135,7 +135,7 @@ public static partial class WebView2Extensions
         if (webView.XamlRoot is null)
             throw new ArgumentNullException($"{nameof(webView)}.{nameof(webView.XamlRoot)}");
         
-        var pdfTask = webView.GeneratePdfAsync(options, token);
+        var pdfTask = webView.TryGeneratePdfAsync(options, token);
 
         var fileName = string.IsNullOrEmpty(options?.Filename)
             ? "document"
@@ -146,8 +146,6 @@ public static partial class WebView2Extensions
         
         async Task MakePdfFunction(CancellationToken localToken)
             => await InternalSavePdfAsync(webView, pdfTask, fileName, localToken);
-
-
     }
 
     public static async Task<bool> TrySavePdfAsync(this WebView2 webView, PdfOptions? options = null,
@@ -173,7 +171,7 @@ public static partial class WebView2Extensions
     /// <param name="options">html2pdf.js options</param>
     /// <param name="token"></param>
     /// <returns></returns>
-    public static async Task<(byte[]? pdf, string error)> GeneratePdfAsync(this WebView2 webView2, PdfOptions? options = null, CancellationToken token = default)
+    public static async Task<(byte[]? pdf, string error)> TryGeneratePdfAsync(this WebView2 webView2, PdfOptions? options = null, CancellationToken token = default)
     {
         try
         {
@@ -210,7 +208,22 @@ public static partial class WebView2Extensions
                 await Task.Delay(500, token);
             }
 
-            var bytes = Convert.FromBase64String(result);
+            if (string.IsNullOrWhiteSpace(result))
+                return (null, "Empty PDF, unknown failure");
+
+            byte[]? bytes = null;
+            try
+            {
+                bytes = Convert.FromBase64String(result);
+            }
+            catch (Exception e)
+            {
+                return (null, $"Base64 conversion exception: \n\n [{e}] \n \n of pdf result: \n\n [{result}]");
+            }
+
+            if (bytes is null || bytes.Length == 0)
+                return (null, "Empty PDF, unknown failure");
+
             return (bytes, "");
         }
         catch (Exception ex)
@@ -311,7 +324,6 @@ public static partial class WebView2Extensions
         if (element.XamlRoot is null)
             throw new ArgumentNullException($"{nameof(element)}.{nameof(element.XamlRoot)}");
 
-
         var fileTask = DialogExtensions.RequestStorageFileAsync( element.XamlRoot, "PDF", fileName, "pdf");
         await Task.WhenAll(fileTask, pdfTask);
         var saveFile = fileTask.Result;
@@ -344,7 +356,19 @@ public static partial class WebView2Extensions
             await DialogExtensions.ShowExceptionDialogAsync(element.XamlRoot, "File Save", e);
         }
     }
-    
+
+    /// <summary>
+    /// Makes sure that the pdf generation scripts have been loaded
+    /// </summary>
+    /// <param name="webView2"></param>
+    /// <param name="token"></param>
+    private static async Task AssurePdfScriptsAsync(this WebView2 webView2, CancellationToken token = default)
+    {
+        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "P42.Uno.Wv2Ext.Resources.html2pdf.bundle.js", token);
+        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "P42.Uno.Wv2Ext.Resources.p42_makePdf.js", token);
+    }
+
+
     /// <summary>
     /// Used for iOS and Android implementations of PrintAsync()
     /// </summary>
@@ -380,17 +404,6 @@ public static partial class WebView2Extensions
             await Task.Delay(500, token);
         }
         
-    }
-
-    /// <summary>
-    /// Makes sure that the pdf generation scripts have been loaded
-    /// </summary>
-    /// <param name="webView2"></param>
-    /// <param name="token"></param>
-    private static async Task AssurePdfScriptsAsync(this WebView2 webView2, CancellationToken token = default)
-    {
-        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "P42.Uno.Wv2Ext.Resources.html2pdf.bundle.js", token);
-        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "P42.Uno.Wv2Ext.Resources.p42_makePdf.js", token);
     }
 
     /// <summary>
@@ -435,6 +448,8 @@ public static partial class WebView2Extensions
         try
         {
             await using var stream = asm.GetManifestResourceStream(resourceId);
+            if (stream == null)
+                throw new FileNotFoundException("stream is null");
             using var reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
         }
@@ -444,7 +459,7 @@ public static partial class WebView2Extensions
             foreach (var file in asm.GetManifestResourceNames())
                 Log.WriteLine($"\t [{file}]");
 
-            throw new InvalidOperationException($"Resource ({resourceId}) not found in Assembly ({asm.GetName().Name})", ex);
+            throw new FileNotFoundException($"Resource ({resourceId}) not found in Assembly ({asm.GetName().Name})", ex);
         }
     }
     
@@ -490,22 +505,14 @@ public static partial class WebView2Extensions
         return source;
     }
 
-    private static readonly char[] DirectorySeparators = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar ];
 
 
-    private static string[] SplitPathSegments(string? path)
-    {
-        return string.IsNullOrWhiteSpace(path) 
-            ? [] 
-            : path.Split( DirectorySeparators, StringSplitOptions.RemoveEmptyEntries);
-    }
 
-#if BROWSERWASM
-    private static string? _packageUrl;
-    private static string PackageUrl =>
-        _packageUrl ??= $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
-#endif
 
+    #region Project Content Folders
+
+
+    #region Public
     public static void EnableProjectContentFolder(string projectFolder)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectFolder);
@@ -516,28 +523,19 @@ public static partial class WebView2Extensions
         
         var fullFolderPath = Path.Combine(VirtualHost.ContentRoot, projectFolder);
         
-#if __ANDROID__
-        var files = VirtualHost.Assets.List(fullFolderPath);
-        if (files is null || files.Length == 0)
-            throw new DirectoryNotFoundException(fullFolderPath);
-        
-        foreach (var file in files)
-            System.Diagnostics.Debug.WriteLine($"AndroidAsset: [{fullFolderPath}]/[{file}]");
-        
-#else
-        if (!Directory.Exists(fullFolderPath))
-            throw new DirectoryNotFoundException(fullFolderPath);
-#endif
-        
+        if (!ProjectFolderExists(fullFolderPath))
+        {
+            CheckForProjectFolderRecursively(fullFolderPath, out var result);
+            throw new DirectoryNotFoundException($"Project Content Folder Not Found: [{fullFolderPath}] : [{result}]");
+        }
+
         VirtualHost.LocalFolders.AddDistinct(projectFolder);
     }
 
     public static void NavigateToProjectContentFile(this WebView2 webView2, string projectContentFilePath)
-    {
-        webView2.Source = ProjectContentFileUri(projectContentFilePath);
-    }
-    
-    internal static Uri ProjectContentFileUri(string projectContentFilePath)
+        => webView2.Source = ProjectContentFileUri(projectContentFilePath);
+
+    public static Uri ProjectContentFileUri(string projectContentFilePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectContentFilePath);
         projectContentFilePath = projectContentFilePath.TrimStart(DirectorySeparators).Replace('\\', '/');
@@ -551,19 +549,20 @@ public static partial class WebView2Extensions
         if (projectContentFilePath.EndsWith('/'))
             projectContentFilePath += "index.html";
         
-        var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);
-        #if __ANDROID__
-        using var stream = VirtualHost.Assets.Open(fullFilePath);
-        stream.Close();
-        #else
-        if (!File.Exists(fullFilePath))
-            throw new FileNotFoundException(fullFilePath);
-        #endif
-        
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))
             throw new ArgumentException("Root project folder is not allowed.");
+
+        var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);
+        if (!ProjectFileExists(fullFilePath) && ProjectFolderExists(fullFilePath))
+            fullFilePath += "/index.html";
         
+        if (!ProjectFileExists(fullFilePath))
+        {
+            CheckForProjectFileRecursively(fullFilePath, out var result);
+            throw new FileNotFoundException($"Project Content File Not Found: [{fullFilePath}] : [{result}]");
+        }
+
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
         VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
         
@@ -579,7 +578,120 @@ public static partial class WebView2Extensions
         
         return new Uri(url);
     }
-    
+    #endregion Public
+
+
+    #region Internal 
+    internal static bool CheckForProjectFolderRecursively(string path, out string result)
+    {
+        result = $"FOUND: {path}";
+        // Normalize path separators
+        path = Path.GetFullPath(path);
+
+        string current = Path.GetPathRoot(path)!; // e.g. "C:\"
+        foreach (var part in path.Substring(current.Length).Split(Path.DirectorySeparatorChar,
+                                                                  Path.AltDirectorySeparatorChar,
+                                                                  StringSplitOptions.RemoveEmptyEntries))
+        {
+            current = Path.Combine(current, part);
+
+            if (!ProjectFolderExists(current))
+            {
+                result = $"MISSING: {current}";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    internal static bool CheckForProjectFileRecursively(string path, out string result)
+    {
+        result = $"FOUND: {path}";
+
+        var folderPath = Path.GetDirectoryName(path);
+        if (!string.IsNullOrWhiteSpace(folderPath) && !CheckForProjectFolderRecursively(folderPath, out result))
+            return false;
+
+        if (!ProjectFileExists(path))
+        {
+            var files = Directory.GetFiles(folderPath);
+            foreach (var file in files) 
+                Log.WriteLine($"\t\t{folderPath}/{file}");
+
+            result = $"MISSING: {path}";
+            return false;
+        }
+        return true;
+    }
+
+    internal static bool ProjectFolderExists(string fullFolderPath)
+    {
+#if __ANDROID__
+        try
+        {
+            var files = VirtualHost.Assets.List(fullFolderPath);
+            if (files is null || files.Length == 0)
+                return false;
+            return true;
+        }
+        catch 
+        { 
+            return false; 
+        }
+#else
+        return Directory.Exists(fullFolderPath);
+#endif
+    }
+
+    internal static bool ProjectFileExists(string fullFilePath)
+    {
+#if __ANDROID__
+        var folderPath = Path.GetDirectoryName(fullFilePath);
+        try
+        {
+            // using var stream = VirtualHost.Assets.Open(fullFilePath);
+            var files = VirtualHost.Assets.List(folderPath ?? "");
+            if (files is null || files.Length == 0)
+                return false;
+            var fileName = Path.GetFileName(fullFilePath);
+            foreach (var file in files)
+                if (file == fileName)
+                    return true;
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+#else
+        return File.Exists(fullFilePath);
+#endif
+    }
+    #endregion Internal
+
+
+    #region Private
+
+    private static readonly char[] DirectorySeparators = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
+
+    private static string[] SplitPathSegments(string? path)
+    {
+        return string.IsNullOrWhiteSpace(path)
+            ? []
+            : path.Split(DirectorySeparators, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+#if BROWSERWASM
+    private static string? _packageUrl;
+    private static string PackageUrl =>
+        _packageUrl ??= $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
+#endif
+
+    #endregion Private
+
+
+    #endregion Project Content Folders
 }
 
 

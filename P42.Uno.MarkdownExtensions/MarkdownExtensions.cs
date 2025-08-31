@@ -63,7 +63,7 @@ public static class MarkdownExtensions
                 Log.WriteLine($"uri: [{uriString}]");
             }
 
-            Uri uri = null;
+            Uri uri;
             try
             {
                 uri = new Uri(uriString);

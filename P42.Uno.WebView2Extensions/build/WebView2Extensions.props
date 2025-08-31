@@ -5,7 +5,7 @@
   </ItemGroup>
 
 
-  <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="BeforeBuild;UnoResourcesGeneration">
+  <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
     <!--
     <ItemGroup>
@@ -51,7 +51,6 @@
 
     </ItemGroup>
     
-    <!--
     <Message Text="  MSBuildProjectDirectory:[$(MSBuildProjectDirectory)]" Importance="high"/>
     <Message Text="  WebView2ProjectContentFolder:[%(WebView2ProjectContentFolder.Identity)]" Importance="high" />
     <Message Text="  _WebView2Root:[%(_WebView2Root.Identity)] [%(_WebView2Root.Folder)]" Importance="high"/>
@@ -68,13 +67,12 @@
         Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
         Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]"
         Importance="High" />
-  -->
 
   </Target>
 
   <!-- Path to generated file -->
   <PropertyGroup>
-    <WebView2ExtensionsGeneratedCodeFile>$(IntermediateOutputPath)App.GeneratedWebView2.g.cs</WebView2ExtensionsGeneratedCodeFile>
+    <WebView2ExtensionsGeneratedCodeFile>$(BaseIntermediateOutputPath)App.GeneratedWebView2.g.cs</WebView2ExtensionsGeneratedCodeFile>
   </PropertyGroup>
 
   
