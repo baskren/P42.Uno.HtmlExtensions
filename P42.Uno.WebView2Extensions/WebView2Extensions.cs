@@ -520,7 +520,8 @@ public static partial class WebView2Extensions
         
         if (SplitPathSegments(projectFolder) is { Length: > 1 })
             throw new ArgumentException("Only folders in project root are allowed", nameof(projectFolder));
-        
+
+#if !BROWSERWASM
         var fullFolderPath = Path.Combine(VirtualHost.ContentRoot, projectFolder);
         
         if (!ProjectFolderExists(fullFolderPath))
@@ -530,6 +531,7 @@ public static partial class WebView2Extensions
         }
 
         VirtualHost.LocalFolders.AddDistinct(projectFolder);
+#endif
     }
 
     public static void NavigateToProjectContentFile(this WebView2 webView2, string projectContentFilePath)
@@ -546,17 +548,20 @@ public static partial class WebView2Extensions
             ? urlAndQuery[1]
             : string.Empty;
 
-        if (projectContentFilePath.EndsWith('/'))
+        // All paths without an extension are assumed to be directories
+        if (string.IsNullOrWhiteSpace(Path.GetExtension(projectContentFilePath)))
+            projectContentFilePath += Path.DirectorySeparatorChar;
+
+        // directories assume we're looking for index.html
+        if (projectContentFilePath.EndsWith(Path.DirectorySeparatorChar) || projectContentFilePath.EndsWith(Path.AltDirectorySeparatorChar))
             projectContentFilePath += "index.html";
         
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))
             throw new ArgumentException("Root project folder is not allowed.");
 
-        var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);
-        if (!ProjectFileExists(fullFilePath) && ProjectFolderExists(fullFilePath))
-            fullFilePath += "/index.html";
-        
+#if !BROWSERWASM
+        var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);        
         if (!ProjectFileExists(fullFilePath))
         {
             CheckForProjectFileRecursively(fullFilePath, out var result);
@@ -565,20 +570,17 @@ public static partial class WebView2Extensions
 
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
         VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
-        
+#endif
+
         if (!string.IsNullOrWhiteSpace(query))
             projectContentFilePath += $"?{query}";
         
-#if BROWSERWASM
-        var url = $"{PackageUrl}/{projectContentFilePath}";
-        Log.WriteLine($"VirtualHost url: [{url}]");
-#else
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
-#endif
-        
+        Log.WriteLine($"VirtualHost url: [{url}]");
+
         return new Uri(url);
     }
-    #endregion Public
+#endregion Public
 
 
     #region Internal 
@@ -625,6 +627,10 @@ public static partial class WebView2Extensions
         return true;
     }
 
+#if BROWSERWASM
+    private static readonly HttpClient HttpClient = new HttpClient();
+#endif
+
     internal static bool ProjectFolderExists(string fullFolderPath)
     {
 #if __ANDROID__
@@ -668,6 +674,8 @@ public static partial class WebView2Extensions
         {
             return false;
         }
+#elif BROWSERWASM
+        return false;
 #else
         return File.Exists(fullFilePath);
 #endif
@@ -686,16 +694,11 @@ public static partial class WebView2Extensions
             : path.Split(DirectorySeparators, StringSplitOptions.RemoveEmptyEntries);
     }
 
-#if BROWSERWASM
-    private static string? _packageUrl;
-    private static string PackageUrl =>
-        _packageUrl ??= $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
-#endif
 
     #endregion Private
 
 
-    #endregion Project Content Folders
+#endregion Project Content Folders
 }
 
 

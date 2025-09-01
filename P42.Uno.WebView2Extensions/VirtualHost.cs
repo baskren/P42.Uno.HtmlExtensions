@@ -31,6 +31,7 @@ internal class VirtualHost
     internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, RootFolder);
 #endif
 
+
     public static string HostUrl { get; private set; }
     
     // TODO: Can we add to listener.Prefixes after we call listener.Start()?
@@ -39,11 +40,17 @@ internal class VirtualHost
     static VirtualHost()
     {
         Log.WriteLine($"ContentRoot: {ContentRoot}");
-        
+
+#if BROWSERWASM
+        HostUrl = $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
+#else
         var random = new Random();
         var port = random.Next(49152, 65536);
-        var listener1 = new HttpListener();
         HostUrl = $"http://localhost:{port}";
+
+
+        var listener1 = new HttpListener();
+
         listener1.Prefixes.Add(HostUrl+'/');
         //listener.Prefixes.Add($"https://localhost:{port}"+'/');
         listener1.IgnoreWriteExceptions = true;
@@ -70,6 +77,7 @@ internal class VirtualHost
                 });
             }
         });
+#endif
     }
     
     
