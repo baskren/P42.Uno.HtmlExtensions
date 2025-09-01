@@ -99,6 +99,7 @@ public static class DialogExtensions
         private readonly Func<CancellationToken, Task> _function;
         
         private readonly ContentDialog _contentDialog;
+        private readonly bool _hideAfterOnLoadedTaskComplete;
         
         #endregion
 
@@ -107,6 +108,7 @@ public static class DialogExtensions
             string title,
             Func<CancellationToken, Task> processFunction, 
             bool hasCancelButton = true,
+            bool hideAfterOnContentLoadedTaskComplete = false,
             CancellationToken cancellationToken = default)
         {
             var processor = new BusyDialog(xamlRoot, title, processFunction, hasCancelButton, cancellationToken);
@@ -159,7 +161,8 @@ public static class DialogExtensions
                 _contentDialog.Content = "COMPLETED";
                 _contentDialog.CloseButtonText = "OK";
                 _tcs.TrySetResult(true);
-                await Task.Delay(3000, _cancellationToken);
+                if (!_hideAfterOnLoadedTaskComplete)
+                    await Task.Delay(3000, _cancellationToken);
             }
             catch (Exception ex)
             {
@@ -342,13 +345,11 @@ public static class DialogExtensions
                     _progressRing.Visibility = Visibility.Collapsed;
 
                 var result = await _onContentLoadedTask(_webView2, _cancellationToken);
-                if (_hideAfterOnLoadedTaskComplete)
-                    return;
-                
                 _contentDialog.Content = "COMPLETED";
                 _contentDialog.CloseButtonText = "OK";
                 _tcs.TrySetResult(result);
-                await Task.Delay(3000, _cancellationToken);
+                if (!_hideAfterOnLoadedTaskComplete)
+                    await Task.Delay(3000, _cancellationToken);
             }
             catch (Exception ex)
             {

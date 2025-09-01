@@ -549,13 +549,14 @@ public static partial class WebView2Extensions
             : string.Empty;
 
         // All paths without an extension are assumed to be directories
-        if (string.IsNullOrWhiteSpace(Path.GetExtension(projectContentFilePath)))
-            projectContentFilePath += Path.DirectorySeparatorChar;
-
         // directories assume we're looking for index.html
         if (projectContentFilePath.EndsWith(Path.DirectorySeparatorChar) || projectContentFilePath.EndsWith(Path.AltDirectorySeparatorChar))
             projectContentFilePath += "index.html";
-        
+
+        if (string.IsNullOrWhiteSpace(Path.GetExtension(projectContentFilePath)))
+            projectContentFilePath += Path.DirectorySeparatorChar + "index.html";
+
+
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))
             throw new ArgumentException("Root project folder is not allowed.");

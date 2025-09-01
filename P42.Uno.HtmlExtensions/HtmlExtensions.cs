@@ -125,7 +125,7 @@ public static class HtmlExtensions
     /// <returns>pdf, error</returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static async Task<(byte[]? pdf, string error)> TryGeneratePdfAsync(
-        this UIElement element, 
+        UIElement element, 
         string html, 
         PdfOptions? options = null, 
         CancellationToken token = default)
@@ -139,6 +139,7 @@ public static class HtmlExtensions
                 element.XamlRoot,
                 html,
                 MakePdfFunction,
+                hideAfterOnContentLoadedTaskComplete: true,
                 cancellationToken: token);
 
             if (result.pdf is null || result.pdf.Length == 0)
