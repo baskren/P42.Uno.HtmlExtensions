@@ -74,7 +74,9 @@ _You **can** combine them_
 
 ## Images
 
-![This is an alt text.](/image/sample.webp "This is a sample image.")
+![This is an absolute cross content folder image](/image/sample.webp "This is a sample image.")
+![This is an relative cross content folder image](../image/sample.webp "This is a sample image.")
+![This is local content folder image](butterfly.webp)
 
 ## Links
 
