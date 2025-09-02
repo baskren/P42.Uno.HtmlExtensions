@@ -97,15 +97,22 @@ public static class MarkdownExtensions
                     
             args.Cancel = true;
             
+            var baseUri = new Uri(VirtualHost.HostUrl+'/');
+            var baseFolder = baseUri.LocalPath;
+            var documentPath = uriString.Replace(VirtualHost.HostUrl+'/',"");
+            Log.WriteLine($"\tbaseUri: [{baseUri}]");
+            Log.WriteLine($"\tbaseFolder: [{baseFolder}]");
+            Log.WriteLine($"\tdocumentPath: [{documentPath}]");
+            var newRequest = $"{MarkdownConverterPagePath}?baseFolder={HttpUtility.UrlEncode(baseFolder)}&documentPath={HttpUtility.UrlEncode(documentPath)}";
             
+            /*
             var host = HttpUtility.UrlEncode(uri.Host);
             var port = uri.Port;
             var directory = HttpUtility.UrlEncode(Path.GetDirectoryName(uri.LocalPath));
             var filename = HttpUtility.UrlEncode(Path.GetFileName(uri.LocalPath));
-            
-            //var requestedSource = sender.Source;
-
             var newRequest = $"{MarkdownConverterPagePath}?host={host}&port={port}&dir={directory}&filename={filename}&query={uri.Query}";
+            */
+            
             Log.WriteLine($"newRequest [{newRequest}]");
             Log.WriteLine(" ");
             Log.WriteLine(" ");

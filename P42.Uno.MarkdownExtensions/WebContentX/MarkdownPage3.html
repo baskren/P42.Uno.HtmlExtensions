@@ -111,6 +111,7 @@
     async function loadMarkdown(){
         const params = new URLSearchParams(window.location.search);
 
+        /*
         const host = params.get("host");
         const port = params.get("port");
         const dir = params.get("dir");
@@ -119,8 +120,6 @@
         console.log("host: "+host+", port: "+port);
         console.log("dir: "+dir+", filename: "+filename);
         console.log("query: "+query);
-
-        //var reqUrl = params.get("requestUrl");
 
         if (missingParameter('host', host)
             || missingParameter('port', port)
@@ -139,8 +138,23 @@
             fetchUrl = `${filename}&${query}`;
         }
         console.log("fetchUrl: "+fetchUrl);
+         */
 
-      try{
+        const baseFolder = params.get("baseFolder");
+        console.log("query.baseFolder: " + baseFolder);
+        const documentPath = params.get("documentPath");
+        console.log("query.documentPath: " + documentPath);
+        if (missingParameter('baseFolder', baseFolder)
+            || missingParameter('documentPath', documentPath))
+            return;
+
+        const newBase = document.createElement('base');
+        newBase.setAttribute('href', baseFolder);
+        document.head.appendChild(newBase);
+
+        const fetchUrl = documentPath;
+
+        try{
         const res = await fetch(fetchUrl, {cache: 'no-store'});
         if(!res.ok) throw new Error('HTTP '+res.status + ' ' + res.statusText);
         const mdText = await res.text();
