@@ -79,31 +79,33 @@ public static class MarkdownExtensions
             }
 
             Log.WriteLine($"uri = [{uri}]");
-            Log.WriteLine($"\t.AbsolutePath = [{uri.AbsolutePath}]");
+            Log.WriteLine($"\t.Host = [{uri.Host}]");
+            Log.WriteLine($"\t.Port = [{uri.Port}]");
             Log.WriteLine($"\t.LocalPath = [{uri.LocalPath}]");
-            Log.WriteLine($"\t.PathAndQuery = [{uri.PathAndQuery}]");
+            Log.WriteLine($"\t.Directory = [{Path.GetDirectoryName(uri.LocalPath)}]");
+            Log.WriteLine($"\t.FileName = [{Path.GetFileName(uri.LocalPath)}]");
+            Log.WriteLine($"\t.Query = [{uri.Query}]");
 
             if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
                 return;
-
-            if (uri.Query is string query && !string.IsNullOrWhiteSpace(query))
+            
+            if (!uriString.StartsWith(VirtualHost.HostUrl))
             {
-                var queryParams = HttpUtility.ParseQueryString(query);
-                foreach (var key in queryParams.AllKeys)
-                    Log.WriteLine($"QUERY {key}: {queryParams[key]}");
+                Log.WriteLine($"uri: [{uriString}] !>>> [{VirtualHost.HostUrl}]");
+                return;
             }
-
-
+                    
             args.Cancel = true;
-
-
+            
+            
+            var host = HttpUtility.UrlEncode(uri.Host);
+            var port = uri.Port;
+            var directory = HttpUtility.UrlEncode(Path.GetDirectoryName(uri.LocalPath));
+            var filename = HttpUtility.UrlEncode(Path.GetFileName(uri.LocalPath));
+            
             //var requestedSource = sender.Source;
-            var requestedSource = uri.PathAndQuery;
-            Log.WriteLine($"requestedSource [{requestedSource}]");
 
-            var safePath = System.Web.HttpUtility.UrlEncode(requestedSource);
-            Log.WriteLine($"safeRelativePath [{safePath}]");
-            var newRequest = $"{MarkdownConverterPagePath}?requestUrl={safePath}";
+            var newRequest = $"{MarkdownConverterPagePath}?host={host}&port={port}&dir={directory}&filename={filename}&query={uri.Query}";
             Log.WriteLine($"newRequest [{newRequest}]");
             Log.WriteLine(" ");
             Log.WriteLine(" ");

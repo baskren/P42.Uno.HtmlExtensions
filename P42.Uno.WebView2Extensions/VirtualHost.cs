@@ -27,6 +27,8 @@ internal class VirtualHost
     internal static string ContentRoot => Package.Current is null 
         ? Path.Combine(AppContext.BaseDirectory, RootFolder)
         : Path.Combine(Package.Current.InstalledLocation.Path, RootFolder);
+#elif BROWSERWASM
+    internal static string ContentRoot => RootFolder;
 #else
     internal static string ContentRoot => Path.Combine(AppContext.BaseDirectory, RootFolder);
 #endif
@@ -42,7 +44,7 @@ internal class VirtualHost
         Log.WriteLine($"ContentRoot: {ContentRoot}");
 
 #if BROWSERWASM
-        HostUrl = $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}";
+        HostUrl = $"{WasmWebViewExtensions.GetPageUrl()}{WasmWebViewExtensions.GetBootstrapBase()}/{ContentRoot}";
 #else
         var random = new Random();
         var port = random.Next(49152, 65536);

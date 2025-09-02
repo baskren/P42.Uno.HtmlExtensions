@@ -577,7 +577,7 @@ public static partial class WebView2Extensions
             projectContentFilePath += $"?{query}";
         
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
-        Log.WriteLine($"VirtualHost url: [{url}]");
+        Log.WriteLine($"Project Content File url: [{url}]");
 
         return new Uri(url);
     }

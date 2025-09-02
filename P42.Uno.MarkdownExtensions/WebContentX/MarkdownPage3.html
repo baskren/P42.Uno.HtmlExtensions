@@ -51,7 +51,9 @@
   <script src="markdown-it-ins.min.js"></script>
   <script src="markdown-it-container.min.js"></script>
   <script src="markdown-it-deflist.min.js"></script>
+    <!--
   <script src="common.min.js"></script>
+  -->
   <script>
     // configure markdown-it with plugins
     const md = window.markdownit({
@@ -94,21 +96,52 @@
       statusEl.style.color = isError ? '#991b1b' : '#92400e';
     }
 
-    async function loadMarkdown(){
-        const params = new URLSearchParams(window.location.search);
-        var reqUrl = params.get("requestUrl");
-        console.log(`reqUrl: ${reqUrl} `);
-        if (!reqUrl)
-        {
-            const msg = `[${window.location.href}]: no 'requestedUrl' parameter provided`;
+    function missingParameter(argName, value)
+    {
+        if (!value || value === '') {
+            const msg = `[${window.location.href}]: no '${argName}' parameter provided`;
             contentEl.innerHTML = '<pre>${msg}</pre>';
             showStatus(msg, true);
             console.error(msg);
-            return;
-            reqUrl = './document.md';
+            return true;
         }
+        return false;
+    }
+
+    async function loadMarkdown(){
+        const params = new URLSearchParams(window.location.search);
+
+        const host = params.get("host");
+        const port = params.get("port");
+        const dir = params.get("dir");
+        const filename = params.get("filename");
+        const query = params.get("query");
+        console.log("host: "+host+", port: "+port);
+        console.log("dir: "+dir+", filename: "+filename);
+        console.log("query: "+query);
+
+        //var reqUrl = params.get("requestUrl");
+
+        if (missingParameter('host', host)
+            || missingParameter('port', port)
+            || missingParameter('dir', dir)
+            || missingParameter('filename', filename))
+            return;
+
+        const newBaseUrl = `${dir}/`;
+        console.log("newBaseUrl: "+newBaseUrl);
+        const newBase = document.createElement('base');
+        newBase.setAttribute('href', newBaseUrl);
+        document.head.appendChild(newBase);
+
+        let fetchUrl =  `${filename}`;
+        if (typeof query === 'string' && query !== '') {
+            fetchUrl = `${filename}&${query}`;
+        }
+        console.log("fetchUrl: "+fetchUrl);
+
       try{
-        const res = await fetch(reqUrl, {cache: 'no-store'});
+        const res = await fetch(fetchUrl, {cache: 'no-store'});
         if(!res.ok) throw new Error('HTTP '+res.status + ' ' + res.statusText);
         const mdText = await res.text();
         contentEl.innerHTML = md.render(mdText);
@@ -116,7 +149,7 @@
         statusEl.style.display = 'none';
       }catch(err){
         contentEl.innerHTML = '<pre>'+String(err)+'</pre>';
-        showStatus(`[${window.location.href}]: Could not load [${reqUrl}] — see message below.`, true);
+        showStatus(`[${window.location.href}]: Could not load [${fetchUrl}] — see message below.`, true);
         console.error(err);
       }
     }
