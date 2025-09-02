@@ -113,17 +113,21 @@
 
         const host = params.get("host");
         const port = params.get("port");
+        const rootPath = params.get("rootPath");
         const dir = params.get("dir");
         const filename = params.get("filename");
         const query = params.get("query");
-        console.log("host: "+host+", port: "+port);
-        console.log("dir: "+dir+", filename: "+filename);
-        console.log("query: "+query);
+        console.log("query.host: "+host+":"+port);
+        console.log("query.rootPath: "+rootPath);
+        console.log("query.dir: "+dir);
+        console.log("query.filename: "+filename);
+        console.log("query.query: "+query);
 
         //var reqUrl = params.get("requestUrl");
 
         if (missingParameter('host', host)
             || missingParameter('port', port)
+            || missingParameter('rootPath', rootPath)
             || missingParameter('dir', dir)
             || missingParameter('filename', filename))
             return;
@@ -147,6 +151,15 @@
         contentEl.innerHTML = md.render(mdText);
         if(window.hljs && typeof hljs.highlightAll === 'function') hljs.highlightAll();
         statusEl.style.display = 'none';
+
+          document.querySelectorAll("[src^='/'], [href^='/']").forEach(el => {
+              const attr = el.hasAttribute("src") ? "src" : "href";
+              const val = el.getAttribute(attr);
+              if (val.startsWith(rootPath))
+                  return;
+              console.log("attr: ["+attr+"] val: ["+val+"]");
+              el.setAttribute(attr, rootPath + val);
+          });
       }catch(err){
         contentEl.innerHTML = '<pre>'+String(err)+'</pre>';
         showStatus(`[${window.location.href}]: Could not load [${fetchUrl}] — see message below.`, true);

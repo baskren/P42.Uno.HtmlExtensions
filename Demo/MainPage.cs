@@ -40,6 +40,11 @@ public sealed partial class MainPage : Page
                                     .Content("WV2 PDF")
                                     .VerticalAlignment(VerticalAlignment.Center)
                             ),
+                        new Rectangle()
+                            .Grid(row:1)
+                            .HorizontalAlignment(HorizontalAlignment.Stretch)
+                            .VerticalAlignment(VerticalAlignment.Stretch)
+                            .Fill(Colors.White),
                         new WebView2()
                             .Name(out _webView)
                             .Grid(row:1)
@@ -150,8 +155,8 @@ public sealed partial class MainPage : Page
             //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
             //WebView2Extensions.EnableProjectContentFolder("image");
                 
-            //_webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
-            _webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            _webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
+            //_webView.NavigateToProjectContentFile("/WebContentX/document.md");
                 
         }
         catch (Exception ex)

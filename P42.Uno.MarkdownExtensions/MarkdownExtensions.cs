@@ -103,9 +103,12 @@ public static class MarkdownExtensions
             var directory = HttpUtility.UrlEncode(Path.GetDirectoryName(uri.LocalPath));
             var filename = HttpUtility.UrlEncode(Path.GetFileName(uri.LocalPath));
             
+            var hostUri = new Uri(VirtualHost.HostUrl);
+            var rootPath = HttpUtility.UrlEncode(hostUri.LocalPath);
+            
             //var requestedSource = sender.Source;
 
-            var newRequest = $"{MarkdownConverterPagePath}?host={host}&port={port}&dir={directory}&filename={filename}&query={uri.Query}";
+            var newRequest = $"{MarkdownConverterPagePath}?host={host}&port={port}&rootPath={rootPath}&dir={directory}&filename={filename}&query={uri.Query}";
             Log.WriteLine($"newRequest [{newRequest}]");
             Log.WriteLine(" ");
             Log.WriteLine(" ");
