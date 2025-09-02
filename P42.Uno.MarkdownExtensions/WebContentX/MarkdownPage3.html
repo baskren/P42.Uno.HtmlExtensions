@@ -111,21 +111,16 @@
     async function loadMarkdown(){
         const params = new URLSearchParams(window.location.search);
 
-        const host = params.get("host");
-        const port = params.get("port");
         const dir = params.get("dir");
         const filename = params.get("filename");
         const query = params.get("query");
-        console.log("host: "+host+", port: "+port);
-        console.log("dir: "+dir+", filename: "+filename);
+        console.log("dir: "+dir);
+        console.log("filename: "+filename);
         console.log("query: "+query);
 
         //var reqUrl = params.get("requestUrl");
 
-        if (missingParameter('host', host)
-            || missingParameter('port', port)
-            || missingParameter('dir', dir)
-            || missingParameter('filename', filename))
+        if (missingParameter('dir', dir) || missingParameter('filename', filename))
             return;
 
         const newBaseUrl = `${dir}/`;
@@ -134,7 +129,7 @@
         newBase.setAttribute('href', newBaseUrl);
         document.head.appendChild(newBase);
 
-        let fetchUrl =  `${filename}`;
+        let fetchUrl =  filename;
         if (typeof query === 'string' && query !== '') {
             fetchUrl = `${filename}&${query}`;
         }

@@ -27,7 +27,7 @@
 
   <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="UnoResourcesGeneration">
   -->
-    
+
     <ItemGroup>
       <_p42_webview2_file Include="$(MSBuildProjectDirectory)/%(WebView2ProjectContentFolder.Identity)/**/*.*">
         <Folder>%(WebView2ProjectContentFolder.Identity)</Folder>
@@ -37,20 +37,31 @@
     <ItemGroup>
       <AndroidAsset
         Include="@(_p42_webview2_file)"
+        Visible="false"
         Link="Platforms/Android/Assets/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
 
       <BundleResource
         Include="@(_p42_webview2_file)"
+        Visible="false"
         Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
 
       <Content
-        Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
+        Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  "
         Include="@(_p42_webview2_file)"
         Link="WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
+        Visible="false"
+        CopyToOutputDirectory="PreserveNewest" />
+
+      <Content
+        Condition="  $(TargetFramework.Contains('wasm')) "
+        Include="@(_p42_webview2_file)"
+        Link="%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
+        Visible="false"
+        UnoDeploy="Root"
         CopyToOutputDirectory="PreserveNewest" />
 
     </ItemGroup>
-    
+
     <Message Text="  MSBuildProjectDirectory:[$(MSBuildProjectDirectory)]" Importance="high"/>
     <Message Text="  WebView2ProjectContentFolder:[%(WebView2ProjectContentFolder.Identity)]" Importance="high" />
     <Message Text="  _WebView2Root:[%(_WebView2Root.Identity)] [%(_WebView2Root.Folder)]" Importance="high"/>
@@ -75,7 +86,7 @@
     <WebView2ExtensionsGeneratedCodeFile>$(BaseIntermediateOutputPath)App.GeneratedWebView2.g.cs</WebView2ExtensionsGeneratedCodeFile>
   </PropertyGroup>
 
-  
+
   <!-- App.cs or App.xaml.cs NameSpace -->
   <Choose>
     <When Condition=" '$(AppNamespace)' != '' and '$(AppNamespace.Trim())' != '' ">

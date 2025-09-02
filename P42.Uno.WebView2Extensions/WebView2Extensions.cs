@@ -513,7 +513,7 @@ public static partial class WebView2Extensions
 
 
     #region Public
-    public static void EnableProjectContentFolder(string projectFolder)
+    public static async Task EnableProjectContentFolder(string projectFolder)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectFolder);
         projectFolder = projectFolder.Trim(DirectorySeparators).Replace('\\', '/');
@@ -521,7 +521,18 @@ public static partial class WebView2Extensions
         if (SplitPathSegments(projectFolder) is { Length: > 1 })
             throw new ArgumentException("Only folders in project root are allowed", nameof(projectFolder));
 
-#if !BROWSERWASM
+#if BROWSERWASM
+        var assets = await WasmWebViewExtensions.GetAssetFilesAsync();
+        if (assets is null)
+            throw new Exception("Unable to get WASM asset files from package");
+
+        var pFolder = projectFolder.Trim(DirectorySeparators) + '/';
+        if (assets.Any(asset => asset.StartsWith(pFolder)))
+            return;
+
+        throw new DirectoryNotFoundException($"Project Content Folder Not Found: [{projectFolder}]");
+
+#else
         var fullFolderPath = Path.Combine(VirtualHost.ContentRoot, projectFolder);
         
         if (!ProjectFolderExists(fullFolderPath))
@@ -531,16 +542,19 @@ public static partial class WebView2Extensions
         }
 
         VirtualHost.LocalFolders.AddDistinct(projectFolder);
+        await Task.CompletedTask;
 #endif
     }
 
-    public static void NavigateToProjectContentFile(this WebView2 webView2, string projectContentFilePath)
-        => webView2.Source = ProjectContentFileUri(projectContentFilePath);
+    public static async Task NavigateToProjectContentFileAsync(this WebView2 webView2, string projectContentFilePath)
+        => webView2.Source = await ProjectContentFileUriAsync(projectContentFilePath);
 
-    public static Uri ProjectContentFileUri(string projectContentFilePath)
+    public static async Task<Uri> ProjectContentFileUriAsync(string projectContentFilePath)
     {
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} A");
         ArgumentException.ThrowIfNullOrWhiteSpace(projectContentFilePath);
         projectContentFilePath = projectContentFilePath.TrimStart(DirectorySeparators).Replace('\\', '/');
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} B");
 
         var urlAndQuery = projectContentFilePath.Split('?');
         projectContentFilePath = urlAndQuery[0];
@@ -548,20 +562,32 @@ public static partial class WebView2Extensions
             ? urlAndQuery[1]
             : string.Empty;
 
-        // All paths without an extension are assumed to be directories
-        // directories assume we're looking for index.html
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} C");
+
+        // All paths without an extension are assumed to be directories -
+        //  assume we're looking for index.html
         if (projectContentFilePath.EndsWith(Path.DirectorySeparatorChar) || projectContentFilePath.EndsWith(Path.AltDirectorySeparatorChar))
             projectContentFilePath += "index.html";
+
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} D");
 
         if (string.IsNullOrWhiteSpace(Path.GetExtension(projectContentFilePath)))
             projectContentFilePath += Path.DirectorySeparatorChar + "index.html";
 
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} E");
 
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))
             throw new ArgumentException("Root project folder is not allowed.");
 
-#if !BROWSERWASM
+#if BROWSERWASM
+        var assets = await WasmWebViewExtensions.GetAssetFilesAsync();
+        if (assets is null)
+            throw new Exception("Unable to get WASM asset files from package");
+
+        if (!assets.Any(asset => asset.StartsWith(projectContentFilePath)))
+            throw new FileNotFoundException($"Project Content File Not Found: [{projectContentFilePath}] ");
+#else
         var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);        
         if (!ProjectFileExists(fullFilePath))
         {
@@ -572,11 +598,19 @@ public static partial class WebView2Extensions
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
         VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
 #endif
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} F");
 
         if (!string.IsNullOrWhiteSpace(query))
             projectContentFilePath += $"?{query}";
-        
+
+        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} G");
+
+        #if BROWSERWASM
+        var url =  $"{VirtualHost.HostUrl}{projectContentFilePath}";
+        #else
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
+        #endif
+        
         Log.WriteLine($"Project Content File url: [{url}]");
 
         return new Uri(url);

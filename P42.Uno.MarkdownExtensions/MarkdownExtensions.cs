@@ -25,14 +25,37 @@ public static class MarkdownExtensions
 
 
 
-    public static void EnableMarkdownSupport(this WebView2 webView)
+    public static async Task EnableMarkdownSupportAsync(this WebView2 webView)
     {
         //TODO: Add VirtualHost.LocalFolders.AddDistinct("UnoLib1"); here
         //webView.IsMarkdownVirtualHostMapped(true);
-        WebView2Extensions.EnableProjectContentFolder("P42.Uno.MarkdownExtensions");
+        await WebView2Extensions.EnableProjectContentFolder("P42.Uno.MarkdownExtensions");
         webView.NavigationStarting += OnNavStart;
+        webView.CoreWebView2.DownloadStarting += OnDownloadStarting;
+        webView.CoreWebView2.LaunchingExternalUriScheme += OnLaunchingExternalUriScheme;
+        webView.CoreWebView2.WebResourceRequested += OnWebResourceRequested;
+        webView.CoreWebView2.WebResourceResponseReceived += OnWebResourceResponseReceived;
     }
 
+    private static void OnWebResourceResponseReceived(CoreWebView2 sender, CoreWebView2WebResourceResponseReceivedEventArgs args)
+    {
+        Log.WriteLine(nameof(OnWebResourceResponseReceived));
+    }
+
+    private static void OnWebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
+    {
+        Log.WriteLine(nameof(OnWebResourceRequested));
+    }
+
+    private static void OnLaunchingExternalUriScheme(CoreWebView2 sender, CoreWebView2LaunchingExternalUriSchemeEventArgs args)
+    {
+        Log.WriteLine(nameof(OnLaunchingExternalUriScheme));
+    }
+
+    private static void OnDownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
+    {
+        Log.WriteLine(nameof(OnDownloadStarting));
+    }
 
 
     private const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
@@ -81,9 +104,12 @@ public static class MarkdownExtensions
             Log.WriteLine($"uri = [{uri}]");
             Log.WriteLine($"\t.Host = [{uri.Host}]");
             Log.WriteLine($"\t.Port = [{uri.Port}]");
-            Log.WriteLine($"\t.LocalPath = [{uri.LocalPath}]");
-            Log.WriteLine($"\t.Directory = [{Path.GetDirectoryName(uri.LocalPath)}]");
-            Log.WriteLine($"\t.FileName = [{Path.GetFileName(uri.LocalPath)}]");
+            var localPath = uri.LocalPath;
+            Log.WriteLine($"\t.LocalPath = [{localPath}]");
+            var directory = Path.GetDirectoryName(localPath);
+            Log.WriteLine($"\t.Directory = [{directory}]");
+            var filename = Path.GetFileName(localPath);
+            Log.WriteLine($"\t.Filename = [{filename}]");
             Log.WriteLine($"\t.Query = [{uri.Query}]");
 
             if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
@@ -97,15 +123,7 @@ public static class MarkdownExtensions
                     
             args.Cancel = true;
             
-            
-            var host = HttpUtility.UrlEncode(uri.Host);
-            var port = uri.Port;
-            var directory = HttpUtility.UrlEncode(Path.GetDirectoryName(uri.LocalPath));
-            var filename = HttpUtility.UrlEncode(Path.GetFileName(uri.LocalPath));
-            
-            //var requestedSource = sender.Source;
-
-            var newRequest = $"{MarkdownConverterPagePath}?host={host}&port={port}&dir={directory}&filename={filename}&query={uri.Query}";
+            var newRequest = $"{MarkdownConverterPagePath}?dir={directory}&filename={filename}&query={uri.Query}";
             Log.WriteLine($"newRequest [{newRequest}]");
             Log.WriteLine(" ");
             Log.WriteLine(" ");
@@ -116,7 +134,7 @@ public static class MarkdownExtensions
             {
                 // TODO: Add error handling
                 //await Task.Delay(500);
-                sender.NavigateToProjectContentFile(newRequest);
+                sender.NavigateToProjectContentFileAsync(newRequest);
             });
         }
         catch (Exception ex)

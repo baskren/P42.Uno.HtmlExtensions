@@ -8,6 +8,7 @@ public sealed partial class MainPage : Page
 
     public MainPage()
     {
+        
         this
             .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
             .VerticalAlignment(VerticalAlignment.Stretch)
@@ -40,6 +41,11 @@ public sealed partial class MainPage : Page
                                     .Content("WV2 PDF")
                                     .VerticalAlignment(VerticalAlignment.Center)
                             ),
+                        new Rectangle()
+                            .Grid(row:1)
+                            .HorizontalAlignment(HorizontalAlignment.Stretch)
+                            .VerticalAlignment(VerticalAlignment.Stretch)
+                            .Fill(Colors.White),
                         new WebView2()
                             .Name(out _webView)
                             .Grid(row:1)
@@ -144,14 +150,10 @@ public sealed partial class MainPage : Page
         {
             await _webView.EnsureCoreWebView2Async();
     
-            _webView.EnableMarkdownSupport();
+            await _webView.EnableMarkdownSupportAsync();
                 
-            //WebView2Extensions.EnableProjectContentFolder("WebContentX");
-            //WebView2Extensions.EnableProjectContentFolder("AltWebContent");
-            //WebView2Extensions.EnableProjectContentFolder("image");
-                
-            //_webView.NavigateToProjectContentFile("/WebContentX/CltInstall.html");
-            _webView.NavigateToProjectContentFile("/WebContentX/document.md");
+            //await _webView.NavigateToProjectContentFileAsync("/WebContentX/CltInstall.html");
+            await _webView.NavigateToProjectContentFileAsync("/WebContentX/document.md");
                 
         }
         catch (Exception ex)
