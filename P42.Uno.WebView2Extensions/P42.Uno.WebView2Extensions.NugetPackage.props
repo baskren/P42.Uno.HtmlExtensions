@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build\P42.Uno.WebView2Extensions.props" Pack="true" PackagePage="build\" />
+    <None Include="build\$(PackageId).props" Pack="true" PackagePage="buildTransitive\" />
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
