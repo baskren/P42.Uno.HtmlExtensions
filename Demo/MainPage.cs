@@ -1,5 +1,12 @@
 using P42.Uno;
 
+#if BROWSERWASM
+using Log = System.Console;
+#else
+using Log = System.Diagnostics.Debug;
+#endif
+    
+
 namespace Demo;
 
 public sealed partial class MainPage : Page
@@ -21,10 +28,6 @@ public sealed partial class MainPage : Page
                     .RowDefinitions("50,*,50")
                     .Children
                     (
-                        new TextBlock()
-                            .Text("Hello World!")
-                            .HorizontalAlignment(HorizontalAlignment.Center)
-                            .VerticalAlignment(VerticalAlignment.Center),
                         new StackPanel()
                             .Grid(row:0)
                             .Orientation(Orientation.Horizontal)
@@ -39,7 +42,16 @@ public sealed partial class MainPage : Page
                                 new Button()
                                     .Name(out var webViewPdfButton)
                                     .Content("WV2 PDF")
+                                    .VerticalAlignment(VerticalAlignment.Center),
+                                new Button()
+                                    .Name(out var backButton)
+                                    .Content("<<<")
+                                    .VerticalAlignment(VerticalAlignment.Center),
+                                new Button()
+                                    .Name(out var fwdButton)
+                                    .Content(">>>")
                                     .VerticalAlignment(VerticalAlignment.Center)
+                                
                             ),
                         new Rectangle()
                             .Grid(row:1)
@@ -67,7 +79,7 @@ public sealed partial class MainPage : Page
                                     .Name(out var htmlPdfButton)
                                     .Content("HTML PDF")
                                     .VerticalAlignment(VerticalAlignment.Center)
-
+                                
                             )
 
 
@@ -77,13 +89,28 @@ public sealed partial class MainPage : Page
 
         webViewPrintButton.Click += OnWebViewPrintButtonClick;
         webViewPdfButton.Click += OnWebViewPdfButtonClick;
+        backButton.Click += OnBackButtonClick;
+        fwdButton.Click += OnFwdButtonClick;
 
         htmlPrintButton.Click += OnHtmlPrintButtonClick;
         htmlPdfButton.Click += OnHtmlPdfButtonClick;
 
         Loaded += OnLoaded;
+        
     }
-    
+
+    private void OnFwdButtonClick(object sender, RoutedEventArgs e)
+    {
+        Log.WriteLine($"CAN GO FWD: {_webView.CanGoForward}");
+            _webView.GoForward();
+    }
+
+    private void OnBackButtonClick(object sender, RoutedEventArgs e)
+    {
+        Log.WriteLine($"CAN GO BACK: {_webView.CanGoBack}");
+        _webView.GoBack();
+    }
+
     private async void OnWebViewPrintButtonClick(object sender, RoutedEventArgs e)
     {
         try

@@ -20,7 +20,7 @@ public partial class App : Application
 
     private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
     {
-        System.Diagnostics.Debug.WriteLine($"FirstChance: [{e.Exception}]");
+        //System.Diagnostics.Debug.WriteLine($"FirstChance: [{e.Exception}]");
     }
 
     private void UncaughtExceptionHandler(object sender, System.UnhandledExceptionEventArgs e)

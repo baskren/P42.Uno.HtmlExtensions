@@ -13,7 +13,14 @@
       Visible="false"
     />
     <Content
-      Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) OR $(TargetFramework.Contains('wasm')) "
+      Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) "
+      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+      Visible="false"
+      UnoDeploy="Root"
+      CopyToOutputDirectory="PreserveNewest" />
+    <Content
+      Condition=" $(TargetFramework.Contains('wasm')) "
       Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
       Link="P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
       Visible="false"
