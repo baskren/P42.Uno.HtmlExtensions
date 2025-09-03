@@ -51,18 +51,7 @@
   <script src="markdown-it-ins.min.js"></script>
   <script src="markdown-it-container.min.js"></script>
   <script src="markdown-it-deflist.min.js"></script>
-
-    <script>
-        window.onhashchange = function() {
-            let hash = window.location.hash;
-            console.log("MarkdownPage: window.onhashchange", hash);
-        }
-        window.addEventListener('popstate', (event) => {
-            console.log('MarkdownPage: History state changed, potentially from a back button.');
-            // The event.state object contains the state pushed with pushState
-        });
-</script>
-
+    
   <script>
     // configure markdown-it with plugins
     const md = window.markdownit({
