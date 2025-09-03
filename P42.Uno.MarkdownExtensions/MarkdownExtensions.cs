@@ -42,7 +42,7 @@ public static class MarkdownExtensions
         #endif
     }
     
-    private const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
+    internal const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
 
     private static void OnNavStart(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
     {

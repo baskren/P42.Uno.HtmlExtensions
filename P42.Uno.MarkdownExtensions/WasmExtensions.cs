@@ -12,6 +12,8 @@ public static partial class WasmExtensions
 
     private static readonly Dictionary<string, WeakReference<WebView2>> WebView2Cache = new ();
 
+    private static readonly Dictionary<string, string> LastPage = new();
+
     internal static async Task EnableOnLoadAsync(WebView2 webView)
     {
         var id = await webView.CoreWebView2.ExecuteScriptAsync("window.frameElement.id");
@@ -59,14 +61,58 @@ public static partial class WasmExtensions
         var (webview, href) = await GetWebView2AndHrefAsync(id);
         msg += $" : [{href}]";
 
-        if (webview != null)
+        if (webview is null || string.IsNullOrEmpty(href))
+            return $"WasmExtensions.OnLoad A id:[{id}] href:[{href}]";
+        
+        if (!href.StartsWith(VirtualHost.HostUrl))
         {
-            Log.WriteLine($"WasmExtensions.OnLoad: [{msg}]");
+            LastPage[id] = href;
+            return $"WasmExtensions.OnLoad B id:[{id}] href:[{href}]";
+        }
+
+        var uri = new Uri(href);
+        var localPath = uri.LocalPath;
+        var directory = Path.GetDirectoryName(localPath);
+        var fileName = Path.GetFileName(localPath);
+        var extension = Path.GetExtension(localPath);
+        var query = uri.Query;
+        if (extension != ".md")
+        {
+            LastPage[id] = href;
+            return $"WasmExtensions.OnLoad C id:[{id}] href:[{href}]";
+        }
+
+        if (!LastPage.TryGetValue(id, out var lastPage)
+            || !lastPage.Contains(MarkdownExtensions.MarkdownConverterPagePath)
+            )
+        {
+            LastPage[id] = href;
             MarkdownExtensions.RedirectIfMarkdown(webview, href);
-            
+            return $"WasmExtensions.OnLoad D id:[{id}] href:[{href}]";
         }
         
-        return $"id:[{id}] href:[{href}]";
+        var lastPageUrl = new Uri(lastPage);
+        var lastPageQuery = lastPageUrl.Query;
+        if (string.IsNullOrWhiteSpace(lastPageQuery))
+        {
+            LastPage[id] = href;
+            return $"WasmExtensions.OnLoad E id:[{id}] href:[{href}]";
+        }
+        
+        var queryParams = System.Web.HttpUtility.ParseQueryString(lastPageQuery);
+        
+        if (queryParams.Get("dir") != directory
+            || queryParams.Get("filename") != fileName
+            || queryParams.Get("query") != query
+            )
+        {
+            LastPage[id] = href;
+            MarkdownExtensions.RedirectIfMarkdown(webview, href);
+            return $"WasmExtensions.OnLoad F id:[{id}] href:[{href}]";
+        }
+
+        await webview.CoreWebView2.ExecuteScriptAsync("history.back()");
+        return $"WasmExtensions.OnLoad G id:[{id}] href:[{href}]";
     }        
 #endif
 

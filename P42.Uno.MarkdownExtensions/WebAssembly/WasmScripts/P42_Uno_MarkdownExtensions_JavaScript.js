@@ -12,6 +12,16 @@ function P42_EnableOnLoad(id) {
                 console.log("P42_EnableOnLoad C : " + r);
             });
         }
+
+        window.onhashchange = function() {
+            let hash = window.location.hash;
+            console.log("APP window.onhashchange", hash);
+        }
+        window.addEventListener('popstate', (event) => {
+            console.log('APP History state changed, potentially from a back button.');
+            // The event.state object contains the state pushed with pushState
+        });
+
         //console.log("P42_EnableOnLoad EXIT B");
         return "ok";
     }
