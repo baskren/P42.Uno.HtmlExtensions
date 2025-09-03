@@ -18,7 +18,7 @@
         </UnoFeatures>
 
       <!-- CUSTOMIZATION -->
-      <RootNamespace>P42.Uno.MdExt</RootNamespace>
+      <RootNamespace>P42.Uno.MarkdownExtensionsRns</RootNamespace>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     </PropertyGroup>

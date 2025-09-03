@@ -21,7 +21,7 @@
     </UnoFeatures>
 
     <!-- CUSTOMIZATION -->
-    <RootNamespace>P42.Uno.Wv2Ext</RootNamespace>
+    <RootNamespace>P42.Uno.WebView2ExtensionsRns</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
   </PropertyGroup>

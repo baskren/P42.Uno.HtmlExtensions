@@ -17,7 +17,7 @@
     </UnoFeatures>
 
     <!-- CUSTOMIZATION -->
-    <RootNamespace>P42.Uno.HtmlExt</RootNamespace>
+    <RootNamespace>P42.Uno.HtmlExtensionsRns</RootNamespace>
 
   </PropertyGroup>
 
