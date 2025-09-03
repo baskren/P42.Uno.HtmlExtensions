@@ -375,7 +375,7 @@ public static partial class WebView2Extensions
     /// <param name="webView2"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    private static object GetNativeWebViewWrapper(this WebView2 webView2)
+    internal static object GetNativeWebViewWrapper(this WebView2 webView2)
     {
         if (typeof(CoreWebView2).GetField("_nativeWebView", BindingFlags.Instance | BindingFlags.NonPublic) is not {} nativeWebViewField)
             throw new Exception("Unable to obtain _nativeWebView field information");
@@ -551,10 +551,10 @@ public static partial class WebView2Extensions
 
     public static async Task<Uri> ProjectContentFileUriAsync(string projectContentFilePath)
     {
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} A");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} A");
         ArgumentException.ThrowIfNullOrWhiteSpace(projectContentFilePath);
         projectContentFilePath = projectContentFilePath.TrimStart(DirectorySeparators).Replace('\\', '/');
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} B");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} B");
 
         var urlAndQuery = projectContentFilePath.Split('?');
         projectContentFilePath = urlAndQuery[0];
@@ -562,32 +562,32 @@ public static partial class WebView2Extensions
             ? urlAndQuery[1]
             : string.Empty;
 
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} C");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} C");
 
         // All paths without an extension are assumed to be directories -
         //  assume we're looking for index.html
         if (projectContentFilePath.EndsWith(Path.DirectorySeparatorChar) || projectContentFilePath.EndsWith(Path.AltDirectorySeparatorChar))
             projectContentFilePath += "index.html";
 
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} D");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} D");
 
         if (string.IsNullOrWhiteSpace(Path.GetExtension(projectContentFilePath)))
             projectContentFilePath += Path.DirectorySeparatorChar + "index.html";
 
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} E");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} E");
 
         var projectFolder = Path.GetDirectoryName(projectContentFilePath);
         if (string.IsNullOrWhiteSpace(projectFolder))
             throw new ArgumentException("Root project folder is not allowed.");
 
-#if BROWSERWASM
+        #if BROWSERWASM
         var assets = await WasmWebViewExtensions.GetAssetFilesAsync();
         if (assets is null)
             throw new Exception("Unable to get WASM asset files from package");
 
         if (!assets.Any(asset => asset.StartsWith(projectContentFilePath)))
             throw new FileNotFoundException($"Project Content File Not Found: [{projectContentFilePath}] ");
-#else
+        #else
         var fullFilePath = Path.Combine(VirtualHost.ContentRoot, projectContentFilePath);        
         if (!ProjectFileExists(fullFilePath))
         {
@@ -597,18 +597,19 @@ public static partial class WebView2Extensions
 
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
         VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
-#endif
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} F");
+        #endif
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} F");
 
         if (!string.IsNullOrWhiteSpace(query))
             projectContentFilePath += $"?{query}";
 
-        Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} G");
+        //Log.WriteLine($"ProjectContentFileUriAsync {projectContentFilePath} G");
 
         #if BROWSERWASM
         var url =  $"{VirtualHost.HostUrl}{projectContentFilePath}";
         #else
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
+        await Task.CompletedTask;
         #endif
         
         Log.WriteLine($"Project Content File url: [{url}]");

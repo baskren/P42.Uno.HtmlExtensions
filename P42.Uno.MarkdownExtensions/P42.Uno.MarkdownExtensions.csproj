@@ -19,7 +19,7 @@
 
       <!-- CUSTOMIZATION -->
       <RootNamespace>P42.Uno.MdExt</RootNamespace>
-
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     </PropertyGroup>
 
@@ -41,6 +41,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
     </ItemGroup>
 
 

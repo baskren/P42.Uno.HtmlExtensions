@@ -15,6 +15,10 @@ namespace P42.Uno;
 public static class MarkdownExtensions
 {
 
+    public static readonly DependencyProperty HtmlIdProperty = DependencyProperty.RegisterAttached(
+        "HtmlId", typeof(string), typeof(MarkdownExtensions), new PropertyMetadata("0"));
+
+    
     /// <summary>
     /// Required initialization method
     /// </summary>
@@ -30,116 +34,113 @@ public static class MarkdownExtensions
         //TODO: Add VirtualHost.LocalFolders.AddDistinct("UnoLib1"); here
         //webView.IsMarkdownVirtualHostMapped(true);
         await WebView2Extensions.EnableProjectContentFolder("P42.Uno.MarkdownExtensions");
+
+        #if BROWSERWASM
+        await WasmExtensions.EnableOnLoadAsync(webView);
+        #else
         webView.NavigationStarting += OnNavStart;
-        webView.CoreWebView2.DownloadStarting += OnDownloadStarting;
-        webView.CoreWebView2.LaunchingExternalUriScheme += OnLaunchingExternalUriScheme;
-        webView.CoreWebView2.WebResourceRequested += OnWebResourceRequested;
-        webView.CoreWebView2.WebResourceResponseReceived += OnWebResourceResponseReceived;
+        #endif
     }
-
-    private static void OnWebResourceResponseReceived(CoreWebView2 sender, CoreWebView2WebResourceResponseReceivedEventArgs args)
-    {
-        Log.WriteLine(nameof(OnWebResourceResponseReceived));
-    }
-
-    private static void OnWebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
-    {
-        Log.WriteLine(nameof(OnWebResourceRequested));
-    }
-
-    private static void OnLaunchingExternalUriScheme(CoreWebView2 sender, CoreWebView2LaunchingExternalUriSchemeEventArgs args)
-    {
-        Log.WriteLine(nameof(OnLaunchingExternalUriScheme));
-    }
-
-    private static void OnDownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
-    {
-        Log.WriteLine(nameof(OnDownloadStarting));
-    }
-
-
+    
     private const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
 
     private static void OnNavStart(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
     {
+        #if !BROWSERWASM
+        args.Cancel = RedirectIfMarkdown(sender, args.Uri ?? string.Empty);
+        #endif
+    }
+
+
+    internal static bool RedirectIfMarkdown(WebView2 webView, string uriString)
+    {
         try
         {
+            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[A] : uriString [{uriString}]");
 
+            if (string.IsNullOrWhiteSpace(uriString))
+                return false;
 
-            Log.WriteLine($"args.Cancel [{args.Cancel}]");
-            Log.WriteLine($"args.IsRedirected [{args.IsRedirected}]");
-            Log.WriteLine($"args.IsUserInitiated [{args.IsUserInitiated}]");
-            Log.WriteLine($"args.NavigationId [{args.NavigationId}]");
-            Log.WriteLine($"args.Uri [{args.Uri}]");
-
-            if (string.IsNullOrWhiteSpace(args.Uri))
-                return;
-
-            var uriString = args.Uri;
-
-            if (args.Uri.StartsWith("data:text/html;charset=utf-8;base64,", StringComparison.OrdinalIgnoreCase))
+            if (uriString.StartsWith("about:"))
+                return false;
+            
+            if (uriString.StartsWith("data:text/html;charset=utf-8;base64,", StringComparison.OrdinalIgnoreCase))
             {
-                var base64 = args.Uri[36..];
-                Log.WriteLine($"base64: [{base64}]");
+                var base64 = uriString[36..];
                 var bytes = Convert.FromBase64String(base64);
                 uriString = System.Text.Encoding.UTF8.GetString(bytes);
                 Log.WriteLine($"uri: [{uriString}]");
             }
 
+            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[B] : uriString [{uriString}]");
+            
+            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[strcmp] : [{uriString == "http://localhost:64526/WebContentX/document.md"}]");
+            
             Uri uri;
             try
             {
                 uri = new Uri(uriString);
             }
-            catch (System.UriFormatException)
+            catch (Exception ex)
             {
+                Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[EX] : {ex}");
+                // TODO: Need to test webview.NavigateToString();
+                /*
                 WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    sender.NavigateToString(uriString);
-                    return;
+                    webView.NavigateToString(uriString);
                 });
-                return;
+                return true;*/
+                return true;
             }
 
-            Log.WriteLine($"uri = [{uri}]");
-            Log.WriteLine($"\t.Host = [{uri.Host}]");
-            Log.WriteLine($"\t.Port = [{uri.Port}]");
+            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[C] : uriString [{uriString}]");
+
+            //Log.WriteLine($"uri = [{uri}]");
+            //Log.WriteLine($"\t.Host = [{uri.Host}]");
+            //Log.WriteLine($"\t.Port = [{uri.Port}]");
             var localPath = uri.LocalPath;
-            Log.WriteLine($"\t.LocalPath = [{localPath}]");
+            //Log.WriteLine($"\t.LocalPath = [{localPath}]");
             var directory = Path.GetDirectoryName(localPath);
-            Log.WriteLine($"\t.Directory = [{directory}]");
+            //Log.WriteLine($"\t.Directory = [{directory}]");
             var filename = Path.GetFileName(localPath);
-            Log.WriteLine($"\t.Filename = [{filename}]");
-            Log.WriteLine($"\t.Query = [{uri.Query}]");
+            //Log.WriteLine($"\t.Filename = [{filename}]");
+            //Log.WriteLine($"\t.Query = [{uri.Query}]");
 
             if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-                return;
+                return false;
             
             if (!uriString.StartsWith(VirtualHost.HostUrl))
             {
                 Log.WriteLine($"uri: [{uriString}] !>>> [{VirtualHost.HostUrl}]");
-                return;
+                return false;
             }
                     
-            args.Cancel = true;
-            
             var newRequest = $"{MarkdownConverterPagePath}?dir={directory}&filename={filename}&query={uri.Query}";
             Log.WriteLine($"newRequest [{newRequest}]");
             Log.WriteLine(" ");
             Log.WriteLine(" ");
 
-            WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(() =>
-
-            //Task.Run(() =>
+            WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(async () =>
             {
-                // TODO: Add error handling
-                //await Task.Delay(500);
-                sender.NavigateToProjectContentFileAsync(newRequest);
+                try
+                {
+                    await webView.NavigateToProjectContentFileAsync(newRequest);
+                }
+                catch (Exception ex)
+                {
+                    await DialogExtensions.ShowExceptionDialogAsync(webView.XamlRoot!, $"NavigateToProjectContentFileAsync({newRequest})", ex);
+                }
             });
+            
+            return true;
         }
         catch (Exception ex)
         {
             Log.WriteLine($"MarkdownExtensions.OnNavStart : [{ex}]");
+            return false;
         }
+        
     }
+    
 }

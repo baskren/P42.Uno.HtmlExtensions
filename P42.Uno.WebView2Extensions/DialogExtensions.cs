@@ -111,18 +111,24 @@ public static class DialogExtensions
             bool hideAfterOnContentLoadedTaskComplete = false,
             CancellationToken cancellationToken = default)
         {
-            var processor = new BusyDialog(xamlRoot, title, processFunction, hasCancelButton, cancellationToken);
+            var processor = new BusyDialog(xamlRoot, title, processFunction, hasCancelButton, hideAfterOnContentLoadedTaskComplete, cancellationToken);
             await processor.ProcessAsync();
         }
         
-        private BusyDialog(XamlRoot xamlRoot, string title, Func<CancellationToken, Task> processFunction,
-            bool hasCancelButton = false, CancellationToken cancellationToken = default)
+        private BusyDialog(
+            XamlRoot xamlRoot, 
+            string title, 
+            Func<CancellationToken, Task> processFunction,
+            bool hasCancelButton = false, 
+            bool hideAfterOnContentLoadedTaskComplete = false,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(xamlRoot);
             ArgumentNullException.ThrowIfNull(processFunction);
             
             
             CancellationTokenSource uiCancellationTokenSource = new ();
+            _hideAfterOnLoadedTaskComplete = hideAfterOnContentLoadedTaskComplete;
             _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(uiCancellationTokenSource.Token, cancellationToken).Token;
 
             _function = processFunction;

@@ -114,9 +114,9 @@
         const dir = params.get("dir");
         const filename = params.get("filename");
         const query = params.get("query");
-        console.log("dir: "+dir);
-        console.log("filename: "+filename);
-        console.log("query: "+query);
+        //console.log("dir: "+dir);
+        //console.log("filename: "+filename);
+        //console.log("query: "+query);
 
         //var reqUrl = params.get("requestUrl");
 
@@ -124,7 +124,7 @@
             return;
 
         const newBaseUrl = `${dir}/`;
-        console.log("newBaseUrl: "+newBaseUrl);
+        //console.log("newBaseUrl: "+newBaseUrl);
         const newBase = document.createElement('base');
         newBase.setAttribute('href', newBaseUrl);
         document.head.appendChild(newBase);

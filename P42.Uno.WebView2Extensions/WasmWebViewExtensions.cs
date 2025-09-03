@@ -39,10 +39,12 @@ internal static partial class WasmWebViewExtensions
         var text = await response.Content.ReadAsStringAsync();
         var lines = text.Split('\n');
         
+        /*
         Console.WriteLine("=== uno-assets.txt ===");
         foreach (var line in lines)
             Console.WriteLine($"\t{line}");
         Console.WriteLine("=== uno-assets.txt ===");
+        */
         
         _assetFiles = lines.ToList();
         _gettingAssets = false;
