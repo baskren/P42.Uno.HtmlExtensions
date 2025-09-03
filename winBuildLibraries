@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+./winWipe
+
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.WebView2Extensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.HtmlExtensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.MarkdownExtensions

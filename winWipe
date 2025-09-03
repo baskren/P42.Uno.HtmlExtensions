@@ -1,0 +1,11 @@
+#!/bin/zsh
+rm -rfv **/bin
+rm -rfv **/obj
+
+rm -rfv /cygdrive/x/NuGet_Server/P42.Uno.WebView2Extensions
+rm -rfv /cygdrive/x/NuGet_Server/P42.Uno.HtmlExtensions
+rm -rfv /cygdrive/x/NuGet_Server/P42.Uno.MarkdownExtensions
+
+rm -rfv /cygdrive/c/Users/ben/.nuget/packages/p42.uno.webview2extensions
+rm -rfv /cygdrive/c/Users/ben/.nuget/packages/p42.uno.htmlextensions
+rm -rfv /cygdrive/c/Users/ben/.nuget/packages/p42.uno.markdownextensions
