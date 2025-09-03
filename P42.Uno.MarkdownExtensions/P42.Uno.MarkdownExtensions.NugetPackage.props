@@ -2,8 +2,8 @@
 
 
 	<!-- NUGET PACKAGE GENERATION -->
-  <PropertyGroup>  
-    
+  <PropertyGroup>
+
     <Version>$(UnoVersion)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
@@ -27,8 +27,9 @@
     <PackageTags>WinUI Uno.Platform Uno Markdown WebView2</PackageTags>
 
   </PropertyGroup>
-  
+
   <ItemGroup>
+    <None Include="build\MarkdownExtensions.props" Pack="true" PackagePage="build\" />
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />

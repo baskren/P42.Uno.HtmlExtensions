@@ -155,3 +155,17 @@ $$I = \int \rho R^{2} dV$$
 
 And note that you can backslash-escape any punctuation characters
 which you wish to be displayed literally, ex.: \`foo\`, \*bar\*, etc.
+
+### EXTERNAL
+
+- You may be using [Markdown Live Preview](https://markdownlivepreview.com/).
+- [External HTML](https://awc.org)
+- [External Markdown Document](https://gist.githubusercontent.com/allysonsilva/85fff14a22bbdf55485be947566cc09e/raw/fa8048a906ebed3c445d08b20c9173afd1b4a1e5/Full-Markdown.md)
+
+### PROJECT CONTENT
+
+- [Project Content HTML File 1](/WebContentX/CltInstall.html)
+- [Project Content HTML File 2](/AltWebContent/Limits.html)
+- [Project Content HTML File 3](/WebContentX/ReducedBody/index.html)
+- [Project Content Markdown File 1](document.md)
+

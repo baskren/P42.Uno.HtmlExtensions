@@ -20,43 +20,43 @@ public static class DialogExtensions
             suggestedName = System.IO.Path.GetFileNameWithoutExtension(suggestedName);
         }
         
-#if __IOS__
+        #if __IOS__
         var picker = new CustomFileSavePicker(xamlRoot)
-#else
+        #else
         var picker = new FileSavePicker
-#endif
+        #endif
         {
             SuggestedStartLocation = PickerLocationId.Downloads,
             SuggestedFileName = suggestedName
         };
 
-        if (suffixes is { Count: > 0 })
-        {
-            for (var i = suffixes.Count - 1; i >= 0; i--)
-            {
-                var suffix = suffixes[i].TrimStart('.');
-                if (string.IsNullOrWhiteSpace(suffix))
-                    suffixes.RemoveAt(i);
-                else
-                    suffixes[i] = $".{suffix}";
-            }
+        if (suffixes is not { Count: > 0 })
+            return await picker.PickSaveFileAsync() ?? throw new TaskCanceledException();
 
-            picker.FileTypeChoices.Add(type, suffixes);
+        for (var i = suffixes.Count - 1; i >= 0; i--)
+        {
+            var suffix = suffixes[i].TrimStart('.');
+            if (string.IsNullOrWhiteSpace(suffix))
+                suffixes.RemoveAt(i);
+            else
+                suffixes[i] = $".{suffix}";
         }
 
+        picker.FileTypeChoices.Add(type, suffixes);
 
 
-#if WINDOWS
+
+        #if WINDOWS
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(WebView2Extensions.WinUiMainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-#elif BROWSERWASM
+        #elif BROWSERWASM
         // TODO: Switch to LocalFolderCache path?
         var path = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
         Log.WriteLine($"LocalCacheFolder.Path = {path}");
         
         if (!Directory.Exists("/cache"))
             Directory.CreateDirectory("/cache");
-#endif
+        #endif
         
         return await picker.PickSaveFileAsync() ??  throw new TaskCanceledException();
 

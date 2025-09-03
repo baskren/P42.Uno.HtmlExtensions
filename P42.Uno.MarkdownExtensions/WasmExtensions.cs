@@ -6,7 +6,7 @@ using Log = System.Diagnostics.Debug;
 
 namespace P42.Uno;
 
-public static partial class WasmExtensions
+internal static partial class WasmExtensions
 {
 #if BROWSERWASM
 
@@ -14,7 +14,7 @@ public static partial class WasmExtensions
 
     private static readonly Dictionary<string, string> LastPage = new();
 
-    internal static async Task EnableOnLoadAsync(WebView2 webView)
+    public static async Task EnableOnLoadAsync(WebView2 webView)
     {
         var id = await webView.CoreWebView2.ExecuteScriptAsync("window.frameElement.id");
         id = id?.Trim('"');
@@ -50,10 +50,10 @@ public static partial class WasmExtensions
     }
     
     [System.Runtime.InteropServices.JavaScript.JSImport("globalThis.P42_EnableOnLoad")]
-    internal static partial string EnableOnLoad(string id);
+    public static partial string EnableOnLoad(string id);
         
     [System.Runtime.InteropServices.JavaScript.JSExport()]
-    internal static async Task<string> OnLoad(string id, string name)
+    public static async Task<string> OnLoad(string id, string name)
     {
         var msg = $"WasmExtensions.OnLoad: [{id}][{name}]";
         Log.WriteLine(msg);

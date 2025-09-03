@@ -1,6 +1,6 @@
 namespace P42.Uno;
 
-public static class StreamExtensions
+internal static class StreamExtensions
 {
     public static byte[] ReadAllBytesFromStream(this Stream stream)
     {

@@ -28,7 +28,10 @@ public static class MarkdownExtensions
         => WebView2Extensions.Init(application, window);
 
 
-
+    /// <summary>
+    /// Enable this WebView2 to display Markdown files
+    /// </summary>
+    /// <param name="webView"></param>
     public static async Task EnableMarkdownSupportAsync(this WebView2 webView)
     {
         //TODO: Add VirtualHost.LocalFolders.AddDistinct("UnoLib1"); here
@@ -110,11 +113,13 @@ public static class MarkdownExtensions
             if (!uri.LocalPath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
                 return false;
             
+            
             if (!uriString.StartsWith(VirtualHost.HostUrl))
             {
                 Log.WriteLine($"uri: [{uriString}] !>>> [{VirtualHost.HostUrl}]");
                 return false;
             }
+            
                     
             var newRequest = $"{MarkdownConverterPagePath}?dir={directory}&filename={filename}&query={uri.Query}";
             Log.WriteLine($"newRequest [{newRequest}]");

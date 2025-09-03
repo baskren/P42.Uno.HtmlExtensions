@@ -51,8 +51,8 @@
     <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
 
-  <Import Project="../P42.Uno.WebView2Extensions/build/WebView2Extensions.props" />
-  <Import Project="../P42.Uno.MarkdownExtensions/build/MarkdownExtensions.props" />
+  <Import Condition=" '$(Configuration)' != 'Release' " Project="../P42.Uno.WebView2Extensions/build/WebView2Extensions.props" />
+  <Import Condition=" '$(Configuration)' != 'Release' " Project="../P42.Uno.MarkdownExtensions/build/MarkdownExtensions.props" />
 
 
   <ItemGroup>
@@ -65,9 +65,12 @@
 
   <!-- LIBRARY REFERENCES -->
   <ItemGroup>
-    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-    <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
-    <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.WebView2Extensions"  />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.HtmlExtensions"  />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.MarkdownExtensions"   />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
@@ -76,13 +79,11 @@
 
 
 
-
+  <!-- VERIFICATION THAT PROJECT CONTENT FILES ARE IN APP BUILD -->
   <Target Name="P42_Demo" BeforeTargets="BeforeBuild">
-
     <Message Condition=" $(TargetFramework.Contains('android')) " Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('ios'))" Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) " Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]" Importance="High" />
-
   </Target>
 
 
