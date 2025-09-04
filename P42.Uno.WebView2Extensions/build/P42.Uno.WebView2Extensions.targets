@@ -1,15 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 
-  <ItemGroup>
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="6.2.58" />
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="6.2.58" />
-    <PackageReference  Condition="   $(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Skia"    />
-    <PackageReference  Condition="  !$(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Native"  />
-  </ItemGroup>
-
-
-
   <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
     <!--
