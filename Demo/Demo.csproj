@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
+    <TargetFrameworks>net9.0-desktop</TargetFrameworks>
+    <!--
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    -->
 
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -64,13 +67,15 @@
 
 
   <!-- LIBRARY REFERENCES -->
-  <ItemGroup>
-    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.WebView2Extensions"  />
-    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
-    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.HtmlExtensions"  />
-    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
-    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.MarkdownExtensions"   />
+  <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
+    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PackageReference Include="P42.Uno.WebView2Extensions"  />
+    <PackageReference Include="P42.Uno.HtmlExtensions"  />
+    <PackageReference Include="P42.Uno.MarkdownExtensions"   />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
