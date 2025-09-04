@@ -1,0 +1,63 @@
+<Project>
+  <PropertyGroup>
+
+    <PackageVariant Condition="  $(MSBuildProjectName.Contains('.Skia.'))  ">Skia</PackageVariant>
+    <PackageVariant Condition="  $(MSBuildProjectName.Contains('.Native.'))  ">Native</PackageVariant>
+
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+
+
+    <UnoFeatures>
+      Lottie;
+      Toolkit;
+      ThemeService;
+      WebView;
+      $(UnoFeatures);
+    </UnoFeatures>
+
+    <!-- CUSTOMIZATION -->
+    <RootNamespace>P42.Uno.WebView2ExtensionsRns</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+  </PropertyGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <!--
+    If you encounter this error message:
+
+      error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+      Please update to a newer .NET SDK in order to reference this assembly.
+
+    This means that the two packages below must be aligned with the "build" version number of
+    the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+    must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+    -->
+    <!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MimeMapping"  Version="3.1.0"  />
+    <EmbeddedResource Include="Resources\**" />
+    <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_WebView2Extensions_JavaScript.js" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $(TargetFramework.Contains('android'))  " >
+    <AndroidResource Include="Platforms\Android\Resources\xml\p42_uno_webview2_network_security_config.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+
+
+  <!-- NO EFFECT, but will try this approach to add PERMISSIONS when modernizing Bc3
+    <AndroidManifestOverlay Include="Platforms\Android\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidManifestOverlay>
+  </ItemGroup>
+  -->
+
+
+</Project>

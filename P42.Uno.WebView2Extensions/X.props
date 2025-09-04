@@ -1,0 +1,44 @@
+<Project>
+  <PropertyGroup>
+
+
+  </PropertyGroup>
+
+  <PropertyGroup  Condition="  '$(PackageVariant)' != ''   " >
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+
+
+
+   <PropertyGroup  Condition="  '$(PackageVariant)' == ''   " >
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    <NoBuild>true</NoBuild>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <BuildOutputTargetFolder>ThisIsStupid</BuildOutputTargetFolder>
+    <!--
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoWarn>NU5100</NoWarn>     
+    -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup> 
+  <ItemGroup Condition="  '$(PackageVariant)' == ''   ">
+    <None Include="build\$(PackageId).targets" Pack="true" PackagePath="build\" />
+  </ItemGroup>
+
+
+
+  <!-- NO EFFECT, but will try this approach to add PERMISSIONS when modernizing Bc3
+    <AndroidManifestOverlay Include="Platforms\Android\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidManifestOverlay>
+  </ItemGroup>
+  -->
+
+
+</Project>

@@ -29,7 +29,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build\$(PackageId).targets" Pack="true" PackagePath="build\" PackFolder="build"/>
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
