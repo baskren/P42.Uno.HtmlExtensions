@@ -6,12 +6,8 @@
 
     <!-- no dll -->
     <TargetFramework>netstandard2.0</TargetFramework>
-    <NoBuild>true</NoBuild>
-    <BuildOutputTargetFolder>ThisIsStupid</BuildOutputTargetFolder>
 
     <!-- build-only, no deps -->
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <DevelopmentDependency>true</DevelopmentDependency>
 
     <!-- No compile items or resources -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
@@ -20,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="build/P42.Uno.WebView2Extensions.targets" Pack="true" PackagePath="build\" />
+    <None Include="build/P42.Uno.WebView2Extensions.targets" Pack="true" PackagePath="build\" />
   </ItemGroup>
 </Project>
 
