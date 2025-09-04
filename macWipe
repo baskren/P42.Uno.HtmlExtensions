@@ -2,5 +2,7 @@ rm -rfv **/bin
 rm -rfv **/obj
 
 rm -rfv ~/.nuget/packages/p42.uno.webview2extensions
+rm -rfv ~/.nuget/packages/p42.uno.webview2extensions.native
+rm -rfv ~/.nuget/packages/p42.uno.webview2extensions.skia
 rm -rfv ~/.nuget/packages/p42.uno.htmlextensions
 rm -rfv ~/.nuget/packages/p42.uno.markdownextensions

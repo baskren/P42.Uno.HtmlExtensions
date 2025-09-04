@@ -54,9 +54,10 @@
     <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
 
+  <!--
   <Import Condition=" '$(Configuration)' != 'Release' " Project="../P42.Uno.WebView2Extensions/build/WebView2Extensions.props" />
   <Import Condition=" '$(Configuration)' != 'Release' " Project="../P42.Uno.MarkdownExtensions/build/MarkdownExtensions.props" />
-
+  -->
 
   <ItemGroup>
     <WebView2ProjectContentFolder Include="WebContentX" />
@@ -68,14 +69,18 @@
 
   <!-- LIBRARY REFERENCES -->
   <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
+    <!--
     <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
     <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
     <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
+  -->
     <PackageReference Include="P42.Uno.WebView2Extensions"  />
+    <!--
     <PackageReference Include="P42.Uno.HtmlExtensions"  />
     <PackageReference Include="P42.Uno.MarkdownExtensions"   />
+    -->
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
@@ -86,6 +91,8 @@
 
   <!-- VERIFICATION THAT PROJECT CONTENT FILES ARE IN APP BUILD -->
   <Target Name="P42_Demo" BeforeTargets="BeforeBuild">
+    <Message Condition=" $(UnoFeatures.Contains(';skiarenderer;')) " Text="===== SKIA RENDERER =====" Importance="High" />
+    <Message Condition="!$(UnoFeatures.Contains(';skiarenderer;')) " Text="===== NATIVE RENDERER =====" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('android')) " Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('ios'))" Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) " Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]" Importance="High" />

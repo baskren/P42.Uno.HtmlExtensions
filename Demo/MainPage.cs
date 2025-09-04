@@ -63,7 +63,9 @@ public sealed partial class MainPage : Page
                             .Grid(row:1)
                             .DefaultBackgroundColor(Colors.White)
                             .HorizontalAlignment(HorizontalAlignment.Stretch)
-                            .VerticalAlignment(VerticalAlignment.Stretch),
+                            .VerticalAlignment(VerticalAlignment.Stretch)
+                        #if P42_UNO_HTMLEXTENSIONS
+                        ,
                         new StackPanel()
                             .Grid(row: 2)
                             .Orientation(Orientation.Horizontal)
@@ -81,6 +83,7 @@ public sealed partial class MainPage : Page
                                     .VerticalAlignment(VerticalAlignment.Center)
                                 
                             )
+                        #endif
 
 
 
@@ -92,8 +95,10 @@ public sealed partial class MainPage : Page
         backButton.Click += OnBackButtonClick;
         fwdButton.Click += OnFwdButtonClick;
 
+        #if P42_UNO_HTMLEXTENSIONS
         htmlPrintButton.Click += OnHtmlPrintButtonClick;
         htmlPdfButton.Click += OnHtmlPdfButtonClick;
+        #endif
 
         Loaded += OnLoaded;
         
@@ -141,6 +146,7 @@ public sealed partial class MainPage : Page
 
     }
 
+    #if P42_UNO_HTMLEXTENSIONS
     private async void OnHtmlPrintButtonClick(object sender, RoutedEventArgs e)
     {
         try
@@ -170,6 +176,7 @@ public sealed partial class MainPage : Page
             await DialogExtensions.ShowExceptionDialogAsync(XamlRoot!, "Html PDF : Demo.Resources.Html5TestPage.html", ex);
         }
     }
+    #endif
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -177,7 +184,9 @@ public sealed partial class MainPage : Page
         {
             await _webView.EnsureCoreWebView2Async();
     
+            #if P42_UNO_MARKDOWNEXTENSIONS
             await _webView.EnableMarkdownSupportAsync();
+            #endif
                 
             //await _webView.NavigateToProjectContentFileAsync("/WebContentX/CltInstall.html");
             await _webView.NavigateToProjectContentFileAsync("/WebContentX/document.md");
