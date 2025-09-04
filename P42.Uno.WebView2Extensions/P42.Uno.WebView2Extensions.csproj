@@ -15,10 +15,6 @@
 
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="build/P42.Uno.WebView2Extensions.targets" Pack="true" PackagePath="buildTransitive\" />
-    <None Include="build/P42.Uno.WebView2Extensions.props" Pack="true" PackagePath="buildTransitive\" />
-  </ItemGroup>
 </Project>
 
 

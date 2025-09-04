@@ -1,7 +1,26 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 
+    <ItemGroup  Condition="  @(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.WebView2Extensions.Skia')) != 'True'   AND   @(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.WebView2Extensions.Native')) != 'True' " >
+      <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="6.2.58" />
+      <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="6.2.58" />
+      <PackageReference  Condition="   $(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Skia"    />
+      <PackageReference  Condition="  !$(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Native"  />
+    </ItemGroup>
+
+
+  <Target Name="CheckPackageRef" BeforeTargets="Restore">
+    <ItemGroup  Condition="  @(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.WebView2Extensions.Skia')) != 'True'   AND   @(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.WebView2Extensions.Native')) != 'True' " >
+      <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="6.2.58" />
+      <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="6.2.58" />
+      <PackageReference  Condition="   $(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Skia"    />
+      <PackageReference  Condition="  !$(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Native"  />
+    </ItemGroup>
+  </Target>
+
   <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
+
+
 
     <!--
     <ItemGroup>
