@@ -7,66 +7,7 @@
     Name="P42_IncludeWebView2ProjectContentFiles"
     BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
-    <!--
     <ItemGroup>
-      <_p42_webview2_file Include="$(MSBuildProjectDirectory)/%(WebView2ProjectContentFolder.Identity)/**/*.*">
-        <Folder>%(WebView2ProjectContentFolder.Identity)</Folder>
-      </_p42_webview2_file>
-    </ItemGroup>
-    -->
-
-
-    <ItemGroup>
-
-
-      <!--
-      <Content
-        Include="@(_p42_webview2_file)"
-        Link="PIZZA/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
-        Visible="false"
-        CopyToOutputDirectory="PreserveNewest" />
-
-      <Content
-        Include="@(_p42_webview2_file)"
-        Link="%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
-        Visible="true"
-        CopyToOutputDirectory="PreserveNewest" />
-
-      <AndroidAsset
-        Condition="  $(TargetFramework.Contains('android')) "
-        Include="@(_p42_webview2_file)"
-        Visible="false"
-        Link="Platforms/Android/Assets/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
-
-      <BundleResource
-        Condition="  $(TargetFramework.Contains('ios')) "
-        Include="@(_p42_webview2_file)"
-        Visible="false"
-        Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
-
-      <Content
-        Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  "
-        Include="@(_p42_webview2_file)"
-        Link="WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
-        Visible="false"
-        CopyToOutputDirectory="PreserveNewest" />
-
-
-      <Content
-        Condition="  $(TargetFramework.Contains('wasm')) "
-        Include="@(_p42_webview2_file)"
-        Link="%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
-        Visible="false"
-        UnoDeploy="Root"
-        CopyToOutputDirectory="PreserveNewest" />
-
-      <Content
-        Include="@(WebView2ProjectContentFile)"
-        Link="WebView2ProjectContentFolders/%(WebView2ProjectContentFile.Identity)"
-        Visible="true"
-        CopyToOutputDirectory="PreserveNewest" />
-
-        -->
 
       <AndroidAsset
         Condition="  $(TargetFramework.Contains('android')) "

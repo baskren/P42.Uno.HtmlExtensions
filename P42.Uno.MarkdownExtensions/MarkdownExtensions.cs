@@ -55,8 +55,6 @@ public static class MarkdownExtensions
     {
         try
         {
-            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[A] : uriString [{uriString}]");
-
             if (string.IsNullOrWhiteSpace(uriString))
                 return false;
 
@@ -68,12 +66,7 @@ public static class MarkdownExtensions
                 var base64 = uriString[36..];
                 var bytes = Convert.FromBase64String(base64);
                 uriString = System.Text.Encoding.UTF8.GetString(bytes);
-                Log.WriteLine($"uri: [{uriString}]");
             }
-
-            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[B] : uriString [{uriString}]");
-            
-            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[strcmp] : [{uriString == "http://localhost:64526/WebContentX/document.md"}]");
             
             Uri uri;
             try
@@ -82,7 +75,6 @@ public static class MarkdownExtensions
             }
             catch (Exception ex)
             {
-                Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[EX] : {ex}");
                 // TODO: Need to test webview.NavigateToString();
                 /*
                 WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -92,8 +84,6 @@ public static class MarkdownExtensions
                 return true;*/
                 return true;
             }
-
-            Log.WriteLine($"MarkdownExtensions.RedirectIfMarkdown[C] : uriString [{uriString}]");
 
             //Log.WriteLine($"uri = [{uri}]");
             //Log.WriteLine($"\t.Host = [{uri.Host}]");
@@ -118,9 +108,6 @@ public static class MarkdownExtensions
             
                     
             var newRequest = $"{MarkdownConverterPagePath}?dir={directory}&filename={filename}&query={uri.Query}";
-            Log.WriteLine($"newRequest [{newRequest}]");
-            Log.WriteLine(" ");
-            Log.WriteLine(" ");
 
             WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(async () =>
             {

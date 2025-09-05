@@ -7,9 +7,9 @@
 
   <!-- App.cs or App.xaml.cs NameSpace -->
   <Choose>
-    <When Condition=" '$(AppNamespace)' != '' and '$(AppNamespace.Trim())' != '' ">
+    <When Condition=" '$(AppXamlCsNamespace)' != '' and '$(AppXamlCsNamespace.Trim())' != '' ">
       <PropertyGroup>
-        <WebView2ExtensionsGeneratedCodeFileNameSpace>$(AppNamespace)</WebView2ExtensionsGeneratedCodeFileNameSpace>
+        <WebView2ExtensionsGeneratedCodeFileNameSpace>$(AppXamlCsNamespace)</WebView2ExtensionsGeneratedCodeFileNameSpace>
       </PropertyGroup>
     </When>
     <When Condition=" '$(RootNamespace)' != '' and '$(RootNamespace.Trim())' != '' ">
@@ -27,7 +27,16 @@
 
   <Target Name="P42_GenerateWebView2RegistrationCode"
           BeforeTargets="BeforeCompile"
+          Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFile)' != ''"
           >
+
+
+    <Message Text=" AppXamlCsNamespace: $(AppXamlCsNamespace)" Importance="high"/>
+    <Message Text=" AppXamlCsNamespace.Trim(): $(AppXamlCsNamespace.Trim())" Importance="high"/>
+    <Message Text=" RootNamespace: $(RootNamespace)" Importance="high"/>
+    <Message Text=" RootNamespace.Trim(): $(RootNamespace.Trim())" Importance="high"/>
+    <Message Text=" ApplicationTitle: $(ApplicationTitle)" Importance="high"/>
+    <Message Text=" ApplicationTitle.Trim(): $(ApplicationTitle.Trim())" Importance="high"/>
 
     <!-- Create the file -->
     <WriteLinesToFile

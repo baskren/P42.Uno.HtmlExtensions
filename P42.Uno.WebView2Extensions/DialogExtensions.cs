@@ -52,7 +52,6 @@ public static class DialogExtensions
 #elif BROWSERWASM
         // TODO: Switch to LocalFolderCache path?
         var path = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
-        Log.WriteLine($"LocalCacheFolder.Path = {path}");
         
         if (!Directory.Exists("/cache"))
             Directory.CreateDirectory("/cache");

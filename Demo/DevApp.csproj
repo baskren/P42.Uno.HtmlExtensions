@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
+    <TargetFrameworks>net9.0-desktop</TargetFrameworks>
+    <!--
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    -->
 
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -13,7 +16,7 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <!-- Package Publisher -->
-    <ApplicationPublisher>Demo</ApplicationPublisher>
+    <ApplicationPublisher>P42</ApplicationPublisher>
     <!-- Package Description -->
     <Description>Demo powered by Uno Platform.</Description>
     <!--
@@ -40,7 +43,8 @@
       WebView;
     </UnoFeatures>
 
-    <BuildInParallel>true</BuildInParallel>
+    <BuildInParallel>false</BuildInParallel>
+    <AppXamlCsNamespace>Demo</AppXamlCsNamespace>
 
   </PropertyGroup>
 
@@ -59,11 +63,16 @@
 
 
   <!-- LIBRARY REFERENCES -->
-  <ItemGroup>
-    <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
-    <PackageReference Include="P42.Uno.MarkdownExtensions.$(PackageVariant)" />
-    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)" />
+  <ItemGroup >
+    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
   </ItemGroup>
+
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
+
 
   <!-- REQUIRED FOR USING PROJECT CONTENT FOLDERS ON ANDROID -->
   <ItemGroup>
@@ -72,6 +81,19 @@
   <ItemGroup>
     <Content Update="WebContentX\CltInstall\install.html" Link="WebView2ContentFile\WebContentX\CltInstall\index.html" />
   </ItemGroup>
+
+
+
+
+  <!-- VERIFICATION THAT PROJECT CONTENT FILES ARE IN APP BUILD -->
+  
+  <Target Name="Demo_Show_Assets_BundleResources_Content" BeforeTargets="BeforeBuild">
+    <Message Text="===== $(PackageVariant) RENDERER =====" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('android')) " Text="Demo: AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('ios'))" Text="'Demo: BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) " Text="Demo: WinDeskWasm Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]" Importance="High" />
+  </Target>
+
 
 
 </Project>

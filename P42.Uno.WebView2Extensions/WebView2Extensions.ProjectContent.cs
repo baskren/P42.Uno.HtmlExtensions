@@ -95,8 +95,9 @@ public static partial class WebView2Extensions
         #else
         var url =  $"{VirtualHost.HostUrl}/{projectContentFilePath}";
         await Task.CompletedTask;
-        #endif
-        
+#endif
+
+        Log.WriteLine($"WebView2Extensions.ProjectContentFileUriAsync('{projectContentFilePath}') => [{url}]");
         return new Uri(url);
     }
     
@@ -138,8 +139,9 @@ public static partial class WebView2Extensions
             return true;
 
         var files = Directory.GetFiles(folderPath ?? "");
+        Log.WriteLine($"WebView2Extensions.ProjectContentFolder: {folderPath}");
         foreach (var file in files) 
-            Log.WriteLine($"\t\t{folderPath}/{file}");
+            Log.WriteLine($"\t\tWebView2Extensions.ProjectContentFiles: {file}");
 
         result = $"MISSING: {path}";
         return false;

@@ -122,6 +122,7 @@ internal class VirtualHost
             if (!WebView2Extensions.ProjectFileExists(filePath))
             {
                 WebView2Extensions.CheckForProjectFileRecursively(filePath, out var result);
+                Log.WriteLine($"VirtualHost Cannot find file: [{filePath}]");
                 return 404;
             }    
 
