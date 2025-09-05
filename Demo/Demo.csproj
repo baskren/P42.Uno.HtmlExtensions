@@ -55,9 +55,9 @@
 
 
   <ItemGroup>
-    <WebView2ProjectContentFolder Include="WebContentX" />
-    <WebView2ProjectContentFolder Include="AltWebContent" />
-    <WebView2ProjectContentFolder Include="image" />
+    <WebView2ProjectContentFolder Include="WebContentX" Visible="false" />
+    <WebView2ProjectContentFolder Include="AltWebContent" Visible="false" />
+    <WebView2ProjectContentFolder Include="image" Visible="false" />
   </ItemGroup>
 
 
@@ -79,7 +79,7 @@
   <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
   <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
 
-  
+
   <!-- REQUIRED FOR USING PROJECT CONTENT FOLDERS ON ANDROID -->
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />

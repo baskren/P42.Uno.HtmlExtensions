@@ -1,6 +1,9 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Condition=" $(OutputType) != 'Library' ">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Condition="'@(WebView2ProjectContentFolder)' != ''" Name="P42_TransformWebView2ProjectContentFolders" BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
+  <Target
+    Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFolder)' != ''"
+    Name="P42_TransformWebView2ProjectContentFolders"
+    BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
     <ItemGroup>
       <_p42_webview2_file Include="$(MSBuildProjectDirectory)/%(WebView2ProjectContentFolder.Identity)/**/*.*">
@@ -9,12 +12,21 @@
     </ItemGroup>
 
     <ItemGroup>
+
+      <Content
+        Include="@(_p42_webview2_file)"
+        Link="%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
+        Visible="true"
+        CopyToOutputDirectory="PreserveNewest" />
+
       <AndroidAsset
+        Condition="  $(TargetFramework.Contains('android')) "
         Include="@(_p42_webview2_file)"
         Visible="false"
         Link="Platforms/Android/Assets/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
 
       <BundleResource
+        Condition="  $(TargetFramework.Contains('ios')) "
         Include="@(_p42_webview2_file)"
         Visible="false"
         Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)" />
@@ -25,6 +37,7 @@
         Link="WebView2ProjectContentFolders/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
         Visible="false"
         CopyToOutputDirectory="PreserveNewest" />
+
 
       <Content
         Condition="  $(TargetFramework.Contains('wasm')) "
