@@ -4,6 +4,7 @@
 	<!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup>
 
+    <PackageId>$(MSBuildProjectName).$(PackageVariant)</PackageId>
     <Version>$(UnoVersion)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 

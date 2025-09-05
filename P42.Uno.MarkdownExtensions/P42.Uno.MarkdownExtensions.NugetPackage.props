@@ -4,6 +4,7 @@
 	<!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup>
 
+    <PackageId>$(MSBuildProjectName).$(PackageVariant)</PackageId>
     <Version>$(UnoVersion)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
@@ -29,14 +30,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build\$(PackageId).targets" Pack="true" PackagePath="build\"  PackFolder="build"/>
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
-
-
-
 
 </Project>

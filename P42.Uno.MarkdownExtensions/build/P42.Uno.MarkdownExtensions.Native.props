@@ -1,0 +1,3 @@
+<Project>
+    <Import Project="P42.Uno.MarkdownExtensions.props" />
+</Project>

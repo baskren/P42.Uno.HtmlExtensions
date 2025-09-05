@@ -1,0 +1,82 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Condition=>
+
+  <!-- Path to generated file -->
+  <PropertyGroup>
+    <WebView2ExtensionsGeneratedCodeFile>$(BaseIntermediateOutputPath)App.GeneratedWebView2.g.cs</WebView2ExtensionsGeneratedCodeFile>
+  </PropertyGroup>
+
+
+  <!-- App.cs or App.xaml.cs NameSpace -->
+  <Choose>
+    <When Condition=" '$(AppNamespace)' != '' and '$(AppNamespace.Trim())' != '' ">
+      <PropertyGroup>
+        <WebView2ExtensionsGeneratedCodeFileNameSpace>$(AppNamespace)</WebView2ExtensionsGeneratedCodeFileNameSpace>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(RootNamespace)' != '' and '$(RootNamespace.Trim())' != '' ">
+      <PropertyGroup>
+        <WebView2ExtensionsGeneratedCodeFileNameSpace>$(RootNamespace)</WebView2ExtensionsGeneratedCodeFileNameSpace>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <WebView2ExtensionsGeneratedCodeFileNameSpace>$(ApplicationTitle)</WebView2ExtensionsGeneratedCodeFileNameSpace>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+
+  <Target Name="GenerateWebView2RegistrationCode"
+          BeforeTargets="BeforeCompile">
+
+    <!-- Create the file -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="/* Auto-generated file : DO NOT EDIT */"
+        Overwrite="true" />
+
+    <!-- Namespace -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="namespace $(WebView2ExtensionsGeneratedCodeFileNameSpace)%3B"
+        Overwrite="false" />
+
+    <!-- Class Entry -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="public partial class App : P42.Uno.IWebView2ProjectContent;{"
+        Overwrite="false" />
+
+    <!-- Method Entry -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="%09public void RegisterProjectProvidedItems();%09{"
+        Overwrite="false" />
+
+    <!-- For each item, add a function call -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="%09%09P42.Uno.WebView2Extensions.EnableProjectContentFolder(@&quot;%(WebView2ProjectContentFolder.Identity)&quot;)%3B"
+        Overwrite="false" />
+
+    <!-- Method Exit -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="%09}"
+        Overwrite="false" />
+
+    <!-- Class Exit -->
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="}"
+        Overwrite="false" />
+
+    <!-- Add the generated file into Compile items -->
+    <ItemGroup>
+      <Compile Include="$(WebView2ExtensionsGeneratedCodeFile)" />
+    </ItemGroup>
+
+  </Target>
+
+
+</Project>

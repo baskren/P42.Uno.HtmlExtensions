@@ -1,5 +1,9 @@
 <Project>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);P42_UNO_MARKDOWNEXTENSIONS;</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
 
     <AndroidAsset

@@ -83,7 +83,7 @@
     <Message Text="  CompileX:[" Importance="high"/>
     <Message Text="      @(CompileX, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
-    <Message Text="================================== $(P42_ProjectName)  ============================" Importance="high"/>
+    <Message Text="==================================  ============================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

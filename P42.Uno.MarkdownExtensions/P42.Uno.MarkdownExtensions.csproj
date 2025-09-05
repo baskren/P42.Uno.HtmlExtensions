@@ -17,10 +17,6 @@
           WebView;
         </UnoFeatures>
 
-      <!-- CUSTOMIZATION -->
-      <RootNamespace>P42.Uno.MarkdownExtensionsRns</RootNamespace>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
     </PropertyGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
@@ -38,15 +34,7 @@
         <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
     </ItemGroup>
 
-
-    <ItemGroup>
-      <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-    </ItemGroup>
-
-
-    <ItemGroup>
-      <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
-    </ItemGroup>
+    <Import Project="$(MSBuildProjectName).Variant.props" />
 
 
 </Project>

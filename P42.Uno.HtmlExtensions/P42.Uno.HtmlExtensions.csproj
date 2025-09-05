@@ -14,10 +14,8 @@
     -->
 
     <UnoFeatures>
+      WebView;
     </UnoFeatures>
-
-    <!-- CUSTOMIZATION -->
-    <RootNamespace>P42.Uno.HtmlExtensionsRns</RootNamespace>
 
   </PropertyGroup>
 
@@ -36,7 +34,7 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-  </ItemGroup>
+    <Import Project="$(MSBuildProjectName).Variant.props" />
+
+
 </Project>

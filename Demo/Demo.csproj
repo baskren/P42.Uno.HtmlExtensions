@@ -49,11 +49,6 @@
 
 
   <!-- CUSTOMIZATION START -->
-  <PropertyGroup>
-    <PackageVariant Condition="  $(UnoFeatures.Contains(';skiarenderer;')) ">Skia</PackageVariant>
-    <PackageVariant Condition=" !$(UnoFeatures.Contains(';skiarenderer;')) ">Native</PackageVariant>
-  </PropertyGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
@@ -76,13 +71,17 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
   -->
+  <PropertyGroup>
+    <PackageVariant Condition="  $(UnoFeatures.Contains(';skiarenderer;')) ">Skia</PackageVariant>
+    <PackageVariant Condition=" !$(UnoFeatures.Contains(';skiarenderer;')) ">Native</PackageVariant>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)"  />
-    <!--
-    <PackageReference Include="P42.Uno.HtmlExtensions"  />
-    <PackageReference Include="P42.Uno.MarkdownExtensions"   />
-    -->
+    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)"  />
+    <PackageReference Include="P42.Uno.MarkdownExtensions.$(PackageVariant)"   />
   </ItemGroup>
+
+  <!-- REQUIRED FOR USING PROJECT CONTENT FOLDERS ON ANDROID -->
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
   </ItemGroup>

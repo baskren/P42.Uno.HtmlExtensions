@@ -10,7 +10,7 @@
     </UnoFeatures>
 
     <!-- CUSTOMIZATION -->
-    <RootNamespace>P42.Uno.WebView2ExtensionsRns</RootNamespace>
+    <RootNamespace>P42.Uno.MarkdownExtensionsRns</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
   </PropertyGroup>
@@ -22,19 +22,15 @@
       PackagePath="buildTransitive\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
+  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MimeMapping"  Version="3.1.0"  />
-    <EmbeddedResource Include="Resources\**" />
-    <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_WebView2Extensions_JavaScript.js" />
+    <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
   </ItemGroup>
 
-  <ItemGroup Condition=" $(TargetFramework.Contains('android'))  " >
-    <AndroidResource Include="Platforms\Android\Resources\xml\p42_uno_webview2_network_security_config.xml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-  </ItemGroup>
+
 
 
   <Target Name="VariantError" BeforeTargets="BeforeBuild;BeforeRestore" Condition="  $(PackageVariant) == ''">

@@ -1,0 +1,3 @@
+<Project>
+    <Import Project="P42.Uno.WebView2Extensions.targets" />
+</Project>
