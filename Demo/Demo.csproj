@@ -63,24 +63,23 @@
 
 
   <!-- LIBRARY REFERENCES -->
-  <!--
-  <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
-    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-    <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
-    <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
-  -->
-  <PropertyGroup>
-    <PackageVariant Condition="  $(UnoFeatures.Contains(';skiarenderer;')) ">Skia</PackageVariant>
-    <PackageVariant Condition=" !$(UnoFeatures.Contains(';skiarenderer;')) ">Native</PackageVariant>
-  </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition=" $(Configuration) != 'Debug' ">
     <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)"  />
-    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)"  />
     <PackageReference Include="P42.Uno.MarkdownExtensions.$(PackageVariant)"   />
+    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)"  />
+  </ItemGroup>
+  <ItemGroup Condition=" $(Configuration) == 'Debug' ">
+    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.MarkdownExtensions\P42.Uno.MarkdownExtensions.csproj" />
+    <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
   </ItemGroup>
 
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.targets" />
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
+  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
+
+  
   <!-- REQUIRED FOR USING PROJECT CONTENT FOLDERS ON ANDROID -->
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />

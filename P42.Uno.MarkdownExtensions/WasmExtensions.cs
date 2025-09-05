@@ -46,7 +46,7 @@ internal static partial class WasmExtensions
         var href = await webView.CoreWebView2.ExecuteScriptAsync("window.location.href");
         href = href?.Trim('"');
         Log.WriteLine($"WasmExtensions.GetCurrentUrlAsync: href: [{href}]");
-        return (webView, href);;
+        return (webView, href ?? "");;
     }
     
     [System.Runtime.InteropServices.JavaScript.JSImport("globalThis.P42_EnableOnLoad")]

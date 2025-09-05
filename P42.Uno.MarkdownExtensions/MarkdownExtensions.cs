@@ -1,8 +1,4 @@
-using System;
-using System.Web;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using P42.Uno;
 
 #if BROWSERWASM
 using Log = System.Console;

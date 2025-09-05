@@ -46,18 +46,18 @@ public static class DialogExtensions
 
 
 
-        #if WINDOWS
+#if WINDOWS
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(WebView2Extensions.WinUiMainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-        #elif BROWSERWASM
+#elif BROWSERWASM
         // TODO: Switch to LocalFolderCache path?
         var path = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
         Log.WriteLine($"LocalCacheFolder.Path = {path}");
         
         if (!Directory.Exists("/cache"))
             Directory.CreateDirectory("/cache");
-        #endif
-        
+#endif
+
         return await picker.PickSaveFileAsync() ??  throw new TaskCanceledException();
 
     }
@@ -308,7 +308,7 @@ public static class DialogExtensions
 
             _webView2.Opacity = showWebContent ? 1 : 0.01;
             
-    #if WINDOWS
+#if WINDOWS
             if (showWebContent)
             {
                 _contentDialog.Resources["ContentDialogPadding"] = new Thickness(4);
@@ -319,7 +319,7 @@ public static class DialogExtensions
                 _contentDialog.Resources["HorizontalContentAlignment"] = HorizontalAlignment.Stretch;
                 _contentDialog.Resources["VerticalContentAlignment"] = VerticalAlignment.Stretch;
             }
-    #endif
+#endif
             _webView2.Loaded += OnLoaded;
                 
             if (!hasCancelButton)

@@ -152,8 +152,8 @@ public static partial class WebView2Extensions
     /// <param name="token"></param>
     private static async Task AssurePdfScriptsAsync(this WebView2 webView2, CancellationToken token = default)
     {
-        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "P42.Uno.Wv2Ext.Resources.html2pdf.bundle.js", token);
-        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "P42.Uno.Wv2Ext.Resources.p42_makePdf.js", token);
+        await webView2.AssureResourceFunctionLoadedAsync("html2pdf", "P42.Uno.WebView2ExtensionsRns.Resources.html2pdf.bundle.js", token);
+        await webView2.AssureResourceFunctionLoadedAsync("p42_makePdf", "P42.Uno.WebView2ExtensionsRns.Resources.p42_makePdf.js", token);
     }
 
 

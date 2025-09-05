@@ -23,7 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
+    <PackageReference Condition=" $(Configuration) != 'Debug' " Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
+    <ProjectReference Condition=" $(Configuration) == 'Debug' " Include="../P42.Uno.WebView2Extensions/P42.Uno.WebView2Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

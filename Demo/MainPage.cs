@@ -184,7 +184,7 @@ public sealed partial class MainPage : Page
         {
             await _webView.EnsureCoreWebView2Async();
     
-            #if P42_UNO_MARKDOWNEXTENSIONS
+            #if P42_UNO_MARKDOWNEXTENSIONS 
             await _webView.EnableMarkdownSupportAsync();
             #endif
                 
