@@ -164,7 +164,7 @@ which you wish to be displayed literally, ex.: \`foo\`, \*bar\*, etc.
 
 ### PROJECT CONTENT
 
-- [Project Content HTML File 1](/WebContentX/CltInstall.html)
+- [Project Content HTML File 1](/WebContentX/CltInstall/index.html)
 - [Project Content HTML File 2](/AltWebContent/Limits.html)
 - [Project Content HTML File 3](/WebContentX/ReducedBody/index.html)
 - [Project Content Markdown File 1](document.md)

@@ -6,12 +6,33 @@
     <DefineConstants>$(DefineConstants);P42_UNO_WEBVIEW2EXTENSIONS;</DefineConstants>
   </PropertyGroup>
 
+  <!--
   <ItemGroup>
-    <!-- Apply to all items of type MyItem -->
     <WebView2ProjectContentFolder Update="@(WebView2ProjectContentFolder)">
       <Visible>false</Visible>
     </WebView2ProjectContentFolder>
   </ItemGroup>
+  -->
+
+  <ItemGroup>
+
+    <MyItem Include="@(MyItem)">
+      <CSharpRelativeDir>$([System.String]::Copy('%(RelativeDir)').Replace('\','/').Split('/')[0])</CSharpRelativeDir>
+    </MyItem>
+
+    
+    <UniqueRootFolders Include="@(MyItem->Metadata('CSharpRelativeDir')->Distinct())"/>
+
+    
+
+    <Content Include="@(MyItem)">
+      <!--
+      <Link>Platforms/Android/Special/%(RelativeDir)%(RecursiveDir)%(Filename)%(Extension)</Link>
+      -->
+      <Link>WebView2ContentFile/%(Identity)</Link>
+    </Content>
+  </ItemGroup>
+
 
   <!-- HOW I WISH THIS WORKED - HOWEVER, THIS MAKES VISUALSTUDIO AND RIDER UNHAPPY
   <ItemGroup>

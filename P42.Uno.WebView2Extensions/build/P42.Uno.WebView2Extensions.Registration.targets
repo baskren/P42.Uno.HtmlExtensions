@@ -5,7 +5,6 @@
     <WebView2ExtensionsGeneratedCodeFile>$(BaseIntermediateOutputPath)App.GeneratedWebView2.g.cs</WebView2ExtensionsGeneratedCodeFile>
   </PropertyGroup>
 
-
   <!-- App.cs or App.xaml.cs NameSpace -->
   <Choose>
     <When Condition=" '$(AppNamespace)' != '' and '$(AppNamespace.Trim())' != '' ">
@@ -27,7 +26,8 @@
 
 
   <Target Name="P42_GenerateWebView2RegistrationCode"
-          BeforeTargets="BeforeCompile">
+          BeforeTargets="BeforeCompile"
+          >
 
     <!-- Create the file -->
     <WriteLinesToFile
@@ -47,6 +47,7 @@
         Lines="public partial class App : P42.Uno.IWebView2ProjectContent;{"
         Overwrite="false" />
 
+    
     <!-- Method Entry -->
     <WriteLinesToFile
         File="$(WebView2ExtensionsGeneratedCodeFile)"
@@ -54,10 +55,36 @@
         Overwrite="false" />
 
     <!-- For each item, add a function call -->
+    <!--
     <WriteLinesToFile
         File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="%09%09P42.Uno.WebView2Extensions.EnableProjectContentFolder(@&quot;%(WebView2ProjectContentFolder.Identity)&quot;)%3B"
+        Lines="@MyItem -> '%09%09P42.Uno.WebView2Extensions.EnableProjectContentFile(&quot;%(Identity)&quot;)%3B')"
         Overwrite="false" />
+            -->
+
+    <!--
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="@(MyItem -> '%09%09P42.Uno.WebView2Extensions.EnableProjectContentFileX(&quot;%(CSharpRelativeDir)&quot;)%3B')"
+        Overwrite="false" />
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="@(MyItem -> ' // %(CSharpRelativeDir)')"
+        Overwrite="false" />
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="@(AllRootFolders->Distinct())"
+        Overwrite="false" />
+    <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="@(UniqueRootFolders)"
+        Overwrite="false" />
+    -->
+        <WriteLinesToFile
+        File="$(WebView2ExtensionsGeneratedCodeFile)"
+        Lines="%09%09P42.Uno.WebView2Extensions.EnableProjectContentFileX(&quot;%(UniqueRootFolders.Identity)&quot;)%3B"
+        Overwrite="false" />
+
 
     <!-- Method Exit -->
     <WriteLinesToFile

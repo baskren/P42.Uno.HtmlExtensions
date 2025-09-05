@@ -188,7 +188,7 @@ public sealed partial class MainPage : Page
             await _webView.EnableMarkdownSupportAsync();
             #endif
                 
-            //await _webView.NavigateToProjectContentFileAsync("/WebContentX/CltInstall.html");
+            //await _webView.NavigateToProjectContentFileAsync("/WebContentX/CltInstall/index.html");
             await _webView.NavigateToProjectContentFileAsync("/WebContentX/document.md");
                 
         }

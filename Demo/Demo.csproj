@@ -53,20 +53,38 @@
     <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
 
+  <!-- THIS WORKS
+  <PropertyGroup>
+    <AltContentProperty>WebContentX</AltContentProperty>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(AltContentProperty)/**/*.*" Link="Platforms/Android/AndroidAssets/AltWebContent/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  -->
+  <ItemGroup>
+    <MyItem Include="WebContentX/**/*.*" Visible="false" />    
+  </ItemGroup>
 
+<!--
+
+%(RecursiveDir)%(Filename)%(Extension)
+
+-->
+
+  <!--
   <ItemGroup>
     <WebView2ProjectContentFolder Include="WebContentX"  />
     <WebView2ProjectContentFolder Include="AltWebContent" />
-    <WebView2ProjectContentFolder Include="image" />
+    <WebView2ProjectContentFolder Include="image" />    
   </ItemGroup>
-
+  -->
 
 
   <!-- LIBRARY REFERENCES -->
   <ItemGroup Condition=" $(Configuration) != 'Debug' ">
-    <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)"  />
-    <PackageReference Include="P42.Uno.MarkdownExtensions.$(PackageVariant)"   />
-    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)"  />
+    <PackageReference Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
+    <PackageReference Include="P42.Uno.MarkdownExtensions.$(PackageVariant)" />
+    <PackageReference Include="P42.Uno.HtmlExtensions.$(PackageVariant)" />
   </ItemGroup>
   <ItemGroup Condition=" $(Configuration) == 'Debug' ">
     <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
