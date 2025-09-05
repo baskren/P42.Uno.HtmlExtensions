@@ -1,29 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="P42.Uno.WebView2Extensions.Registration.targets" />
-  <Import Project="P42.Uno.WebView2Extensions.targets" />
-
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);P42_UNO_WEBVIEW2EXTENSIONS;</DefineConstants>
   </PropertyGroup>
 
-
-  <ItemGroup>
-
-    <WebView2ProjectContentFile Include="@(WebView2ProjectContentFile)">
-      <CSharpRelativeDir>$([System.String]::Copy('%(RelativeDir)').Replace('\','/').Split('/')[0])</CSharpRelativeDir>
-    </WebView2ProjectContentFile>
-
-
-    <UniqueWebView2ProjectContentRootFolders Include="@(WebView2ProjectContentFile->Metadata('CSharpRelativeDir')->Distinct())"/>
-
-    
-<!--
-    <Content Include="@(WebView2ProjectContentFile)">
-      <Link>WebView2ProjectContent/%(Identity)</Link>
-    </Content>
-    -->
-  </ItemGroup>
 
 
   <!-- HOW I WISH THIS WORKED - HOWEVER, THIS MAKES VISUALSTUDIO AND RIDER UNHAPPY

@@ -69,17 +69,16 @@
     <ProjectReference Include="..\P42.Uno.HtmlExtensions\P42.Uno.HtmlExtensions.csproj" />
   </ItemGroup>
 
-  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
-  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
-  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
+  <Import Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
+  <Import Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
+  <Import Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
+
+  <Import Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.targets" />
 
 
   <!-- REQUIRED FOR USING PROJECT CONTENT FOLDERS ON ANDROID -->
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="WebContentX\CltInstall\install.html" Link="WebView2ContentFile\WebContentX\CltInstall\index.html" />
   </ItemGroup>
 
 

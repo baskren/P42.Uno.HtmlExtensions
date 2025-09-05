@@ -1,11 +1,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+<!--
+    BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
+-->
 
   <Target
     Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFile)' != ''"
     Name="P42_IncludeWebView2ProjectContentFiles"
-    BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
+    AfterTargets="P42_GenerateWebView2RegistrationCode">
 
     <ItemGroup>
 
@@ -38,11 +41,6 @@
 
 
     </ItemGroup>
-
-    <Message
-      Text="ProjectContentFile: ID[%(WebView2ProjectContentFile.Identity)] LINK[%(WebView2ProjectContentFile.Link)]"
-      Importance="high"
-      />
 
     <Message
       Condition=" $(TargetFramework.Contains('android')) "

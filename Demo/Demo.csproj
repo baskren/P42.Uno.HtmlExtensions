@@ -69,9 +69,6 @@
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Update="WebContentX\CltInstall\install.html" Link="WebView2ContentFile\WebContentX\CltInstall\index.html" />
-  </ItemGroup>
 
 
 </Project>
