@@ -74,9 +74,23 @@ _You **can** combine them_
 
 ## Images
 
-![This is an absolute cross content folder image](/image/sample.webp "This is a sample image.")
-![This is an relative cross content folder image](../image/sample.webp "This is a sample image.")
-![This is local content folder image](butterfly.webp)
+- absolute path webp image (/Images/sample.wepb)
+
+    ![webp image](/Images/sample.webp "kayaker")
+
+- absolute path folder jpeg image (/Images/sample.jpg)
+
+    ![jpeg image](/Images/sample.jpg "laptop")
+
+    <img src="/Images/sample.jpg" alt="laptop sized" width="300" />
+
+- relative path pgn image (../Images/pg-coral.png)
+
+    ![pgn image](../Images/pg-coral.png "coral")
+
+- local image (butterfly.webp)
+
+    ![bufferfly](butterfly.webp "butterfly")
 
 ## Links
 

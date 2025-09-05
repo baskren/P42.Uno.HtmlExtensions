@@ -3,23 +3,21 @@
 
 
   <Target
-    Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFolder)' != ''"
-    Name="P42_TransformWebView2ProjectContentFolders"
+    Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFile)' != ''"
+    Name="P42_IncludeWebView2ProjectContentFiles"
     BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
 
-
+    <!--
     <ItemGroup>
       <_p42_webview2_file Include="$(MSBuildProjectDirectory)/%(WebView2ProjectContentFolder.Identity)/**/*.*">
         <Folder>%(WebView2ProjectContentFolder.Identity)</Folder>
       </_p42_webview2_file>
     </ItemGroup>
+    -->
 
 
     <ItemGroup>
 
-      <Content Include="WebContentX/**/*.*" LinkBase="PIZZA">
-
-      </Content>
 
       <!--
       <Content
@@ -70,26 +68,53 @@
 
         -->
 
+      <AndroidAsset
+        Condition="  $(TargetFramework.Contains('android')) "
+        Include="@(WebView2ProjectContentFile)"
+        Visible="false"
+        Link="Platforms/Android/Assets/WebView2ProjectContentFolders/%(Identity)" />
+
+      <BundleResource
+        Condition="  $(TargetFramework.Contains('ios')) "
+        Include="@(WebView2ProjectContentFile)"
+        Visible="false"
+        Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(Identity)" />
+
+      <Content
+        Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  "
+        Include="@(WebView2ProjectContentFile)"
+        Link="WebView2ProjectContentFolders/%(Identity)"
+        Visible="false"
+        CopyToOutputDirectory="PreserveNewest" />
+
+      <Content
+        Condition="  $(TargetFramework.Contains('wasm')) "
+        Include="@(WebView2ProjectContentFile)"
+        Link="%(Identity)"
+        Visible="false"
+        UnoDeploy="Root"
+        CopyToOutputDirectory="PreserveNewest" />
 
 
     </ItemGroup>
 
-    <Message Text="  MSBuildProjectDirectory:[$(MSBuildProjectDirectory)]" Importance="high"/>
-    <Message Text="  WebView2ProjectContentFolder:[%(WebView2ProjectContentFolder.Identity)]" Importance="high" />
-    <Message Text="  _WebView2Root:[%(_WebView2Root.Identity)] [%(_WebView2Root.Folder)]" Importance="high"/>
+    <Message
+      Text="ProjectContentFile: ID[%(WebView2ProjectContentFile.Identity)] LINK[%(WebView2ProjectContentFile.Link)]"
+      Importance="high"
+      />
 
-      <Message
-        Condition=" $(TargetFramework.Contains('android')) "
-        Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]"
-        Importance="High" />
-      <Message
-        Condition=" $(TargetFramework.Contains('ios'))"
-        Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]"
-        Importance="High" />
-      <Message
-        Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
-        Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]"
-        Importance="High" />
+    <Message
+      Condition=" $(TargetFramework.Contains('android')) "
+      Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]"
+      Importance="High" />
+    <Message
+      Condition=" $(TargetFramework.Contains('ios'))"
+      Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]"
+      Importance="High" />
+    <Message
+      Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) "
+      Text="WinDeskWasm Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]"
+      Importance="High" />
 
   </Target>
 

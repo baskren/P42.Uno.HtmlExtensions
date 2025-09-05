@@ -53,31 +53,12 @@
     <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
 
-  <!-- THIS WORKS
-  <PropertyGroup>
-    <AltContentProperty>WebContentX</AltContentProperty>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Content Include="$(AltContentProperty)/**/*.*" Link="Platforms/Android/AndroidAssets/AltWebContent/%(RecursiveDir)%(Filename)%(Extension)" />
+    <WebView2ProjectContentFile Include="WebContentX/**/*.*" />
+    <WebView2ProjectContentFile Include="AltWebContent/**/*.*" />
+    <WebView2ProjectContentFile Include="Images/**/*.*" />
   </ItemGroup>
-  -->
-  <ItemGroup>
-    <MyItem Include="WebContentX/**/*.*" Visible="false" />    
-  </ItemGroup>
-
-<!--
-
-%(RecursiveDir)%(Filename)%(Extension)
-
--->
-
-  <!--
-  <ItemGroup>
-    <WebView2ProjectContentFolder Include="WebContentX"  />
-    <WebView2ProjectContentFolder Include="AltWebContent" />
-    <WebView2ProjectContentFolder Include="image" />    
-  </ItemGroup>
-  -->
 
 
   <!-- LIBRARY REFERENCES -->
@@ -93,7 +74,6 @@
   </ItemGroup>
 
   <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
-  <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.targets" />
   <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
   <Import Condition=" $(Configuration) == 'Debug' " Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
 
@@ -102,16 +82,20 @@
   <ItemGroup>
     <Folder Include="Platforms\Android\Resources\xml\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="WebContentX\CltInstall\install.html" Link="WebView2ContentFile\WebContentX\CltInstall\index.html" />
+  </ItemGroup>
 
 
 
 
   <!-- VERIFICATION THAT PROJECT CONTENT FILES ARE IN APP BUILD -->
+  
   <Target Name="Demo_Show_Assets_BundleResources_Content" BeforeTargets="BeforeBuild">
     <Message Text="===== $(PackageVariant) RENDERER =====" Importance="High" />
-    <Message Condition=" $(TargetFramework.Contains('android')) " Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
-    <Message Condition=" $(TargetFramework.Contains('ios'))" Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
-    <Message Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) " Text="W Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('android')) " Text="Demo: AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('ios'))" Text="'Demo: BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
+    <Message Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop'))  OR  $(TargetFramework.Contains('wasm')) " Text="Demo: WinDeskWasm Content: ID[%(Content.Identity)]     LINK[%(Content.Link)]" Importance="High" />
   </Target>
 
 

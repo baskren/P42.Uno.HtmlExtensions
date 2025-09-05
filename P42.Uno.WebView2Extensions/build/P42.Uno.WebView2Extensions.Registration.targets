@@ -55,34 +55,9 @@
         Overwrite="false" />
 
     <!-- For each item, add a function call -->
-    <!--
     <WriteLinesToFile
         File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="@MyItem -> '%09%09P42.Uno.WebView2Extensions.EnableProjectContentFile(&quot;%(Identity)&quot;)%3B')"
-        Overwrite="false" />
-            -->
-
-    <!--
-    <WriteLinesToFile
-        File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="@(MyItem -> '%09%09P42.Uno.WebView2Extensions.EnableProjectContentFileX(&quot;%(CSharpRelativeDir)&quot;)%3B')"
-        Overwrite="false" />
-    <WriteLinesToFile
-        File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="@(MyItem -> ' // %(CSharpRelativeDir)')"
-        Overwrite="false" />
-    <WriteLinesToFile
-        File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="@(AllRootFolders->Distinct())"
-        Overwrite="false" />
-    <WriteLinesToFile
-        File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="@(UniqueRootFolders)"
-        Overwrite="false" />
-    -->
-        <WriteLinesToFile
-        File="$(WebView2ExtensionsGeneratedCodeFile)"
-        Lines="%09%09P42.Uno.WebView2Extensions.EnableProjectContentFileX(&quot;%(UniqueRootFolders.Identity)&quot;)%3B"
+        Lines="%09%09P42.Uno.WebView2Extensions.EnableProjectContentFolder(&quot;%(UniqueWebView2ProjectContentRootFolders.Identity)&quot;)%3B"
         Overwrite="false" />
 
 

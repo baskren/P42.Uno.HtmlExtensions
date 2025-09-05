@@ -1,36 +1,28 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="P42.Uno.WebView2Extensions.Registration.targets" />
+  <Import Project="P42.Uno.WebView2Extensions.targets" />
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);P42_UNO_WEBVIEW2EXTENSIONS;</DefineConstants>
   </PropertyGroup>
 
-  <!--
-  <ItemGroup>
-    <WebView2ProjectContentFolder Update="@(WebView2ProjectContentFolder)">
-      <Visible>false</Visible>
-    </WebView2ProjectContentFolder>
-  </ItemGroup>
-  -->
 
   <ItemGroup>
 
-    <MyItem Include="@(MyItem)">
+    <WebView2ProjectContentFile Include="@(WebView2ProjectContentFile)">
       <CSharpRelativeDir>$([System.String]::Copy('%(RelativeDir)').Replace('\','/').Split('/')[0])</CSharpRelativeDir>
-    </MyItem>
+    </WebView2ProjectContentFile>
+
+
+    <UniqueWebView2ProjectContentRootFolders Include="@(WebView2ProjectContentFile->Metadata('CSharpRelativeDir')->Distinct())"/>
 
     
-    <UniqueRootFolders Include="@(MyItem->Metadata('CSharpRelativeDir')->Distinct())"/>
-
-    
-
-    <Content Include="@(MyItem)">
-      <!--
-      <Link>Platforms/Android/Special/%(RelativeDir)%(RecursiveDir)%(Filename)%(Extension)</Link>
-      -->
-      <Link>WebView2ContentFile/%(Identity)</Link>
+<!--
+    <Content Include="@(WebView2ProjectContentFile)">
+      <Link>WebView2ProjectContent/%(Identity)</Link>
     </Content>
+    -->
   </ItemGroup>
 
 
