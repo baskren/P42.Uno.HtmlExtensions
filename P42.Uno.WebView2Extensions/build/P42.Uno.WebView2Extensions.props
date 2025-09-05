@@ -1,8 +1,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <Import Project="P42.Uno.WebView2Extensions.Registration.targets" />
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);P42_UNO_WEBVIEW2EXTENSIONS;</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Apply to all items of type MyItem -->
+    <WebView2ProjectContentFolder Update="@(WebView2ProjectContentFolder)">
+      <Visible>false</Visible>
+    </WebView2ProjectContentFolder>
+  </ItemGroup>
 
   <!-- HOW I WISH THIS WORKED - HOWEVER, THIS MAKES VISUALSTUDIO AND RIDER UNHAPPY
   <ItemGroup>

@@ -89,7 +89,7 @@
 
 
   <!-- VERIFICATION THAT PROJECT CONTENT FILES ARE IN APP BUILD -->
-  <Target Name="P42_Demo" BeforeTargets="BeforeBuild">
+  <Target Name="Demo_Show_Assets_BundleResources_Content" BeforeTargets="BeforeBuild">
     <Message Text="===== $(PackageVariant) RENDERER =====" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('android')) " Text="AndroidAsset: ID[%(AndroidAsset.Identity)]     LINK[%(AndroidAsset.Link)]" Importance="High" />
     <Message Condition=" $(TargetFramework.Contains('ios'))" Text="BundleResource: ID[%(BundleResource.Identity)]     LINK[%(BundleResource.Link)]" Importance="High" />
