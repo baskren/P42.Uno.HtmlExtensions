@@ -1,9 +1,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+
+
   <Target
     Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFolder)' != ''"
     Name="P42_TransformWebView2ProjectContentFolders"
     BeforeTargets="BeforeBuild;UnoResourcesGeneration;BeforeCompile">
+
 
     <ItemGroup>
       <_p42_webview2_file Include="$(MSBuildProjectDirectory)/%(WebView2ProjectContentFolder.Identity)/**/*.*">
@@ -11,7 +14,19 @@
       </_p42_webview2_file>
     </ItemGroup>
 
+
     <ItemGroup>
+
+      <Content Include="WebContentX/**/*.*" LinkBase="PIZZA">
+
+      </Content>
+
+      <!--
+      <Content
+        Include="@(_p42_webview2_file)"
+        Link="PIZZA/%(_p42_webview2_file.Folder)/%(RecursiveDir)%(Filename)%(Extension)"
+        Visible="false"
+        CopyToOutputDirectory="PreserveNewest" />
 
       <Content
         Include="@(_p42_webview2_file)"
@@ -46,6 +61,16 @@
         Visible="false"
         UnoDeploy="Root"
         CopyToOutputDirectory="PreserveNewest" />
+
+      <Content
+        Include="@(WebView2ProjectContentFile)"
+        Link="WebView2ProjectContentFolders/%(WebView2ProjectContentFile.Identity)"
+        Visible="true"
+        CopyToOutputDirectory="PreserveNewest" />
+
+        -->
+
+
 
     </ItemGroup>
 

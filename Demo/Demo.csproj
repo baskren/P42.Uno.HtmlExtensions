@@ -55,9 +55,9 @@
 
 
   <ItemGroup>
-    <WebView2ProjectContentFolder Include="WebContentX" Visible="false" />
-    <WebView2ProjectContentFolder Include="AltWebContent" Visible="false" />
-    <WebView2ProjectContentFolder Include="image" Visible="false" />
+    <WebView2ProjectContentFolder Include="WebContentX"  />
+    <WebView2ProjectContentFolder Include="AltWebContent" />
+    <WebView2ProjectContentFolder Include="image" />
   </ItemGroup>
 
 
