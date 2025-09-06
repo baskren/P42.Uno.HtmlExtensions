@@ -10,30 +10,39 @@
     Name="P42_IncludeWebView2ProjectContentFiles"
     AfterTargets="P42_GenerateWebView2RegistrationCode">
 
+
+    <Message
+      Text="ProjectContentFile: ID[%(UniqueWebView2ProjectContentFile.Identity)] LINK[%(UniqueWebView2ProjectContentFile.Link)] FOLDER[%(UniqueWebView2ProjectContentFile.CSharpRelativeDir)]"
+      Importance="high"
+      />
+
+
+
+
     <ItemGroup>
 
       <AndroidAsset
         Condition="  $(TargetFramework.Contains('android')) "
-        Include="@(WebView2ProjectContentFile)"
+        Include="@(UniqueWebView2ProjectContentFile)"
         Visible="false"
         Link="Platforms/Android/Assets/WebView2ProjectContentFolders/%(Identity)" />
 
       <BundleResource
         Condition="  $(TargetFramework.Contains('ios')) "
-        Include="@(WebView2ProjectContentFile)"
+        Include="@(UniqueWebView2ProjectContentFile)"
         Visible="false"
         Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/%(Identity)" />
 
       <Content
         Condition="  $(TargetFramework.Contains('windows'))  OR   $(TargetFramework.Contains('desktop'))  "
-        Include="@(WebView2ProjectContentFile)"
+        Include="@(UniqueWebView2ProjectContentFile)"
         Link="WebView2ProjectContentFolders/%(Identity)"
         Visible="false"
         CopyToOutputDirectory="PreserveNewest" />
 
       <Content
         Condition="  $(TargetFramework.Contains('wasm')) "
-        Include="@(WebView2ProjectContentFile)"
+        Include="@(UniqueWebView2ProjectContentFile)"
         Link="%(Identity)"
         Visible="false"
         UnoDeploy="Root"

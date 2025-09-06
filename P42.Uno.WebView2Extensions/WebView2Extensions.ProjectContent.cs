@@ -37,7 +37,8 @@ public static partial class WebView2Extensions
             throw new DirectoryNotFoundException($"Project Content Folder Not Found: [{fullFolderPath}] : [{result}]");
         }
 
-        VirtualHost.LocalFolders.AddDistinct(projectFolder);
+        if (!VirtualHost.LocalFolders.Contains(projectFolder))
+            VirtualHost.LocalFolders.Add(projectFolder);
         await Task.CompletedTask;
         #endif
         
@@ -85,7 +86,8 @@ public static partial class WebView2Extensions
         }
 
         var rootProjectFolder = SplitPathSegments(projectFolder)[0];
-        VirtualHost.LocalFolders.AddDistinct(rootProjectFolder);
+        if (!VirtualHost.LocalFolders.Contains(projectFolder))
+            VirtualHost.LocalFolders.Add(projectFolder);
         #endif
         if (!string.IsNullOrWhiteSpace(query))
             projectContentFilePath += $"?{query}";

@@ -73,7 +73,7 @@ public static class MarkdownExtensions
             {
                 uri = new Uri(uriString);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: Need to test webview.NavigateToString();
                 /*

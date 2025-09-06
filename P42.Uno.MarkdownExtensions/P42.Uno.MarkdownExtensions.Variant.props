@@ -3,6 +3,7 @@
 
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+    <BuildInParallel>false</BuildInParallel>
 
     <UnoFeatures Condition="  $(PackageVariant) == 'Skia' ">
       $(UnoFeatures);
@@ -22,13 +23,14 @@
       PackagePath="buildTransitive\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Condition=" $(Configuration) != 'Debug' " Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
-    <ProjectReference Condition=" $(Configuration) == 'Debug' " Include="../P42.Uno.WebView2Extensions/P42.Uno.WebView2Extensions.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Condition=" $(Configuration) != 'Debug' " Include="P42.Uno.WebView2Extensions.$(PackageVariant)" />
+    <ProjectReference Condition=" $(Configuration) == 'Debug' " Include="../P42.Uno.WebView2Extensions/P42.Uno.WebView2Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

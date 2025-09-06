@@ -30,22 +30,17 @@
           Condition="   $(OutputType) != 'Library' AND  '@(WebView2ProjectContentFile)' != ''"
           >
 
-  <ItemGroup>
-
-    <WebView2ProjectContentFile Include="@(WebView2ProjectContentFile)">
-      <CSharpRelativeDir>$([System.String]::Copy('%(RelativeDir)').Replace('\','/').Split('/')[0])</CSharpRelativeDir>
-    </WebView2ProjectContentFile>
-
-    <UniqueWebView2ProjectContentRootFolders Include="@(WebView2ProjectContentFile->Metadata('CSharpRelativeDir')->Distinct())"/>
-
-  </ItemGroup>
-
-    <Message
-      Text="ProjectContentFile: ID[%(WebView2ProjectContentFile.Identity)] LINK[%(WebView2ProjectContentFile.Link)] FOLDER[%(WebView2ProjectContentFile.CSharpRelativeDir)]"
-      Importance="high"
-      />
 
 
+
+    <ItemGroup>
+
+      <UniqueWebView2ProjectContentFile Include="@(WebView2ProjectContentFile->Distinct())">
+        <CSharpRelativeDir>$([System.String]::Copy('%(RelativeDir)').Replace('\','/').Split('/')[0])</CSharpRelativeDir>
+      </UniqueWebView2ProjectContentFile>
+
+      <UniqueWebView2ProjectContentRootFolders Include="@(UniqueWebView2ProjectContentFile->Metadata('CSharpRelativeDir')->Distinct())"/>
+    </ItemGroup>
 
     <Message Text=" AppXamlCsNamespace: $(AppXamlCsNamespace)" Importance="high"/>
     <Message Text=" AppXamlCsNamespace.Trim(): $(AppXamlCsNamespace.Trim())" Importance="high"/>

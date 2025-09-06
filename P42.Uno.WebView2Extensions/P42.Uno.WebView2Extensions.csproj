@@ -14,8 +14,6 @@
     -->
     <UnoFeatures>
       Lottie;
-      Toolkit;
-      ThemeService;
       WebView;
     </UnoFeatures>
     

@@ -3,6 +3,7 @@
 
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+    <BuildInParallel>false</BuildInParallel>
 
     <UnoFeatures Condition="  $(PackageVariant) == 'Skia' ">
       $(UnoFeatures);
