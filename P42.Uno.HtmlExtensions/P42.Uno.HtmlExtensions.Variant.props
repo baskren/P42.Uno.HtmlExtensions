@@ -3,6 +3,7 @@
 
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+    <BuildInParallel>false</BuildInParallel>
 
     <UnoFeatures Condition="  $(PackageVariant) == 'Skia' ">
       $(UnoFeatures);
@@ -16,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None 
-      Include="build/*" 
-      Pack="true" 
+    <None
+      Include="build/*"
+      Pack="true"
       PackagePath="buildTransitive\" />
   </ItemGroup>
 

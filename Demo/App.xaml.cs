@@ -71,7 +71,7 @@ public partial class App : Application
         }
 
 #if WINDOWS
-        MainWindow.SetWindowIcon();
+        //MainWindow.SetWindowIcon();
 #endif
         // Ensure the current window is active
         MainWindow.Activate();

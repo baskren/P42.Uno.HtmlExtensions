@@ -3,7 +3,7 @@
 
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
-    <BuildInParallel>false</BuildInParallel>
+    <BuildInParallel>true</BuildInParallel>
 
     <UnoFeatures Condition="  $(PackageVariant) == 'Skia' ">
       $(UnoFeatures);
@@ -17,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None 
-      Include="build/*" 
-      Pack="true" 
+    <None
+      Include="build/*"
+      Pack="true"
       PackagePath="buildTransitive\" />
   </ItemGroup>
 
@@ -33,29 +33,31 @@
     <ProjectReference Condition=" $(Configuration) == 'Debug' " Include="../P42.Uno.WebView2Extensions/P42.Uno.WebView2Extensions.csproj" />
   </ItemGroup>
 
+
   <ItemGroup>
 
     <AndroidAsset
-      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Include="WebContentX/**/*.*"
       Link="Platforms/Android/Assets/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
       Visible="false"
     />
     <BundleResource
-      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Include="WebContentX/**/*.*"
       Link="Platforms/iOS/Resources/WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
       Visible="false"
     />
     <Content
       Condition=" $(TargetFramework.Contains('windows'))  OR  $(TargetFramework.Contains('desktop')) "
-      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
+      Include="WebContentX/**/*.*"
       Link="WebView2ProjectContentFolders/P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
       Visible="false"
       UnoDeploy="Root"
       CopyToOutputDirectory="PreserveNewest" />
+
     <Content
       Condition=" $(TargetFramework.Contains('wasm')) "
-      Include="/Users/ben/Development/AWC/ConnectionCalc.WinUI/Bc3/P42.Uno.HtmlExtensions/P42.Uno.MarkdownExtensions/WebContentX/**/*.*"
-      Link="P42.Uno.MarkdownExtensions/%(RecursiveDir)%(Filename)%(Extension)"
+      Include="WebContentX/**/*.*"
+      Link="%(RecursiveDir)%(Filename)%(Extension)"
       Visible="false"
       UnoDeploy="Root"
       CopyToOutputDirectory="PreserveNewest" />

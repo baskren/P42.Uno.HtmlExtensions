@@ -12,8 +12,8 @@
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
-
     <UnoFeatures>
+      Lottie;
       WebView;
     </UnoFeatures>
 
@@ -34,7 +34,8 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
-    <Import Project="$(MSBuildProjectName).Variant.props" />
+  <Import Project="$(MSBuildProjectName).Variant.props" />
+
 
 
 </Project>

@@ -37,7 +37,7 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
+    <Message Text="============================= $(MSBuildProjectName).$(PackageVariant):$(TargetFramework) =================================" Importance="high"/>
     <Message Text="========================== WINDOWS =========================== " Condition=" $(TargetFramework.Contains('windows')) " Importance="high" />
     <Message Text="======================== NOT WINDOWS ========================= " Condition=" !$(TargetFramework.Contains('windows')) " Importance="high" />
     <Message Text="========================== DESKTOP =========================== " Condition=" $(TargetFramework.Contains('desktop')) " Importance="high" />
@@ -73,7 +73,7 @@
     <Message Text="      @(EmbeddedResource, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  Content:[" Importance="high"/>
-    <Message Text="      @(Content, '%0a      ')" Importance="high"/>
+    <Message Text="      [%(Content.Identity)]     LINK[%(Content.Link)]" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  AndroidResource:[" Importance="high"/>
     <Message Text="      @(AndroidResource, '%0a      ')" Importance="high"/>
@@ -97,6 +97,6 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
   </Target>
-  
-  
+
+
 </Project>

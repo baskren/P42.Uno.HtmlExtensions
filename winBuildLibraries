@@ -2,11 +2,14 @@
 
 ./winWipe
 
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Skia P42.Uno.WebView2Extensions
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Skia P42.Uno.MarkdownExtensions
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Skia P42.Uno.HtmlExtensions
+export PackageVariant="Skia"
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.WebView2Extensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.MarkdownExtensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.HtmlExtensions
 
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Native P42.Uno.WebView2Extensions
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Native P42.Uno.MarkdownExtensions
-/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal /p:PackageVariant=Native P42.Uno.HtmlExtensions
+exit 0
 
+export PackageVariant="Native"
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.WebView2Extensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.MarkdownExtensions
+/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe /r /p:Configuration=Release -verbosity:minimal P42.Uno.HtmlExtensions
