@@ -5,13 +5,18 @@
     See https://aka.platform.uno/using-uno-sdk for more information.
     See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
   -->
+
+  <PropertyGroup>
+    <P42_Uno_Version>6.2.58</P42_Uno_Version>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageVersion Include="MimeMapping" Version="3.1.0" />
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="$(UnoVersion)"  />
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="$(UnoVersion)"  />
-    <PackageVersion Include="P42.Uno.HtmlExtensions.Skia" Version="$(UnoVersion)"  />
-    <PackageVersion Include="P42.Uno.HtmlExtensions.Native" Version="$(UnoVersion)"  />
-    <PackageVersion Include="P42.Uno.MarkdownExtensions.Skia" Version="$(UnoVersion)"  />
-    <PackageVersion Include="P42.Uno.MarkdownExtensions.Native" Version="$(UnoVersion)"  />
+    <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="$(P42_Uno_Version)"  />
+    <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="$(P42_Uno_Version)"  />
+    <PackageVersion Include="P42.Uno.HtmlExtensions.Skia" Version="$(P42_Uno_Version)"  />
+    <PackageVersion Include="P42.Uno.HtmlExtensions.Native" Version="$(P42_Uno_Version)"  />
+    <PackageVersion Include="P42.Uno.MarkdownExtensions.Skia" Version="$(P42_Uno_Version)"  />
+    <PackageVersion Include="P42.Uno.MarkdownExtensions.Native" Version="$(P42_Uno_Version)"  />
   </ItemGroup>
 </Project>

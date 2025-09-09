@@ -68,6 +68,7 @@
 
   <Import Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.props" />
   <Import Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.props" />
+  <Import Project="../P42.Uno.MarkdownExtensions/build/P42.Uno.MarkdownExtensions.targets" />
   <Import Project="../P42.Uno.HtmlExtensions/build/P42.Uno.HtmlExtensions.props" />
 
   <Import Project="../P42.Uno.WebView2Extensions/build/P42.Uno.WebView2Extensions.targets" />

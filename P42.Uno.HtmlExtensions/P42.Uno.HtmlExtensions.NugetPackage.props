@@ -2,10 +2,10 @@
 
 
 	<!-- NUGET PACKAGE GENERATION -->
-  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND   $(Configuration) == 'Release'">  
-    
+  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND   $(Configuration) == 'Release'">
+
     <PackageId>$(MSBuildProjectName).$(PackageVariant)</PackageId>
-    <Version>$(UnoVersion)</Version>
+    <Version>$(P42_Uno_Version)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
 	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -28,7 +28,7 @@
     <PackageTags>WinUI Uno.Platform Uno HTML Print PDF</PackageTags>
 
   </PropertyGroup>
-  
+
   <ItemGroup>
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />

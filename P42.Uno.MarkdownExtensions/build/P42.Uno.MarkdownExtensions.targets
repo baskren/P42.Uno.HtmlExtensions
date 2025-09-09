@@ -1,0 +1,99 @@
+<Project>
+
+
+  <Target
+    Name="_P42UnoMarkdownPackageCheck"
+    Condition="$(TargetFramework.Contains('wasm'))"
+    BeforeTargets="Build">
+    <PropertyGroup>
+      <_IsP42UnoMarkdownIsPackage
+        Condition="@(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.MarkdownExtensions'))">
+        true
+      </_IsP42UnoMarkdownIsPackage>
+    </PropertyGroup>
+  </Target>
+
+  <Target
+    Name="_P42UnoMarkdownCopyMarkdownDevFiles"
+    Condition="$(TargetFramework.Contains('wasm')) AND '$(_IsP42UnoMarkdownIsPackage)' != 'true' "
+    AfterTargets="Build">
+
+    <PropertyGroup>
+      <_MarkdownSupportFolder>$(MSBuildThisFileDirectory)/../WebContentX/</_MarkdownSupportFolder>
+    </PropertyGroup>
+    <ItemGroup>
+      <_MarkdownSupportFiles Include="$(_MarkdownSupportFolder)**\*.*" />
+    </ItemGroup>
+
+    <Message Text="||-|-|-|-|-|-|| " Importance="high" />
+
+    <Message Condition="Exists('$(_MarkdownSupportFolder)"
+             Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder exists!" Importance="high" />
+    <Message Condition="!Exists('$(_MarkdownSupportFolder)"
+             Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder does not exist." Importance="high" />
+
+    <Message Text="||-|-|-|-|-|-||  OutputPath: [$(OutputPath)]" Importance="high" />
+
+    <Message Condition="Exists('$(OutputPath)/wwwroot')"
+             Text="||-|-|-|-|-|-||  wwwroot folder exists!" Importance="high" />
+    <Message Condition="!Exists('$(OutputPath)/wwwroot')"
+             Text="||-|-|-|-|-|-||  wwwroot folder does not exist." Importance="high" />
+
+    <Message Text="||-|-|-|-|-|-|| " Importance="high" />
+
+    <MakeDir
+      Directories="$(OutputPath)/wwwroot/P42.Uno.MarkdownExtensions" />
+    <MakeDir
+      Directories="$(OutputPath)/wwwroot/P42.Uno.MarkdownExtensions/katex" />
+    <Copy
+      SourceFiles="@(_MarkdownSupportFiles)"
+      DestinationFiles="@(_MarkdownSupportFiles->'$(OutputPath)\wwwroot\P42.Uno.MarkdownExtensions\%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+
+
+
+  </Target>
+
+  <Target
+    Name="_P42UnoMarkdownCopyMarkdownNugetFiles"
+    Condition="$(TargetFramework.Contains('wasm')) AND '$(_IsP42UnoMarkdownIsPackage)' == 'true' "
+    AfterTargets="Build">
+
+    <PropertyGroup>
+      <_MarkdownSupportFolder>$(NuGetPackageRoot)\p42.uno.markdownextensions.$(P42_Uno_MarkdownExtensions_Variant)\$(P42_Uno_Version)\lib\net9.0-browserwasm\P42.Uno.MarkdownExtensions</_MarkdownSupportFolder>
+    </PropertyGroup>
+    <ItemGroup>
+      <_MarkdownSupportFiles Include="$(_MarkdownSupportFolder)**/*.*" />
+    </ItemGroup>
+
+    <Message Text="||-|-|-|-|-|-|| " Importance="high" />
+
+    <Message Condition="Exists('$(_MarkdownSupportFolder)')"
+             Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder exists!" Importance="high" />
+    <Message Condition="!Exists('$(_MarkdownSupportFolder)')"
+             Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder does not exist." Importance="high" />
+
+
+    <Message Text="||-|-|-|-|-|-||  OutputPath: [$(OutputPath)]" Importance="high" />
+
+    <Message Condition="Exists('$(OutputPath)/wwwroot')"
+             Text="||-|-|-|-|-|-||  wwwroot folder exists!" Importance="high" />
+    <Message Condition="!Exists('$(OutputPath)/wwwroot')"
+             Text="||-|-|-|-|-|-||  wwwroot folder does not exist." Importance="high" />
+
+    <Message Text="||-|-|-|-|-|-|| " Importance="high" />
+
+    <MakeDir
+      Directories="$(OutputPath)/wwwroot/P42.Uno.MarkdownExtensions" />
+    <MakeDir
+      Directories="$(OutputPath)/wwwroot/P42.Uno.MarkdownExtensions/katex" />
+    <Copy
+      SourceFiles="@(_MarkdownSupportFiles)"
+      DestinationFiles="@(_MarkdownSupportFiles->'$(OutputPath)\wwwroot\P42.Uno.MarkdownExtensions\%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+
+
+
+  </Target>
+
+</Project>
