@@ -9,6 +9,9 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**;bin\**</DefaultItemExcludes>
   </PropertyGroup>
 
+  <!-- SOLUTION PROPERTIES -->
+  <Import Condition="Exists('../Directory.Build.props')" Project="../Directory.Build.props" />
+
 
   <!-- REFERENCES -->
   <Import Condition="Exists('$(MSBuildProjectName).References.props')" Project="$(MSBuildProjectName).References.props" />
@@ -41,6 +44,7 @@
   	<Message Text="  DotNetVersion:[net9.0]" Importance="high" />
   	<Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
   	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
+    <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>

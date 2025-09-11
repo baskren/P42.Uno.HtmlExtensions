@@ -8,8 +8,8 @@
 
   <!-- HOW I WISH THIS WORKED - HOWEVER, THIS MAKES VISUALSTUDIO AND RIDER UNHAPPY
   <ItemGroup>
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="6.2.58" />
-    <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="6.2.58" />
+    <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="$(P42_Uno_Version)" />
+    <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="$(P42_Uno_Version)" />
     <PackageReference  Condition="   $(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Skia"    />
     <PackageReference  Condition="  !$(UnoFeatures.Contains(';skiarenderer;'))  "  Include="P42.Uno.WebView2Extensions.Native"  />
   </ItemGroup>

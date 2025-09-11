@@ -1,0 +1,8 @@
+<Project>
+
+  <PropertyGroup>
+    <P42_Uno_MarkdownExtensions_Variant>Skia</P42_Uno_MarkdownExtensions_Variant>
+  </PropertyGroup>
+
+    <Import Project="P42.Uno.MarkdownExtensions.targets" />
+</Project>

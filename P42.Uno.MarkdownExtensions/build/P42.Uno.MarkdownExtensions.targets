@@ -7,9 +7,9 @@
     BeforeTargets="Build">
     <PropertyGroup>
       <_IsP42UnoMarkdownIsPackage
-        Condition="@(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.MarkdownExtensions'))">
-        true
-      </_IsP42UnoMarkdownIsPackage>
+      Condition="@(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.MarkdownExtensions.Native'))
+                OR @(PackageReference->AnyHaveMetadataValue('Identity','P42.Uno.MarkdownExtensions.Skia'))"
+      >true</_IsP42UnoMarkdownIsPackage>
     </PropertyGroup>
   </Target>
 
@@ -27,9 +27,9 @@
 
     <Message Text="||-|-|-|-|-|-|| " Importance="high" />
 
-    <Message Condition="Exists('$(_MarkdownSupportFolder)"
+    <Message Condition="Exists('$(_MarkdownSupportFolder)')"
              Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder exists!" Importance="high" />
-    <Message Condition="!Exists('$(_MarkdownSupportFolder)"
+    <Message Condition="!Exists('$(_MarkdownSupportFolder)')"
              Text="||-|-|-|-|-|-||  _MarkdownSupportFolder folder does not exist." Importance="high" />
 
     <Message Text="||-|-|-|-|-|-||  OutputPath: [$(OutputPath)]" Importance="high" />
@@ -60,7 +60,7 @@
     AfterTargets="Build">
 
     <PropertyGroup>
-      <_MarkdownSupportFolder>$(NuGetPackageRoot)\p42.uno.markdownextensions.$(P42_Uno_MarkdownExtensions_Variant)\$(P42_Uno_Version)\lib\net9.0-browserwasm\P42.Uno.MarkdownExtensions</_MarkdownSupportFolder>
+      <_MarkdownSupportFolder>$(OutputPath)/wwwroot/$(WasmShellOutputPackagePath)/P42.Uno.MarkdownExtensions/</_MarkdownSupportFolder>
     </PropertyGroup>
     <ItemGroup>
       <_MarkdownSupportFiles Include="$(_MarkdownSupportFolder)**/*.*" />

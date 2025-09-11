@@ -6,11 +6,8 @@
     See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
   -->
 
-  <PropertyGroup>
-    <P42_Uno_Version>6.2.58</P42_Uno_Version>
-  </PropertyGroup>
-
   <ItemGroup>
+  	<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     <PackageVersion Include="MimeMapping" Version="3.1.0" />
     <PackageVersion Include="P42.Uno.WebView2Extensions.Skia" Version="$(P42_Uno_Version)"  />
     <PackageVersion Include="P42.Uno.WebView2Extensions.Native" Version="$(P42_Uno_Version)"  />
