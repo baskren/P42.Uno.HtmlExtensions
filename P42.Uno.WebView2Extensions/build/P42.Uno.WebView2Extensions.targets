@@ -64,4 +64,19 @@
 
   </Target>
 
+
+  <!-- It appears that UNO is handling some Content file types (.jpg and .png for example) differently than other formats, putting those in wwwroot/package_XXX but everything else in wwwroot -->
+  <Target
+    Name="_P42UnoWebView2ExtensionsWasmProjectContentFiles"
+    Condition="$(TargetFramework.Contains('wasm'))  AND  '@(WebView2ProjectContentFile)' != '' "
+    AfterTargets="Build">
+
+    <Copy
+      SourceFiles="@(UniqueWebView2ProjectContentFile)"
+      DestinationFiles="@(UniqueWebView2ProjectContentFile->'$(OutputPath)\wwwroot\%(RelativeDir)%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+
+  </Target>
+
+
 </Project>
