@@ -74,19 +74,19 @@ _You **can** combine them_
 
 ## Images
 
-- absolute path webp image (/Images/sample.wepb)
+- absolute path webp image (/MyImages/sample.wepb)
 
-    ![webp image](/Images/sample.webp "kayaker")
+    ![webp image](/MyImages/sample.webp "kayaker")
 
-- absolute path folder jpeg image (/Images/sample.jpg)
+- absolute path folder jpeg image (/MyImages/sample.jpg)
 
-    ![jpeg image](/Images/sample.jpg "laptop")
+    ![jpeg image](/MyImages/sample.jpg "laptop")
 
-    <img src="/Images/sample.jpg" alt="laptop sized" width="300" />
+    <img src="/MyImages/sample.jpg" alt="laptop sized" width="300" />
 
-- relative path pgn image (../Images/pg-coral.png)
+- relative path pgn image (../MyImages/pg-coral.png)
 
-    ![pgn image](../Images/pg-coral.png "coral")
+    ![pgn image](../MyImages/pg-coral.png "coral")
 
 - local image (butterfly.webp)
 

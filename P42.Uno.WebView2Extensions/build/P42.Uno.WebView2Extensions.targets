@@ -46,6 +46,10 @@
         UnoDeploy="Root"
         CopyToOutputDirectory="PreserveNewest" />
 
+      <None
+        Include="@(UniqueWebView2ProjectContentFile)"
+        Pack="true"
+        PackagePath="webView2ProjectContent\" />
 
     </ItemGroup>
 

@@ -55,7 +55,7 @@
   <ItemGroup>
     <WebView2ProjectContentFile Include="WebContentX/**/*.*" />
     <WebView2ProjectContentFile Include="AltWebContent/**/*.*" />
-    <WebView2ProjectContentFile Include="Images/**/*.*" />
+    <WebView2ProjectContentFile Include="MyImages/**/*.*" />
   </ItemGroup>
 
 
