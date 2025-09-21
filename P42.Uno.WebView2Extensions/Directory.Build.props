@@ -16,7 +16,7 @@
 
   <!-- OLD STYLE EMBEDDED RESOURCES -->
   <ItemGroup>
-    <EmbeddedResource Include="Resources\**" />
+    <EmbeddedResource Include="Resources\**\*.*" />
   </ItemGroup>
 
   <!-- REFERENCES -->
@@ -97,6 +97,6 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
   </Target>
-  
-  
+
+
 </Project>
