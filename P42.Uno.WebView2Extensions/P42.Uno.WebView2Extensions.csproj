@@ -20,6 +20,11 @@
       WebView;
     </UnoFeatures>
 
+    <UnoFeatures Condition="  $(TargetFramework.Contains('android'))">
+      SkiaRenderer;
+      $(UnoFeatures)
+    </UnoFeatures>
+
     <!-- CUSTOMIZATION -->
     <RootNamespace>P42.Uno.WebView2ExtensionsRns</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
