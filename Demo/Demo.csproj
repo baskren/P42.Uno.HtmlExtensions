@@ -40,7 +40,7 @@
       WebView;
     </UnoFeatures>
 
-    <BuildInParallel>false</BuildInParallel>
+    <BuildInParallel>true</BuildInParallel>
 
   </PropertyGroup>
 
