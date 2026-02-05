@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 
-
 #if BROWSERWASM
 using Log = System.Console;
 #else
@@ -13,15 +12,21 @@ using Log = System.Diagnostics.Debug;
 
 namespace P42.Uno;
 
-public static partial class WebView2Extensions
+public static class WebView2Extensions
 {
 
-    private static Application? _winUiApplication;
-    internal static Application WinUiApplication => _winUiApplication ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
+    internal static Application WinUiApplication
+    {
+        get => field ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
+        private set;
+    }
 
-    private static Window? _winUiMainWindow;
-    public static Window WinUiMainWindow => _winUiMainWindow ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
-    
+    public static Window WinUiMainWindow
+    {
+        get => field ?? throw new NullReferenceException("P42.Uno.WebView2Extensions is not initialized.");
+        private set;
+    }
+
 
     /// <summary>
     /// Required initialization method
@@ -30,8 +35,8 @@ public static partial class WebView2Extensions
     /// <param name="window"></param>
     public static void Init(Application application, Window window)
     {
-        _winUiApplication = application;
-        _winUiMainWindow = window;
+        WinUiApplication = application;
+        WinUiMainWindow = window;
         try
         {
             if (application is IWebView2ProjectContent app)
@@ -82,13 +87,11 @@ public static partial class WebView2Extensions
 #if __ANDROID__
             var nativeWebViewWrapper = webView2.GetNativeWebViewWrapper();
             var type = nativeWebViewWrapper.GetType();
-            if (type.GetProperty
-            (
-                "WebView", 
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
-            )
-            ?.GetValue(nativeWebViewWrapper) is not Android.Webkit.WebView droidWebView)
-            throw new Exception("Unable to obtain native webview");
+            if (type
+                    .GetProperty("WebView", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?
+                    .GetValue(nativeWebViewWrapper) is not Android.Webkit.WebView droidWebView
+               )
+                throw new Exception("Unable to obtain native webview");
 
             await droidWebView.PrintAsync(cancellationToken: token);
 #elif __IOS__
@@ -96,7 +99,9 @@ public static partial class WebView2Extensions
             if (nativeWebViewWrapper is not WebKit.WKWebView wkWebView)
                 throw new Exception("Unable to obtain native webview");
 
-            var result = await wkWebView.PrintAsync();
+            var (Successful, errorMessage) = await wkWebView.PrintAsync();
+            if (!Successful)
+                throw new Exception(errorMessage);
 #else
             await webView2.ExecuteScriptAsync("print();").AsTask(token);
 
@@ -345,7 +350,7 @@ public static partial class WebView2Extensions
         {
             CachedFileManager.DeferUpdates(saveFile);
 #if __DESKTOP__
-            await System.IO.File.WriteAllBytesAsync(saveFile.Path, pdfTask.Result.pdf, token);
+            await File.WriteAllBytesAsync(saveFile.Path, pdfTask.Result.pdf, token);
 #else
             await FileIO.WriteBytesAsync(saveFile, pdfTask.Result.pdf);
 #endif
@@ -447,9 +452,7 @@ public static partial class WebView2Extensions
     {
         try
         {
-            await using var stream = asm.GetManifestResourceStream(resourceId);
-            if (stream == null)
-                throw new FileNotFoundException("stream is null");
+            await using var stream = asm.GetManifestResourceStream(resourceId) ?? throw new FileNotFoundException("stream is null");
             using var reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
         }
@@ -468,7 +471,7 @@ public static partial class WebView2Extensions
     private record TryResult<T>(bool IsSuccess, T? Value = default);
 
     /// <summary>
-    /// runs a javascript in a WebBView2 and tries to cast it to T
+    /// runs a JavaScript in a WebBView2 and tries to cast it to T
     /// </summary>
     /// <param name="webView2"></param>
     /// <param name="script"></param>
@@ -522,10 +525,7 @@ public static partial class WebView2Extensions
             throw new ArgumentException("Only folders in project root are allowed", nameof(projectFolder));
 
 #if BROWSERWASM
-        var assets = await WasmWebViewExtensions.GetAssetFilesAsync();
-        if (assets is null)
-            throw new Exception("Unable to get WASM asset files from package");
-
+        var assets = await WasmWebViewExtensions.GetAssetFilesAsync() ?? throw new Exception("Unable to get WASM asset files from package");
         var pFolder = projectFolder.Trim(DirectorySeparators) + '/';
         if (assets.Any(asset => asset.StartsWith(pFolder)))
             return;
@@ -582,10 +582,7 @@ public static partial class WebView2Extensions
             throw new ArgumentException("Root project folder is not allowed.");
 
         #if BROWSERWASM
-        var assets = await WasmWebViewExtensions.GetAssetFilesAsync();
-        if (assets is null)
-            throw new Exception("Unable to get WASM asset files from package");
-
+        var assets = await WasmWebViewExtensions.GetAssetFilesAsync() ?? throw new Exception("Unable to get WASM asset files from package");
         if (!assets.Any(asset => asset.StartsWith(projectContentFilePath)))
             throw new FileNotFoundException($"Project Content File Not Found: [{projectContentFilePath}] ");
         #else
@@ -628,18 +625,18 @@ public static partial class WebView2Extensions
         // Normalize path separators
         path = Path.GetFullPath(path);
 
-        string current = Path.GetPathRoot(path)!; // e.g. "C:\"
-        foreach (var part in path.Substring(current.Length).Split(Path.DirectorySeparatorChar,
-                                                                  Path.AltDirectorySeparatorChar,
-                                                                  StringSplitOptions.RemoveEmptyEntries))
+        var current = Path.GetPathRoot(path)!; // e.g. "C:\"
+        foreach (var part in path[current.Length..].Split(Path.DirectorySeparatorChar,
+                                                          Path.AltDirectorySeparatorChar,
+                                                          StringSplitOptions.RemoveEmptyEntries))
         {
             current = Path.Combine(current, part);
 
-            if (!ProjectFolderExists(current))
-            {
-                result = $"MISSING: {current}";
-                return false;
-            }
+            if (ProjectFolderExists(current))
+                continue;
+
+            result = $"MISSING: {current}";
+            return false;
         }
 
         return true;
@@ -653,21 +650,17 @@ public static partial class WebView2Extensions
         if (!string.IsNullOrWhiteSpace(folderPath) && !CheckForProjectFolderRecursively(folderPath, out result))
             return false;
 
-        if (!ProjectFileExists(path))
-        {
-            var files = Directory.GetFiles(folderPath ?? "");
-            foreach (var file in files) 
-                Log.WriteLine($"\t\t{folderPath}/{file}");
+        if (ProjectFileExists(path))
+            return true;
 
-            result = $"MISSING: {path}";
-            return false;
-        }
-        return true;
+        var files = Directory.GetFiles(folderPath ?? "");
+        foreach (var file in files) 
+            Log.WriteLine($"\t\t{folderPath}/{file}");
+
+        result = $"MISSING: {path}";
+        return false;
     }
 
-#if BROWSERWASM
-    private static readonly HttpClient HttpClient = new HttpClient();
-#endif
 
     internal static bool ProjectFolderExists(string fullFolderPath)
     {
@@ -691,11 +684,12 @@ public static partial class WebView2Extensions
     internal static bool ProjectFileExists(string fullFilePath)
     {
 #if __ANDROID__
-        var folderPath = Path.GetDirectoryName(fullFilePath);
+        //var folderPath = Path.GetDirectoryName(fullFilePath);
         try
         {
             using var stream = VirtualHost.Assets.Open(fullFilePath);
-            return stream != null;
+            stream.Close();
+            return true;
             /*
             var files = VirtualHost.Assets.List(folderPath ?? "");
             if (files is null || files.Length == 0)

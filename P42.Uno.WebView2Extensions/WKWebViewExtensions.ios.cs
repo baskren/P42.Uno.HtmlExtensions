@@ -7,7 +7,7 @@ using WebKit;
 
 namespace P42.Uno;
 
-public static class WKWebViewExtensions
+public static class WkWebViewExtensions
 {
     public static Task<(bool Successful, string errorMessage)> PrintAsync(this WKWebView webView, string title = "")
     {

@@ -1,8 +1,9 @@
-﻿using Android.Content;
+using Android.Content;
 using Android.Runtime;
 using Android.Views;
 using System.Reflection;
 using Android.Print;
+
 
 namespace P42.Uno;
 

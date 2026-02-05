@@ -8,6 +8,7 @@ using Log = System.Console;
 using Log = System.Diagnostics.Debug;
 #endif
 
+
 namespace P42.Uno;
 
 internal class VirtualHost
@@ -18,9 +19,10 @@ internal class VirtualHost
 
 #if __ANDROID__
     
+    // ReSharper disable once MemberCanBePrivate.Global
     internal static Android.App.Activity Activity => ContextHelper.Current as Android.App.Activity ?? throw new Exception("Cannot get Android Activity");
     
-    internal static Android.Content.Res.AssetManager Assets => Activity.Assets as Android.Content.Res.AssetManager  ?? throw new Exception("Cannot get Android AssetManager");
+    internal static Android.Content.Res.AssetManager Assets => Activity.Assets ?? throw new Exception("Cannot get Android AssetManager");
     
     internal static string ContentRoot => RootFolder;
 #elif WINDOWS

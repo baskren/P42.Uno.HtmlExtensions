@@ -6,6 +6,7 @@ using Log = System.Console;
 using Log = System.Diagnostics.Debug;
 #endif
 
+
 namespace P42.Uno;
 
 public static class DialogExtensions
@@ -65,6 +66,7 @@ public static class DialogExtensions
     public static Task ShowExceptionDialogAsync(XamlRoot xamlRoot, string title, Exception e)
         => ShowErrorDialogAsync(xamlRoot, title, e is TaskCanceledException ? "Task Cancelled" : e.ToString());
     
+    // ReSharper disable once MemberCanBePrivate.Global
     public static async Task ShowErrorDialogAsync(XamlRoot xamlRoot, string title, string? error)
     {
         ContentDialog cd = new ()
@@ -372,6 +374,7 @@ public static class DialogExtensions
     }
     
     
+    // ReSharper disable once MemberCanBePrivate.Global
     internal class RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
         : ICommand
     {

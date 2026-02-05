@@ -10,9 +10,9 @@ public static partial class WasmExtensions
 {
 #if BROWSERWASM
 
-    private static readonly Dictionary<string, WeakReference<WebView2>> WebView2Cache = new ();
+    private static readonly Dictionary<string, WeakReference<WebView2>> WebView2Cache = [];
 
-    private static readonly Dictionary<string, string> LastPage = new();
+    private static readonly Dictionary<string, string> LastPage = [];
 
     internal static async Task EnableOnLoadAsync(WebView2 webView)
     {
@@ -56,10 +56,10 @@ public static partial class WasmExtensions
     internal static async Task<string> OnLoad(string id, string name)
     {
         var msg = $"WasmExtensions.OnLoad: [{id}][{name}]";
-        Log.WriteLine(msg);
 
         var (webview, href) = await GetWebView2AndHrefAsync(id);
         msg += $" : [{href}]";
+        Log.WriteLine(msg);
 
         if (webview is null || string.IsNullOrEmpty(href))
             return $"WasmExtensions.OnLoad A id:[{id}] href:[{href}]";

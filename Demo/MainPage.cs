@@ -130,8 +130,8 @@ public sealed partial class MainPage : Page
         {
             var options = new PdfOptions([30, 30, 30, 30],
                 Filename: "Document_WebViewPdf",
-                Html2canvas: new Html2CanvasOptions(Scale: 2),
-                JsPDF: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
+                Html2Canvas: new Html2CanvasOptions(Scale: 2),
+                JsPdf: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
             await _webView.SavePdfAsync(options);
         }
         catch (Exception ex)
@@ -160,8 +160,8 @@ public sealed partial class MainPage : Page
         {
             var options = new PdfOptions([30, 30, 30, 30],
                 Filename: "Document_HtmlPdf",
-                Html2canvas: new Html2CanvasOptions(Scale: 2),
-                JsPDF: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
+                Html2Canvas: new Html2CanvasOptions(Scale: 2),
+                JsPdf: new JsPdfOptions(Unit: PdfUnits.Pt, Format: PdfPageSize.Letter));
             var html = await WebView2Extensions.ReadResourceAsTextAsync("Demo.Resources.Html5TestPage.html", GetType().Assembly);
             await HtmlExtensions.SavePdfAsync(this, html, options);
         }

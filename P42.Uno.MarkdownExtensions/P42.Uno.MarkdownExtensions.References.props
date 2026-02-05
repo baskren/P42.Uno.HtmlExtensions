@@ -1,0 +1,16 @@
+<Project ToolsVersion="15.0">
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
+  </ItemGroup>
+
+
+
+
+</Project>

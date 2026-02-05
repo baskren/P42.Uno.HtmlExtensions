@@ -1,6 +1,7 @@
 #if BROWSERWASM
 using System.Runtime.InteropServices.JavaScript;
 
+
 namespace P42.Uno;
 
 internal static partial class WasmWebViewExtensions
@@ -46,7 +47,7 @@ internal static partial class WasmWebViewExtensions
         Console.WriteLine("=== uno-assets.txt ===");
         */
         
-        _assetFiles = lines.ToList();
+        _assetFiles = [.. lines];
         _gettingAssets = false;
         return _assetFiles;
     }

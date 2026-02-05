@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
+
 namespace P42.Uno;
 
 public record PdfOptions(
@@ -10,8 +11,8 @@ public record PdfOptions(
     PdfPageBreakMode? PageBreak = null, 
     PdfImageSettings? Image = null, 
     bool? EnableLinks = null, 
-    Html2CanvasOptions? Html2canvas = null,
-    JsPdfOptions? JsPDF = null
+    Html2CanvasOptions? Html2Canvas = null,
+    JsPdfOptions? JsPdf = null
     );
 
 public record Html2CanvasOptions(
@@ -19,10 +20,11 @@ public record Html2CanvasOptions(
     string? BackgroundColor = null,
     bool? ForeignObjectRendering = null,
     int? ImageTimeout = null,
-    string? IngoreElements = null,
+    string? IgnoreElements = null,
     bool? Logging = null,
     string? Proxy = null,
     double? Scale = null,
+    // ReSharper disable once InconsistentNaming
     bool? UseCORS = null,
     double? Width = null,
     double? Height = null,

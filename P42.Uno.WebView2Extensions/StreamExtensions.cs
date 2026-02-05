@@ -1,3 +1,4 @@
+
 namespace P42.Uno;
 
 public static class StreamExtensions
@@ -12,7 +13,7 @@ public static class StreamExtensions
 
         // If the stream supports seeking and has a known length,
         // we can pre-allocate the byte array for efficiency.
-        if (stream.CanSeek && stream.Length > 0)
+        if (stream is { CanSeek: true, Length: > 0 })
         {
             var buffer = new byte[stream.Length];
             int bytesRead; 
