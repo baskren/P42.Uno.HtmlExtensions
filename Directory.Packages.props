@@ -7,5 +7,6 @@
   <ItemGroup>
       <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
       <PackageVersion Include="MimeMapping" Version="3.1.0" />
+      <PackageVersion Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" />
   </ItemGroup>
 </Project>

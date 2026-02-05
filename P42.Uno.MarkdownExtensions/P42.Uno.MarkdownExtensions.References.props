@@ -2,7 +2,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+    <PackageReference Include="P42.Uno.WebView2Extensions" />
   </ItemGroup>
 
 

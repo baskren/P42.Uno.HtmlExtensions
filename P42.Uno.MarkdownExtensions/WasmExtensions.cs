@@ -53,6 +53,7 @@ public static partial class WasmExtensions
     internal static partial string EnableOnLoad(string id);
         
     [System.Runtime.InteropServices.JavaScript.JSExport()]
+    //[System.Runtime.Versioning.SupportedOSPlatform("browser")]
     internal static async Task<string> OnLoad(string id, string name)
     {
         var msg = $"WasmExtensions.OnLoad: [{id}][{name}]";
