@@ -19,7 +19,7 @@ public static class HtmlExtensions
     public static bool CanPrint => WebView2Extensions.CanPrint;
     
     /// <summary>
-    /// Print html : may throw printing exceptions
+    /// Print HTML : may throw printing exceptions
     /// </summary>
     /// <param name="element">UIElement in current page</param>
     /// <param name="html"></param>
@@ -48,7 +48,7 @@ public static class HtmlExtensions
     }
 
     /// <summary>
-    /// Try printing html : presents errors in a dialog
+    /// Try printing HTML : presents errors in a dialog
     /// </summary>
     /// <param name="element">UIElement in current page</param>
     /// <param name="html"></param>
@@ -69,7 +69,7 @@ public static class HtmlExtensions
     }
     
     /// <summary>
-    /// Saves html as PDF : may throw exceptions
+    /// Saves HTML as PDF : may throw exceptions
     /// </summary>
     /// <param name="element">UIElement in current page</param>
     /// <param name="html"></param>
@@ -142,8 +142,11 @@ public static class HtmlExtensions
                 hideAfterOnContentLoadedTaskComplete: true,
                 cancellationToken: token);
 
-            if (result.pdf is null || result.pdf.Length == 0)
-                result.error ??= "Empty pdf, unknown failure";
+            if (result.pdf is not null && result.pdf.Length != 0)
+                return result;
+
+            if (string.IsNullOrWhiteSpace(result.error))
+                result.error = "Empty pdf, unknown failure";
 
             return result;
         }

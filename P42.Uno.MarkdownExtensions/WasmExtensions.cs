@@ -24,7 +24,7 @@ public static partial class WasmExtensions
             EnableOnLoad(id);
             WebView2Cache[id] = new WeakReference<WebView2>(webView);
         }
-        //Log.WriteLine($"WasmExtensions.EnableOnLoadAsync: id: [{id}] EXOT");
+        //Log.WriteLine($"WasmExtensions.EnableOnLoadAsync: id: [{id}] EXIT");
     }
 
     private static async Task<(WebView2?, string)> GetWebView2AndHrefAsync(string id)

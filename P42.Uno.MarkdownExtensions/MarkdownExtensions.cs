@@ -1,8 +1,4 @@
-using System;
-using System.Web;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using P42.Uno;
 
 #if BROWSERWASM
 using Log = System.Console;
@@ -44,12 +40,16 @@ public static class MarkdownExtensions
     
     internal const string MarkdownConverterPagePath = "/P42.Uno.MarkdownExtensions/MarkdownPage3.html";
 
+    // ReSharper disable once UnusedParameter.Local
+    // ReSharper disable UnusedParameter.Local
+    // ReSharper disable once UnusedMember.Local
     private static void OnNavStart(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
     {
         #if !BROWSERWASM
         args.Cancel = RedirectIfMarkdown(sender, args.Uri ?? string.Empty);
         #endif
     }
+    // ReSharper enable UnusedParameter.Local
 
 
     internal static bool RedirectIfMarkdown(WebView2 webView, string uriString)
@@ -121,6 +121,7 @@ public static class MarkdownExtensions
             Log.WriteLine(" ");
             Log.WriteLine(" ");
 
+            // ReSharper disable once AsyncVoidLambda
             WebView2Extensions.WinUiMainWindow.DispatcherQueue.TryEnqueue(async () =>
             {
                 try

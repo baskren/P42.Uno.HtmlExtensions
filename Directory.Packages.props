@@ -5,8 +5,9 @@
     See https://aka.platform.uno/using-uno-sdk for more information.
   -->
   <ItemGroup>
-      <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-      <PackageVersion Include="MimeMapping" Version="3.1.0" />
-      <PackageVersion Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="MimeMapping" Version="3.1.0" />
+    <PackageVersion Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" />
   </ItemGroup>
 </Project>
