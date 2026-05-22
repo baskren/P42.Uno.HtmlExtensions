@@ -1,4 +1,5 @@
 #if BROWSERWASM
+using System.Runtime.Versioning;
 using Log = System.Console;
 #else
 using Log = System.Diagnostics.Debug;
@@ -51,7 +52,8 @@ public static partial class WasmExtensions
     
     [System.Runtime.InteropServices.JavaScript.JSImport("globalThis.P42_EnableOnLoad")]
     internal static partial string EnableOnLoad(string id);
-        
+
+    [SupportedOSPlatform("browser")]
     [System.Runtime.InteropServices.JavaScript.JSExport()]
     //[System.Runtime.Versioning.SupportedOSPlatform("browser")]
     internal static async Task<string> OnLoad(string id, string name)

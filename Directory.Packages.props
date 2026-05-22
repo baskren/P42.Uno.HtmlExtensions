@@ -6,8 +6,13 @@
   -->
   <ItemGroup>
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <PackageVersion Include="MimeMapping" Version="3.1.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
+    <PackageVersion Include="MimeMapping" Version="4.0.0" />
     <PackageVersion Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" />
+
+    <!-- Uno.Sdk 6.5.36 Warning fix -->
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.8" />
+    <PackageVersion Include="Tmds.DBus.Protocol" Version="0.21.3" />
+
   </ItemGroup>
 </Project>
