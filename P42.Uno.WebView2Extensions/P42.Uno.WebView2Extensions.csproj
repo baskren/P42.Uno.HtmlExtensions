@@ -55,6 +55,12 @@
     </AndroidResource>
   </ItemGroup>
 
+  <!-- FIX: XA1004 - Pack (GeneratePackageOnBuild) re-runs _CreateAar in a fresh instance where @(_AndroidResourceDest) was never computed, producing a 0-byte .aar -->
+  <Target Name="P42_ComputeAarInputs"
+          Condition="$(TargetFramework.Contains('android'))"
+          BeforeTargets="_CreateAarCache"
+          DependsOnTargets="_ComputeAndroidResourcePaths" />
+
   <!-- NO EFFECT, but will try this approach to add PERMISSIONS when modernizing Bc3
     <AndroidManifestOverlay Include="Platforms\Android\AndroidManifest.xml">
       <SubType>Designer</SubType>
