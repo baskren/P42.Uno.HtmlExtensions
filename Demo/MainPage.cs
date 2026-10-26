@@ -11,7 +11,7 @@ namespace Demo;
 
 public sealed partial class MainPage : Page
 {
-    private readonly WebView2 _webView;
+    private readonly Microsoft.UI.Xaml.Controls.WebView2 _webView;
 
     public MainPage()
     {
@@ -58,7 +58,7 @@ public sealed partial class MainPage : Page
                             .HorizontalAlignment(HorizontalAlignment.Stretch)
                             .VerticalAlignment(VerticalAlignment.Stretch)
                             .Fill(Colors.White),
-                        new WebView2()
+                        new Microsoft.UI.Xaml.Controls.WebView2()
                             .Name(out _webView)
                             .Grid(row:1)
                             .DefaultBackgroundColor(Colors.White)

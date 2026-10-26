@@ -38,14 +38,17 @@
       Toolkit;
       ThemeService;
       WebView;
-    </UnoFeatures>
-
-    <UnoFeatures Condition="  $(TargetFramework.Contains('android'))" >
       SkiaRenderer;
       $(UnoFeatures)
     </UnoFeatures>
 
     <BuildInParallel>false</BuildInParallel>
+
+    <!-- Android minimum SDK (emitted as uses-sdk android:minSdkVersion) -->
+    <SupportedOSPlatformVersion Condition=" $(TargetFramework.Contains('android'))">24</SupportedOSPlatformVersion>
+    <!-- iOS minimum version (Uno.Sdk defaults to 14.2, below the iOS workload minimum of 15.0) -->
+    <SupportedOSPlatformVersion Condition=" $(TargetFramework.Contains('ios'))">15.0</SupportedOSPlatformVersion>
+
 
   </PropertyGroup>
 

@@ -625,10 +625,16 @@ public static partial class WebView2Extensions
     internal static bool CheckForProjectFolderRecursively(string path, out string result)
     {
         result = $"FOUND: {path}";
+        #if __ANDROID__
+        // AssetManager paths are relative to the APK's assets folder: no leading separator, root is ""
+        path = path.TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        string current = string.Empty;
+        #else
         // Normalize path separators
         path = Path.GetFullPath(path);
-
         string current = Path.GetPathRoot(path)!; // e.g. "C:\"
+        #endif
+
         foreach (var part in path.Substring(current.Length).Split(Path.DirectorySeparatorChar,
                                                                   Path.AltDirectorySeparatorChar,
                                                                   StringSplitOptions.RemoveEmptyEntries))
@@ -655,7 +661,11 @@ public static partial class WebView2Extensions
 
         if (!ProjectFileExists(path))
         {
+            #if __ANDROID__
+            var files = VirtualHost.Assets.List(folderPath ?? "") ?? [];
+            #else
             var files = Directory.GetFiles(folderPath ?? "");
+            #endif
             foreach (var file in files) 
                 Log.WriteLine($"\t\t{folderPath}/{file}");
 
@@ -674,6 +684,7 @@ public static partial class WebView2Extensions
 #if __ANDROID__
         try
         {
+            fullFolderPath.TrimStart('/');
             var files = VirtualHost.Assets.List(fullFolderPath);
             if (files is null || files.Length == 0)
                 return false;
@@ -691,6 +702,7 @@ public static partial class WebView2Extensions
     internal static bool ProjectFileExists(string fullFilePath)
     {
 #if __ANDROID__
+        fullFilePath.TrimStart('/');
         var folderPath = Path.GetDirectoryName(fullFilePath);
         try
         {
