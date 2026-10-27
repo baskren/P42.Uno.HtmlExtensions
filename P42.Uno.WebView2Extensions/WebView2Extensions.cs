@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection;
 using System.Text.Json;
@@ -78,9 +77,8 @@ public static partial class WebView2Extensions
     /// <param name="webView2"></param>
     /// <param name="token"></param>
 #if __ANDROID__
-    // NativeWebViewWrapper.WebView is accessed via reflection below; keep it from being trimmed (TrimMode=full)
-    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties,
-                       "Uno.UI.Xaml.Controls.NativeWebViewWrapper", "Uno.UI.Runtime.Skia.Android")]
+    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2075",
+        Justification = "NativeWebViewWrapper.WebView is preserved by Platforms/Android/ILLink.Descriptors.xml")]
 #endif
     public static async Task PrintAsync(this WebView2 webView2, CancellationToken token = default)
     {
@@ -623,7 +621,7 @@ public static partial class WebView2Extensions
         Log.WriteLine($"Project Content File url: [{url}]");
 
         return new Uri(url);
-    }
+        }
 #endregion Public
 
 

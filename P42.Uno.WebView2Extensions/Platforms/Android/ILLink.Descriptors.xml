@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Embedded in the Android build of P42.Uno.WebView2Extensions; the trimmer applies it in every consuming app.
+  WebView2Extensions.PrintAsync() reads NativeWebViewWrapper.WebView via reflection, which TrimMode=full would otherwise remove.
+  NOTE: with the Skia renderer, NativeWebViewWrapper lives in Uno.UI.Runtime.Skia.Android (not Uno.UI).
+-->
+<linker>
+  <assembly fullname="Uno.UI.Runtime.Skia.Android">
+    <type fullname="Uno.UI.Xaml.Controls.NativeWebViewWrapper">
+      <property name="WebView" />
+    </type>
+  </assembly>
+</linker>
