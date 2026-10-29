@@ -42,13 +42,17 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
-    </ItemGroup>
-
-
-    <ItemGroup>
       <EmbeddedResource Include="WebAssembly\WasmScripts\P42_Uno_MarkdownExtensions_JavaScript.js" />
     </ItemGroup>
+
+  <ItemGroup  Condition="$([MSBuild]::IsOSPlatform('windows'))">    
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" /> 
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup  Condition="!$([MSBuild]::IsOSPlatform('windows'))">
+    <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+  </ItemGroup>
 
 
 </Project>

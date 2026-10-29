@@ -39,6 +39,13 @@
   </ItemGroup>
 
   <ItemGroup>
+  </ItemGroup>
+  <ItemGroup  Condition="$([MSBuild]::IsOSPlatform('windows'))">    
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Uno.WebView2Extensions" Version="$(UnoVersion)" /> 
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup  Condition="!$([MSBuild]::IsOSPlatform('windows'))">
     <ProjectReference Include="..\P42.Uno.WebView2Extensions\P42.Uno.WebView2Extensions.csproj" />
   </ItemGroup>
 </Project>
